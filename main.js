@@ -1,17 +1,18 @@
-import { vec3 } from '../../../lib/glm.js';
-import { ResizeSystem } from 'engine/systems/ResizeSystem.js';
-import { UpdateSystem } from 'engine/systems/UpdateSystem.js';
+import { vec3 } from './glm.js';
+import { ResizeSystem } from './systems/ResizeSystem.js';
+import { UpdateSystem } from './systems/UpdateSystem.js';
 
-import { GLTFLoader } from 'engine/loaders/GLTFLoader.js';
-import { UnlitRenderer } from 'engine/renderers/UnlitRenderer.js';
-import { FirstPersonController } from 'engine/controllers/FirstPersonController.js';
+import { GLTFLoader } from './loaders/GLTFLoader.js';
+import { UnlitRenderer } from './renderers/UnlitRenderer.js';
+import { FirstPersonController } from './controllers/FirstPersonController.js';
+import { OrbitController } from './controllers/OrbitController.js';
 
-import { Camera, Model, Transform } from 'engine/core.js';
+import { Camera, Model, Transform } from './core.js';
 
 import {
     calculateAxisAlignedBoundingBox,
     mergeAxisAlignedBoundingBoxes,
-} from 'engine/core/MeshUtils.js';
+} from './core/MeshUtils.js';
 
 import { Physics } from './Physics.js';
 
@@ -26,6 +27,7 @@ await loader.load('scene/table2.gltf');
 const scene = loader.loadScene(loader.defaultScene);
 const camera = loader.loadNode('Camera');
 camera.addComponent(new FirstPersonController(camera, canvas));
+scene.addChild(camera);
 camera.isDynamic = true;
 camera.aabb = {
     min: [-0.2, -0.2, -0.2],
@@ -35,6 +37,11 @@ camera.aabb = {
 const table = loader.loadNode('Table');
 table.isStatic = true;
 table.name = "Table";
+scene.addChild(table);
+table.aabb = {
+    min: [-0.5, -0.5, -0.5],
+    max: [0.5, 0.5, 0.5],
+};
 
 
 console.log(scene);
@@ -49,26 +56,6 @@ scene.traverse(node => {
     const boxes = model.primitives.map(primitive => calculateAxisAlignedBoundingBox(primitive.mesh));
     node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
 });
-//debugging the camera purposes
-table.aabb.max = [0, 0, 0];
-table.aabb.min = [0, 0, 0];
-
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'u') {
-        const closestBox = physics.raycastFromCamera(camera);// Perform raycasting
-        if (closestBox) {
-            console.log("nasli closest box" + closestBox);
-            const transform = closestBox.getComponentOfType(Transform);
-            if (transform) {
-                transform.translation[1] += 1;// Move the box up by 1 unit
-                transform.scale = transform.scale.map(s => s * 1.1);// Scale the box by 10%
-                closestBox.aabb.max = [closestBox.aabb.max[0] * 1.1, closestBox.aabb.max[1] * 1.1, closestBox.aabb.max[2] * 1.1];
-                closestBox.aabb.min = [closestBox.aabb.min[0] * 1.1, closestBox.aabb.min[1] * 1.1, closestBox.aabb.min[2] * 1.1];
-            }
-        }
-    }
-});
-
 
 function update(time, dt) {
     scene.traverse(node => {
@@ -78,6 +65,7 @@ function update(time, dt) {
     });
 
     physics.update(time, dt);
+    console.log()
 }
 
 function render() {

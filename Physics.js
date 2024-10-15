@@ -1,7 +1,7 @@
-import { vec3, mat4 } from 'glm';
-import { getGlobalModelMatrix } from 'engine/core/SceneUtils.js';
-import { Transform } from 'engine/core.js';
-import { FirstPersonController } from 'engine/controllers/FirstPersonController.js';
+import { vec3, mat4 } from './glm.js';
+import { getGlobalModelMatrix } from './core/SceneUtils.js';
+import { Transform } from './core.js';
+import { FirstPersonController } from './controllers/FirstPersonController.js';
 
 export class Physics {
 
