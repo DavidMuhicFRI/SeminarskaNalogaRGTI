@@ -9,6 +9,7 @@ export class Physics {
         this.scene = scene;
     }
 
+    //update primerja vse dinamične objekte z vsemi statičnimi objekti
     update(t, dt) {
         this.scene.traverse(node => {
             if (node.isDynamic) {
@@ -21,6 +22,7 @@ export class Physics {
         });
     }
 
+    //raycastFromCamera metoda vrne (naj bi ;-) (vcasih malo buggy)) objeckt, ki ga kamera gleda (je na sredini zaslona)
     raycastFromCamera(camera) {
         // Get the camera direction in world space
         const forwardDirection = vec3.create();
@@ -185,6 +187,7 @@ export class Physics {
         if (!transform) {
             return;
         }
+        //avoiding movement on Y axis
         minDirection[1] = 0;
         vec3.add(transform.translation, transform.translation, minDirection);
     }

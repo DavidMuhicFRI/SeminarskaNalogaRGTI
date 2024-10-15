@@ -1,4 +1,4 @@
-import { vec3 } from './glm.js';
+//import { vec3 } from './glm.js';
 import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
 
