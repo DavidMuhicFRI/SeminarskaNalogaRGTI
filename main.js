@@ -29,12 +29,12 @@ const camera = loader.loadNode('Camera');
 camera.addComponent(new FirstPersonController(camera, canvas));
 const cameraTransform = camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform);
 console.log(cameraTransform.translation);
-cameraTransform.translation = [3, 4, 10];
+cameraTransform.translation = [3, 4.5, 10];
 scene.addChild(camera);
 camera.isDynamic = true;
 camera.aabb = {
-    min: [-0.4, -4, -0.2],
-    max: [0.4, 0, 0.2],
+    min: [-0.5, -4, -0.6],
+    max: [0.5, 0, 0.6],
 };
 
 const table = loader.loadNode('Table');
