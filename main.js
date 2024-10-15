@@ -5,7 +5,6 @@ import { UpdateSystem } from './systems/UpdateSystem.js';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
 import { UnlitRenderer } from './renderers/UnlitRenderer.js';
 import { FirstPersonController } from './controllers/FirstPersonController.js';
-import { OrbitController } from './controllers/OrbitController.js';
 
 import { Camera, Model, Transform } from './core.js';
 
@@ -16,12 +15,15 @@ import {
 
 import { Physics } from './Physics.js';
 
+/////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
+
 const canvas = document.querySelector('canvas');
 const renderer = new UnlitRenderer(canvas);
 await renderer.initialize();
 
+////////////////////////////////////////////////////////////////////////////LOADING THE SCENE/////////////////////////////////////////////////
+
 const loader = new GLTFLoader();
-//await loader.load('scene/scene.gltf');
 await loader.load('scene/table2.gltf');
 
 const scene = loader.loadScene(loader.defaultScene);
@@ -29,10 +31,10 @@ const camera = loader.loadNode('Camera');
 camera.addComponent(new FirstPersonController(camera, canvas));
 const cameraTransform = camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform);
 console.log(cameraTransform.translation);
-cameraTransform.translation = [3, 4.5, 10];
+cameraTransform.translation = [3, 4.5, 10]; // Set the initial camera position
 scene.addChild(camera);
 camera.isDynamic = true;
-camera.aabb = {
+camera.aabb = {               // Set the camera's bounding "hit" box
     min: [-0.5, -4, -0.6],
     max: [0.5, 0, 0.6],
 };
@@ -45,6 +47,7 @@ table.addComponent(new Transform);
 table.getComponentOfType(Transform).translation = [0, 0, 0];
 console.log(scene);
 
+/////////////////////////////////////////////////////////////////////////////SET THE AABBS FOR MODELS///////////////////////////////////////////////////////////
 
 const physics = new Physics(scene);
 scene.traverse(node => {
@@ -55,6 +58,8 @@ scene.traverse(node => {
     const boxes = model.primitives.map(primitive => calculateAxisAlignedBoundingBox(primitive.mesh));
     node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
 });
+
+/////////////////////////////////////////////////////////////////////////////UPDATE AND RENDER//////////////////////////////////////////////////////////////
 
 function update(time, dt) {
     scene.traverse(node => {
