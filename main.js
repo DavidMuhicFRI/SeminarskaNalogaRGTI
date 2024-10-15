@@ -27,23 +27,22 @@ await loader.load('scene/table2.gltf');
 const scene = loader.loadScene(loader.defaultScene);
 const camera = loader.loadNode('Camera');
 camera.addComponent(new FirstPersonController(camera, canvas));
+const cameraTransform = camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform);
+console.log(cameraTransform.translation);
+cameraTransform.translation = [3, 4, 10];
 scene.addChild(camera);
 camera.isDynamic = true;
 camera.aabb = {
-    min: [-0.2, -0.2, -0.2],
-    max: [0.2, 0.2, 0.2],
+    min: [-0.4, -4, -0.2],
+    max: [0.4, 0, 0.2],
 };
 
 const table = loader.loadNode('Table');
 table.isStatic = true;
 table.name = "Table";
 scene.addChild(table);
-table.aabb = {
-    min: [-0.5, -0.5, -0.5],
-    max: [0.5, 0.5, 0.5],
-};
-
-
+table.addComponent(new Transform);
+table.getComponentOfType(Transform).translation = [0, 0, 0];
 console.log(scene);
 
 
@@ -65,7 +64,7 @@ function update(time, dt) {
     });
 
     physics.update(time, dt);
-    console.log()
+    //console.log(camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation);
 }
 
 function render() {

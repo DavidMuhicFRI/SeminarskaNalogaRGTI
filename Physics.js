@@ -185,6 +185,7 @@ export class Physics {
         if (!transform) {
             return;
         }
+        minDirection[1] = 0;
         vec3.add(transform.translation, transform.translation, minDirection);
     }
 }

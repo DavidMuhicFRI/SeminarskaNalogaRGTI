@@ -61,7 +61,7 @@ export class FirstPersonController {
         // Map user input to the acceleration vector.
         const acc = vec3.create();
         if(this.keys['KeyW'] || this.keys['KeyS'] || this.keys['KeyD'] || this.keys['KeyA']){
-            console.log("User input detected");
+           // console.log("User input detected");
         }
         if (this.keys['KeyW']) {
             vec3.add(acc, acc, forward);
@@ -87,7 +87,7 @@ export class FirstPersonController {
         {
             const decay = Math.exp(dt * Math.log(1 - this.decay));
             vec3.scale(this.velocity, this.velocity, decay);
-            console.log("Decay applied because of no user input");
+            //console.log("Decay applied because of no user input");
         }
 
         // Limit speed to prevent accelerating to infinity and beyond.
