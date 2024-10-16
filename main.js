@@ -24,7 +24,7 @@ await renderer.initialize();
 ////////////////////////////////////////////////////////////////////////////LOADING THE SCENE/////////////////////////////////////////////////
 
 const loader = new GLTFLoader();
-await loader.load('scene/table2.gltf');
+await loader.load('scene/test.gltf');
 
 const scene = loader.loadScene(loader.defaultScene); // Load the default scene
 
