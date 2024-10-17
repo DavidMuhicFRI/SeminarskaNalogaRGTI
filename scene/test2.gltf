@@ -48,9 +48,9 @@
 			"mesh":2,
 			"name":"Floor",
 			"scale":[
-				35,
+				25,
 				0.3199999928474426,
-				45
+				25
 			]
 		},
 		{
@@ -68,27 +68,27 @@
 			]
 		},
 		{
-      	"camera":0,
-        "name":"Camera",
-      	"translation":[
-      		0,
-      		1,
-      	  15
-      	]
-    }
+          	"camera":0,
+            "name":"Camera",
+          	"translation":[
+          		0,
+          		1,
+          	  15
+          	]
+        }
 	],
 	"cameras":[
-      	{
-      			"name":"Camera.001",
-      			"perspective":{
-      				"aspectRatio":1.7777777777777777,
-      				"yfov":1,
-      				"zfar":100,
-      				"znear":0.1
-      			},
-      			"type":"perspective"
-      	}
-  ],
+        	{
+        			"name":"Camera.001",
+        			"perspective":{
+        				"aspectRatio":1.7777777777777777,
+        				"yfov":1,
+        				"zfar":100,
+        				"znear":0.1
+        			},
+        			"type":"perspective"
+        	}
+    ],
 	"materials":[
 		{
 			"doubleSided":true,
@@ -224,8 +224,8 @@
 		},
 		{
 			"mimeType":"image/jpeg",
-			"name":"floorTexture2.jpg",
-			"uri":"floorTexture2.jpg"
+			"name":"floorTexture3.jpg",
+			"uri":"floorTexture3.jpg"
 		},
 		{
 			"mimeType":"image/jpeg",
@@ -466,7 +466,7 @@
 	"buffers":[
 		{
 			"byteLength":39436,
-			"uri":"test.bin"
+			"uri":"test2.bin"
 		}
 	]
 }
