@@ -121,7 +121,6 @@ export class UnlitRenderer extends BaseRenderer {
         if (this.gpuObjects.has(texture)) {
             return this.gpuObjects.get(texture);
         }
-
         const { gpuTexture } = this.prepareImage(texture.image); // ignore sRGB
         const { gpuSampler } = this.prepareSampler(texture.sampler);
 
@@ -134,7 +133,6 @@ export class UnlitRenderer extends BaseRenderer {
         if (this.gpuObjects.has(material)) {
             return this.gpuObjects.get(material);
         }
-
         const baseTexture = this.prepareTexture(material.baseTexture);
 
         const materialUniformBuffer = this.device.createBuffer({

@@ -4,6 +4,7 @@ import { UpdateSystem } from './systems/UpdateSystem.js';
 
 import { GLTFLoader } from './loaders/GLTFLoader.js';
 import { UnlitRenderer } from './renderers/UnlitRenderer.js';
+import { BaseRenderer} from "./renderers/BaseRenderer.js";
 import { FirstPersonController } from './controllers/FirstPersonController.js';
 
 import { Camera, Model, Transform } from './core.js';
@@ -24,7 +25,7 @@ await renderer.initialize();
 ////////////////////////////////////////////////////////////////////////////LOADING THE SCENE/////////////////////////////////////////////////
 
 const loader = new GLTFLoader();
-await loader.load('scene/test3.gltf');
+await loader.load('scene/test5.gltf');
 
 const scene = loader.loadScene(loader.defaultScene); // Load the default scene
 
