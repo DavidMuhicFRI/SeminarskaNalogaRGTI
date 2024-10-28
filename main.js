@@ -29,51 +29,92 @@ let updateSystem;
 let camera;
 
 async function initializeTheRenderer(){
-    const renderer = new UnlitRenderer(canvas);
+    renderer = new UnlitRenderer(canvas);
     await renderer.initialize();
-    return renderer;
+}
+
+async function initializeTheLoader(){
+  await loader = new GLTFLoader();
+}
+
+async function initializeTheScene(){
+  await loader.load('scene/test5.gltf'); // Load the scene
+  scene = loader.loadScene(loader.defaultScene); // Load the default scene
+}
+
+async function initializeTheCamera(){
+  const camera = await loader.loadNode('Camera'); // Load the camera node
+  camera.addComponent(new FirstPersonController(camera, canvas)); // Add a first person controller to the camera
+  camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation = [0, 8.2, 15]; // Set the initial camera position
+  camera.isDynamic = true;
+  camera.aabb = {
+    min: [-0.5, -8.2, -0.6],
+    max: [0.5, 0, 0.6],
+  };
+  scene.addChild(camera);
+  return camera;
+}
+
+async function initPhysics(){
+  await physics = new Physics();
+}
+
+async function initializeSystems(){
+  await resizeSystem = new ResizeSystem({ canvas, resize });
+  await updateSystem = new UpdateSystem({ update, render });
+}
+
+function startSystems(){
+  resizeSystem.start();
+  updateSystem.start();
+}
+
+function update(time, dt) {
+  scene.traverse(node => {
+    for (const component of node.components) {
+      component.update?.(time, dt);
+    }
+  });
+
+  physics.update(time, dt);
+}
+
+function render() {
+  renderer.render(scene, camera);
+}
+
+function resize({ displaySize: { width, height }}) {
+  camera.getComponentOfType(Camera).aspect = width / height;
+}
+
+async function init(){
+  await initializeTheRenderer();
+  await initializeTheLoader();
+  await initializeTheScene();
+  await initializeTheCamera();
+  await initPhysics();
+  await initializeSystems();
+  startSystems();
 }
 
 ////////////////////////////////////////////////////////////////////////////LOADING THE SCENE/////////////////////////////////////////////////
 
-
-function initializeTheLoader(){
-    loader = new GLTFLoader();
-}
-
-async function initializeTheScene(){
-    await loader.load('scene/test5.gltf'); // Load the scene
-    scene = loader.loadScene(loader.defaultScene); // Load the default scene
-}
-
-function initializeTheCamera(){
-    const camera = loader.loadNode('Camera'); // Load the camera node
-    camera.addComponent(new FirstPersonController(camera, canvas)); // Add a first person controller to the camera
-    camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation = [0, 8.2, 15]; // Set the initial camera position
-    camera.isDynamic = true;
-    camera.aabb = {
-        min: [-0.5, -8.2, -0.6],
-        max: [0.5, 0, 0.6],
-    };
-    scene.addChild(camera);
-    return camera;
-}
+/////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
 
 function loadObject(name, type){
-    let object = loader.loadNode(name);
-    object.name = name;
-    if(type){
-      if(type === "static"){
-        object.isStatic = true;
-      }else{
-        object.isDynamic = true;
-      }
+  let object = loader.loadNode(name);
+  object.name = name;
+  if(type){
+    if(type === "static"){
+      object.isStatic = true;
+    }else{
+      object.isDynamic = true;
     }
-    scene.addChild(object);
-    return object;
+  }
+  scene.addChild(object);
+  return object;
 }
 
-/////////////////////////////////////////////////////////////////////////////LOADING THE PLAYERS/////////////////////////////////////////////////
 
 function loadPlayer(playerObject){
     let player = new Node();
@@ -98,10 +139,6 @@ function loadPlayer(playerObject){
 
 /////////////////////////////////////////////////////////////////////////////PHYSICS///////////////////////////////////////////////////////////
 
-function initPhysics(){
-    physics = new Physics();
-}
-
 function setAABBs(){
     scene.traverse(node => {
         const model = node.getComponentOfType(Model);
@@ -113,32 +150,4 @@ function setAABBs(){
     });
 }
 
-/////////////////////////////////////////////////////////////////////////////UPDATE AND RENDER//////////////////////////////////////////////////////////////
 
-function update(time, dt) {
-    scene.traverse(node => {
-        for (const component of node.components) {
-            component.update?.(time, dt);
-        }
-    });
-
-    physics.update(time, dt);
-}
-
-function render() {
-    renderer.render(scene, camera);
-}
-
-function resize({ displaySize: { width, height }}) {
-    camera.getComponentOfType(Camera).aspect = width / height;
-}
-
-function initializeSystems(){
-    resizeSystem = new ResizeSystem({ canvas, resize });
-    updateSystem = new UpdateSystem({ update, render });
-}
-
-function startSystems(){
-    resizeSystem.start();
-    updateSystem.start();
-}
