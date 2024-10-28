@@ -16,6 +16,7 @@ export class Player {
                 doc = document.querySelector('canvas'),
                 yaw = 0,
                 node = null,
+                name = null,
               } = {}) {
     this.head = head;
     this.torso = torso;
@@ -30,6 +31,7 @@ export class Player {
     this.decay = decay;
     this.yaw = yaw;
     this.node = node;
+    this.name = name;
 
     this.mouseSensitivity = 0.002; // Adjust for mouse sensitivity
     this.lastMouseX = null;
