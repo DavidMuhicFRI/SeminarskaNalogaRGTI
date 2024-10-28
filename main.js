@@ -17,6 +17,61 @@ import {
 import { Physics } from './Physics.js';
 import { Player } from "./Player.js";
 
+/////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
+
+let introPage = "intro1";
+const intro1Logo = document.getElementById('intro1Logo');
+const intro2Logo = document.getElementById('intro2Logo');
+$("#intro2").hide();
+
+document.addEventListener("click", () => {
+  if(introPage === "intro1"){
+    introPage = "intro2";
+    $("#intro1").hide();
+    $("#intro2").show();
+    showImage(intro2Logo);
+  } else if(introPage === "intro2"){
+    introPage = "game";
+    $("#intro2").hide();
+    $("#game").show();
+  }
+});
+
+
+showImage(intro1Logo);
+setTimeout(() => {
+  if(introPage === "intro1") {
+    introPage = "intro2";
+    $("#intro1").hide();
+    $("#intro2").show();
+    showImage(intro2Logo);
+    setTimeout(() => {
+      if(introPage === "intro2") {
+        introPage = "game";
+        $("#intro2").hide();
+        $("#game").show();
+        }
+      }, 6100);
+    } else {
+      introPage = "game";
+      $("#intro2").hide();
+      $("#intro1").hide();
+      $("#game").show();
+      $("#createUser").show();
+    }
+  }, 6100);
+
+
+function showImage(element){
+  setTimeout(() => {
+    element.style.opacity = '1';
+  }, 100);
+  setTimeout(() => {
+    element.style.opacity = '0';
+  }, 3100);
+}
+
+
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
 
 const canvas = document.querySelector('canvas');
@@ -33,8 +88,8 @@ async function initializeTheRenderer(){
     await renderer.initialize();
 }
 
-async function initializeTheLoader(){
-  await loader = new GLTFLoader();
+function initializeTheLoader(){
+  loader = new GLTFLoader();
 }
 
 async function initializeTheScene(){
@@ -42,8 +97,8 @@ async function initializeTheScene(){
   scene = loader.loadScene(loader.defaultScene); // Load the default scene
 }
 
-async function initializeTheCamera(){
-  const camera = await loader.loadNode('Camera'); // Load the camera node
+function initializeTheCamera(){
+  const camera = loader.loadNode('Camera'); // Load the camera node
   camera.addComponent(new FirstPersonController(camera, canvas)); // Add a first person controller to the camera
   camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation = [0, 8.2, 15]; // Set the initial camera position
   camera.isDynamic = true;
@@ -55,13 +110,13 @@ async function initializeTheCamera(){
   return camera;
 }
 
-async function initPhysics(){
-  await physics = new Physics();
+function initPhysics(){
+  physics = new Physics();
 }
 
-async function initializeSystems(){
-  await resizeSystem = new ResizeSystem({ canvas, resize });
-  await updateSystem = new UpdateSystem({ update, render });
+function initializeSystems(){
+  resizeSystem = new ResizeSystem({ canvas, resize });
+  updateSystem = new UpdateSystem({ update, render });
 }
 
 function startSystems(){
@@ -96,8 +151,6 @@ async function init(){
   await initializeSystems();
   startSystems();
 }
-
-////////////////////////////////////////////////////////////////////////////LOADING THE SCENE/////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
 
