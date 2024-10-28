@@ -51,15 +51,14 @@ setTimeout(() => {
         $("#intro2").hide();
         $("#game").show();
         }
-      }, 6100);
+      }, 4100);
     } else {
       introPage = "game";
-      $("#intro2").hide();
       $("#intro1").hide();
+      $("#intro2").hide();
       $("#game").show();
-      $("#createUser").show();
     }
-  }, 6100);
+  }, 4100);
 
 
 function showImage(element){
@@ -68,7 +67,7 @@ function showImage(element){
   }, 100);
   setTimeout(() => {
     element.style.opacity = '0';
-  }, 3100);
+  }, 2100);
 }
 
 
