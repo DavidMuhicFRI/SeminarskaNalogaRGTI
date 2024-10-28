@@ -99,8 +99,7 @@ export class FirstPersonController {
         const transform = this.node.getComponentOfType(Transform);
         if (transform) {
             // Update translation based on velocity.
-            vec3.scaleAndAdd(transform.translation,
-                transform.translation, this.velocity, dt);
+            vec3.scaleAndAdd(transform.translation, transform.translation, this.velocity, dt);
 
             // Update rotation based on the Euler angles.
             const rotation = quat.create();
