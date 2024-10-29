@@ -23,8 +23,6 @@ let introPage = "intro";
 const introLogo = document.getElementById('introLogo');
 const charactersImg = document.getElementById('introCharacters');
 $("#main").hide();
-$("#introCrack").hide();
-$("#introLogo").hide();
 
 document.addEventListener("click", () => {
     introPage = "main";
@@ -35,46 +33,37 @@ document.addEventListener("click", () => {
 
 document.getElementById('introCharacters').style.opacity = '1';
 setTimeout(function(){
-  document.getElementById("introAnd").style.opacity = '1';
   document.getElementById("name1").style.opacity = '1';
   document.getElementById("name2").style.opacity = '1';
-}, 1500);
+}, 1000);
 setTimeout(function(){
-  document.getElementById("introPresents").style.opacity = '1';
-  setTimeout(function(){
-    document.getElementById("introPresents").style.opacity = '0';
-  }, 2000);
-}, 2600);
-setTimeout(function(){
-  document.getElementById("introAnd").style.opacity = '0';
   document.getElementById("name1").style.opacity = '0';
   document.getElementById("name2").style.opacity = '0';
-}, 4100);
+}, 2000);
 setTimeout(function(){
   charactersImg.src = "animationTogether.png";
-},5000);
+},3000);
 setTimeout(function(){
   charactersImg.src = "animationNormal.png";
-},5600);
-setTimeout(function(){
-  charactersImg.src = "animationOut.png";
-},6200);
-setTimeout(function(){
-  charactersImg.src = "animationNormal.png";
-}, 6800);
+},3700);
 setTimeout(function(){
   charactersImg.src = "animationUp.png";
-}, 7400);
+}, 4400);
 let top = -100;
 setTimeout(function(){
   $("#introLogo").show();
   let moveLogo = setInterval(function(){
     introLogo.style.top = top + "vh";
-    top += 0.5 + ((top + 100) / 100);
+    top += 0.5 + Math.pow(top + 100, 2) / 4000;
     if(top > 22.6){
       introLogo.style.top = 22.6 + "vh";
       clearInterval(moveLogo);
-      $("#introCrack").show();
+      setTimeout(function(){
+        introLogo.style.opacity = '0';
+      }, 500);
+      setTimeout(function(){
+        $("#intro").hide();
+      }, 3200);
     }else if(top > 10){
       $("#introCharacters").hide();
       $("#introAnd").hide();
@@ -82,7 +71,7 @@ setTimeout(function(){
       $("#name2").hide();
     }
   }, 5);
-},7700);
+},4450);
 
 
 
