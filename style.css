@@ -17,9 +17,10 @@ body, html {
 }
 #introLogo{
   position: absolute;
-  height: 100vh;
-  width: 60vw;
-  left: 20vw;
+  height: 80vh;
+  width: 50vw;
+  top: 10vh;
+  left: 25vw;
   opacity: 0;
   transition: opacity 2s ease-in-out;
   user-select: none;

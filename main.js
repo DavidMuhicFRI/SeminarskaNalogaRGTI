@@ -33,9 +33,9 @@ document.addEventListener("click", () => {
 showImage(introLogo);
 setTimeout(() => {
     introPage = "main";
-    $("#intro1").hide();
+    $("#intro").hide();
     $("#main").show();
-  }, 4100);
+  }, 4500);
 
 
 function showImage(element){
@@ -44,7 +44,7 @@ function showImage(element){
   }, 100);
   setTimeout(() => {
     element.style.opacity = '0';
-  }, 2100);
+  }, 2500);
 }
 
 
