@@ -7,7 +7,7 @@ body, html {
     font-family: sans-serif;
 }
 
-#intro1{
+#intro{
   background-color: black;
   position: absolute;
   top: 0;
@@ -15,30 +15,11 @@ body, html {
   width: 100vw;
   height: 100vh;
 }
-#intro1Logo{
+#introLogo{
   position: absolute;
   height: 100vh;
   width: 60vw;
   left: 20vw;
-  opacity: 0;
-  transition: opacity 2s ease-in-out;
-  user-select: none;
-}
-
-#intro2{
-  background-color: rebeccapurple;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-#intro2Logo{
-  position: absolute;
-  top: 22vh;
-  left: 34vw;
-  width: 30vw;
-  height: 45vh;
   opacity: 0;
   transition: opacity 2s ease-in-out;
   user-select: none;

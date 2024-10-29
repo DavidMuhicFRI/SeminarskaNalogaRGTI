@@ -19,45 +19,22 @@ import { Player } from "./Player.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
-let introPage = "intro1";
-const intro1Logo = document.getElementById('intro1Logo');
-const intro2Logo = document.getElementById('intro2Logo');
-$("#intro2").hide();
+let introPage = "intro";
+const introLogo = document.getElementById('introLogo');
+$("#main").hide();
 
 document.addEventListener("click", () => {
-  if(introPage === "intro1"){
-    introPage = "intro2";
-    $("#intro1").hide();
-    $("#intro2").show();
-    showImage(intro2Logo);
-  } else if(introPage === "intro2"){
-    introPage = "game";
-    $("#intro2").hide();
-    $("#game").show();
-  }
+    introPage = "main";
+    $("#intro").hide();
+    $("#main").show();
 });
 
 
-showImage(intro1Logo);
+showImage(introLogo);
 setTimeout(() => {
-  if(introPage === "intro1") {
-    introPage = "intro2";
+    introPage = "main";
     $("#intro1").hide();
-    $("#intro2").show();
-    showImage(intro2Logo);
-    setTimeout(() => {
-      if(introPage === "intro2") {
-        introPage = "game";
-        $("#intro2").hide();
-        $("#game").show();
-        }
-      }, 4100);
-    } else {
-      introPage = "game";
-      $("#intro1").hide();
-      $("#intro2").hide();
-      $("#game").show();
-    }
+    $("#main").show();
   }, 4100);
 
 
