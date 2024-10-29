@@ -21,7 +21,10 @@ import { Player } from "./Player.js";
 
 let introPage = "intro";
 const introLogo = document.getElementById('introLogo');
+const charactersImg = document.getElementById('introCharacters');
 $("#main").hide();
+$("#introCrack").hide();
+$("#introLogo").hide();
 
 document.addEventListener("click", () => {
     introPage = "main";
@@ -30,22 +33,60 @@ document.addEventListener("click", () => {
 });
 
 
-showImage(introLogo);
-setTimeout(() => {
-    introPage = "main";
-    $("#intro").hide();
-    $("#main").show();
-  }, 4500);
+document.getElementById('introCharacters').style.opacity = '1';
+setTimeout(function(){
+  document.getElementById("introAnd").style.opacity = '1';
+  document.getElementById("name1").style.opacity = '1';
+  document.getElementById("name2").style.opacity = '1';
+}, 1500);
+setTimeout(function(){
+  document.getElementById("introPresents").style.opacity = '1';
+  setTimeout(function(){
+    document.getElementById("introPresents").style.opacity = '0';
+  }, 2000);
+}, 2600);
+setTimeout(function(){
+  document.getElementById("introAnd").style.opacity = '0';
+  document.getElementById("name1").style.opacity = '0';
+  document.getElementById("name2").style.opacity = '0';
+}, 4100);
+setTimeout(function(){
+  charactersImg.src = "animationTogether.png";
+},5000);
+setTimeout(function(){
+  charactersImg.src = "animationNormal.png";
+},5600);
+setTimeout(function(){
+  charactersImg.src = "animationOut.png";
+},6200);
+setTimeout(function(){
+  charactersImg.src = "animationNormal.png";
+}, 6800);
+setTimeout(function(){
+  charactersImg.src = "animationUp.png";
+}, 7400);
+let top = -100;
+setTimeout(function(){
+  $("#introLogo").show();
+  let moveLogo = setInterval(function(){
+    introLogo.style.top = top + "vh";
+    top += 0.5 + ((top + 100) / 100);
+    if(top > 22.6){
+      introLogo.style.top = 22.6 + "vh";
+      clearInterval(moveLogo);
+      $("#introCrack").show();
+    }else if(top > 10){
+      $("#introCharacters").hide();
+      $("#introAnd").hide();
+      $("#name1").hide();
+      $("#name2").hide();
+    }
+  }, 5);
+},7700);
 
 
-function showImage(element){
-  setTimeout(() => {
-    element.style.opacity = '1';
-  }, 100);
-  setTimeout(() => {
-    element.style.opacity = '0';
-  }, 2500);
-}
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////

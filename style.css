@@ -15,15 +15,74 @@ body, html {
   width: 100vw;
   height: 100vh;
 }
-#introLogo{
+#introCharacters{
   position: absolute;
-  height: 80vh;
-  width: 50vw;
-  top: 10vh;
-  left: 25vw;
+  height: 12vh;
+  width: 17vw;
+  top: 50vh;
+  left: 41vw;
   opacity: 0;
   transition: opacity 2s ease-in-out;
   user-select: none;
+}
+.introText{
+  position: absolute;
+  opacity: 0;
+  color: white;
+  font-weight: bolder;
+  transition: opacity 0.5s ease-in-out;
+  user-select: none;
+}
+#introGround{
+  position: absolute;
+  height: 0.3vh;
+  width: 100vw;
+  top: 62vh;
+  background-color: white;
+}
+#introAnd{
+  height: 5vh;
+  width: 5vw;
+  top: 52vh;
+  left: 48.5vw;
+  font-size: 4vh;
+}
+#introPresents{
+  height: 5vh;
+  width: 20vw;
+  top: 65vh;
+  left: 45vw;
+  font-size: 3.5vh;
+  transition: opacity 1.5s ease-in-out;
+}
+#name1{
+  height: 5vh;
+  width: 20vw;
+  top: 44vh;
+  left: 42.8vw;
+  font-size: 2.5vh;
+}
+#name2{
+  height: 5vh;
+  width: 20vw;
+  top: 44vh;
+  left: 52.7vw;
+  font-size: 2.5vh;
+}
+#introLogo{
+  position: absolute;
+  height: 60vh;
+  width: 36vw;
+  top: -100vh;
+  left: 32vw;
+  user-select: none;
+}
+#introCrack{
+  position: absolute;
+  height: 20vh;
+  width: 30vw;
+  top: 62vh;
+  left: 35vw;
 }
 
 .fullscreen {
