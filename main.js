@@ -22,12 +22,10 @@ import { Player } from "./Player.js";
 let introPage = "intro";
 const introLogo = document.getElementById('introLogo');
 const charactersImg = document.getElementById('introCharacters');
-$("#main").hide();
 
 document.addEventListener("click", () => {
     introPage = "main";
     $("#intro").hide();
-    $("#main").show();
 });
 
 
@@ -72,10 +70,6 @@ setTimeout(function(){
     }
   }, 5);
 },4450);
-
-
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
