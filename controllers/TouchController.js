@@ -13,7 +13,7 @@ export class TouchController {
         wheelSensitivity = 0.002,
     } = {}) {
         this.node = node;
-        this.domElement = domElement;
+        this.domElement = domElement ? domElement : document.body;
 
         this.translation = translation;
         this.rotation = rotation;
