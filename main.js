@@ -220,7 +220,7 @@ document.addEventListener("mousemove", (event) => {
   }
 });
 let constantRotation = setInterval(function(){
-  if(introPage === "main"){
+  if(introPage === "main" && !rotate){
     rotatePlayer(player1, 0.003);
     rotatePlayer(player2, 0.003);
   }
