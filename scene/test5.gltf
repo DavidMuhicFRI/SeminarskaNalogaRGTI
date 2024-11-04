@@ -36,8 +36,7 @@
 				25,
 				26,
 				27,
-				28,
-				29
+				28
 			]
 		}
 	],
@@ -540,29 +539,9 @@
 				5.543527603149414,
 				12.67836856842041
 			]
-		},
-		{
-          "camera":0,
-          "name":"Camera",
-          "translation":[
-          	0,
-          	1,
-            15
-          ]
-        }
-      ],
-        "cameras":[
-        {
-              "name":"Camera.001",
-              "perspective":{
-              "aspectRatio":1.7777777777777777,
-              "yfov":1,
-              "zfar":100,
-              "znear":0.1
-           },
-              "type":"perspective"
-        }
-	],
+		}
+  ],
+
 	"materials":[
 		{
 			"doubleSided":true,

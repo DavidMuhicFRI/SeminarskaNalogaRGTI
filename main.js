@@ -94,24 +94,33 @@ function initializeTheLoader(){
 
 async function initializeTheScene(){
   await loader.load('scene/test5.gltf'); // Load the scene
-  scene = loader.loadScene(loader.defaultScene); // Load the default scene
+  scene = await loader.loadScene(loader.defaultScene); // Load the default scene
 }
 
 function initializeTheCamera(){
-  const camera = loader.loadNode('Camera'); // Load the camera node
-  camera.addComponent(new FirstPersonController(camera, canvas)); // Add a first person controller to the camera
-  camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation = [0, 8.2, 15]; // Set the initial camera position
+  camera = new Node();
+  camera.name = 'Camera';
+  camera.addComponent(new Camera({
+    aspect: canvas.width / canvas.height,
+    fovy: Math.PI / 3,
+    near: 0.1,
+    far: 100,
+  }));
+  camera.addComponent(new Transform({
+    translation: [0, 8, 11],
+    rotation: [0, 0, 0, 1],
+  }));
   camera.isDynamic = true;
   camera.aabb = {
     min: [-0.5, -8.2, -0.6],
     max: [0.5, 0, 0.6],
   };
   scene.addChild(camera);
-  return camera;
 }
 
-function initPhysics(){
-  physics = new Physics();
+async function initPhysics(){
+  physics = await new Physics();
+  physics.scene = scene;
 }
 
 function initializeSystems(){
@@ -151,6 +160,11 @@ async function init(){
   await initializeSystems();
   startSystems();
 }
+
+
+/////////////////////////////////////////////////////////////////////////////FIRST PAGE////////////////////////////////////////////////////////////
+
+await init();
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
 
