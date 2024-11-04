@@ -11,7 +11,7 @@ export class OrbitController {
         zoomSensitivity = 0.002,
     } = {}) {
         this.node = node;
-        this.domElement = domElement;
+        this.domElement = domElement ? domElement : document.body;
 
         this.rotation = rotation;
         this.distance = distance;

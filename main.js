@@ -1,4 +1,4 @@
-//import { vec3 } from './glm.js';
+import { vec3, quat } from './glm.js';
 import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
 
@@ -6,6 +6,9 @@ import { GLTFLoader } from './loaders/GLTFLoader.js';
 import { UnlitRenderer } from './renderers/UnlitRenderer.js';
 import { BaseRenderer} from "./renderers/BaseRenderer.js";
 import { FirstPersonController } from './controllers/FirstPersonController.js';
+import { OrbitController } from './controllers/OrbitController.js';
+import { TouchController } from './controllers/TouchController.js';
+import { TurntableController} from "./controllers/TurntableController.js";
 
 import { Camera, Model, Transform, Node } from './core.js';
 
@@ -63,6 +66,7 @@ setTimeout(function(){
       }, 500);
       setTimeout(function(){
         $("#intro").hide();
+        introPage = "main";
       }, 3200);
     }else if(top > 10){
       $("#introCharacters").hide();
@@ -95,25 +99,35 @@ function initializeTheLoader(){
 }
 
 async function initializeTheScene(){
-  await loader.load('scene/test5.gltf'); // Load the scene
-  scene = loader.loadScene(loader.defaultScene); // Load the default scene
+  await loader.load('scene/test.gltf'); // Load the scene
+  //scene = await loader.loadScene(loader.defaultScene); // Load the default scene
+  scene = new Node();
 }
 
 function initializeTheCamera(){
-  const camera = loader.loadNode('Camera'); // Load the camera node
-  camera.addComponent(new FirstPersonController(camera, canvas)); // Add a first person controller to the camera
-  camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation = [0, 8.2, 15]; // Set the initial camera position
+  camera = new Node();
+  camera.name = 'Camera';
+  camera.addComponent(new Camera({
+    aspect: canvas.width / canvas.height,
+    fovy: Math.PI / 3,
+    near: 0.1,
+    far: 100,
+  }));
+  camera.addComponent(new Transform({
+    translation: [0, 8, 10],
+    rotation: [0, 0, 0, 1],
+  }));
   camera.isDynamic = true;
   camera.aabb = {
     min: [-0.5, -8.2, -0.6],
     max: [0.5, 0, 0.6],
   };
   scene.addChild(camera);
-  return camera;
 }
 
-function initPhysics(){
-  physics = new Physics();
+async function initPhysics(){
+  physics = await new Physics();
+  physics.scene = scene;
 }
 
 function initializeSystems(){
@@ -153,6 +167,67 @@ async function init(){
   await initializeSystems();
   startSystems();
 }
+
+
+/////////////////////////////////////////////////////////////////////////////FIRST PAGE////////////////////////////////////////////////////////////
+
+let rotate = false;
+function createQuaternionFromAxisAngle(axis, angle) {
+  const halfAngle = angle / 2;
+  const sinHalfAngle = Math.sin(halfAngle);
+
+  return [
+    axis[0] * sinHalfAngle,  // X component
+    axis[1] * sinHalfAngle,  // Y component
+    axis[2] * sinHalfAngle,  // Z component
+    Math.cos(halfAngle)      // W component
+  ];
+}
+function multiplyQuaternions(q1, q2) {
+  return [
+    q1[3] * q2[0] + q1[0] * q2[3] + q1[1] * q2[2] - q1[2] * q2[1], // X component
+    q1[3] * q2[1] - q1[0] * q2[2] + q1[1] * q2[3] + q1[2] * q2[0], // Y component
+    q1[3] * q2[2] + q1[0] * q2[1] - q1[1] * q2[0] + q1[2] * q2[3], // Z component
+    q1[3] * q2[3] - q1[0] * q2[0] - q1[1] * q2[1] - q1[2] * q2[2]  // W component
+  ];
+}
+function rotatePlayer(player, angle){
+  const rotationQuat = createQuaternionFromAxisAngle([0, 1, 0], angle);
+  const transform = player.getComponentOfType(Transform);
+  transform.rotation = multiplyQuaternions(transform.rotation, rotationQuat);
+}
+
+await init();
+let player1 = loadObject("playerObject", "dynamic");
+player1.getComponentOfType(Transform).translation = [-12, 8, -12];
+let player2 = loadObject("playerObject2", "dynamic");
+player2.getComponentOfType(Transform).translation = [12, 8, -12];
+document.addEventListener("mousedown", () => {
+  if(introPage === "main") {
+    document.body.requestPointerLock();
+    rotate = true;
+  }
+});
+
+document.addEventListener("mouseup", () => {
+  if(introPage === "main"){
+    rotate = false;
+    document.exitPointerLock();
+  }
+});
+document.addEventListener("mousemove", (event) => {
+  if (rotate) {
+    rotatePlayer(player1, event.movementX * 0.01);
+    rotatePlayer(player2, event.movementX * 0.01);
+  }
+});
+let constantRotation = setInterval(function(){
+  if(introPage === "main" && !rotate){
+    rotatePlayer(player1, 0.003);
+    rotatePlayer(player2, 0.003);
+  }
+}, 5);
+setAABBs();
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
 
