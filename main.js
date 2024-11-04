@@ -19,6 +19,8 @@ import { Player } from "./Player.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
+
+
 let introPage = "intro";
 const introLogo = document.getElementById('introLogo');
 const charactersImg = document.getElementById('introCharacters');

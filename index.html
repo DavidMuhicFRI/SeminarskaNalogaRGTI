@@ -15,18 +15,58 @@
     }
     </script>
     <script type="module" src="main.js"></script>
-    <link rel="stylesheet" href="style.css">
-</head>
+    <link rel="stylesheet" href="style.css"></head>
 <body>
     <div class="fullscreen no-touch pixelated">
         <canvas></canvas>
         <div id="cursor"></div>
     </div>
-<div id="intro">
-  <img id="introLogo" src="logoTransparent.png" alt="logo">
-  <img id="introCharacters" src="animationNormal.png" alt="characters">
-  <p id="name1" class="introText">DAVID</p>
-  <p id="name2" class="introText">ALEKS</p>
-</div>
+  <div id="intro">
+    <img id="introLogo" src="logoTransparent.png" alt="logo">
+    <img id="introCharacters" src="animationNormal.png" alt="characters">
+    <p id="name1" class="introText">DAVID</p>
+    <p id="name2" class="introText">ALEKS</p>
+  </div>
+    <div id="characterPage">
+      <div id="CPLeft">
+        <div class="title">PLAYER1</div>
+        <div class="characterContainer">
+          <div class="characterTop">
+            <div id="characterNameLeft" class="character-name">ARNOLD</div>
+            <div id="characterTitleLeft" class="character-title">the titan</div>
+          </div>
+          <div class="characterMid">
+            <img id="CPLeftPreviousCharacter" src="previousButton.png" class="arrowButton">
+            <div id="characterDisplayLeft"></div>
+            <img id="CPLeftNextCharacter" src="nextButton.png" class="arrowButton">
+          </div>
+          <div class="characterBottom">
+            <div class="info-box">PASSIVE: takes less damage from direct ball hits</div>
+            <div class="info-box">ABILITY: Throws a mega ball</div>
+            <div class="fun-fact">Fun-fact: can lift your mom</div>
+          </div>
+        </div>
+      </div>
+      <div id="CPRight">
+        <div class="title">PLAYER1</div>
+        <div class="characterContainer">
+          <div class="characterTop">
+            <div id="characterNameRight" class="character-name">ARNOLD</div>
+            <div id="characterTitleRight" class="character-title">the titan</div>
+          </div>
+          <div class="characterMid">
+            <img id="CPRightPreviousCharacter" src="previousButton.png" class="arrowButton">
+            <div id="characterDisplayRight"></div>
+            <img id="CPRightNextCharacter" src="nextButton.png" class="arrowButton">
+          </div>
+          <div class="characterBottom">
+            <div class="info-box">PASSIVE: takes less damage from direct ball hits</div>
+            <div class="info-box">ABILITY: Throws a mega ball</div>
+            <div class="fun-fact">Fun-fact: can lift your mom</div>
+          </div>
+        </div>
+      </div>
+      <div id="playButton">PLAY</div>
+    </div>
 </body>
 </html>

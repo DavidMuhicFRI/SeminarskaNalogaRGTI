@@ -104,3 +104,145 @@ body, html {
       0% { transform: rotate(0deg); }
     100% { transform: rotate(1800deg); }
 }
+
+#characterPage {
+  background-color: black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+#CPLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 49.5vw;
+  height: 99vh;
+  background-color: #0072DE;
+  border: 0.5vh solid black;
+  opacity: 0.85;
+}
+#CPRight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  position: absolute;
+  left: 50vw;
+  top: 0;
+  width: 49.5vw;
+  height: 99vh;
+  background-color: #FF3737;
+  border: 0.5vh solid black;
+  opacity: 0.85;
+}
+#CPLeft:hover, #CPRight:hover {
+  opacity: 1;
+}
+.characterContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  border: 0.5vh solid black;
+  border-radius: 10%;
+  height: 80%;
+  width: 80%;
+}
+.characterTop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 10%;
+}
+.characterMid {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 40%;
+  width: 80%;
+}
+.arrowButton {
+  height: 30%;
+  width: 12%;
+}
+.arrowButton:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
+#characterDisplayLeft {
+  background-color: blue;
+  width: 50%;
+  height: 100%;
+  opacity: 0;
+}
+.characterBottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-top: -3vh;
+  height: 30%;
+  width: 80%;
+}
+.title {
+  font-size: 7vh;
+  font-weight: bold;
+  margin: -3vh 0 -3vh 0;
+}
+.character-name {
+  font-size: 4vh;
+  font-weight: bold;
+}
+.character-title {
+  font-size: 2.5vh;
+}
+.fun-fact {
+  font-size: 2vh;
+  font-weight: bolder;
+}
+.info-box {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  width: 50%;
+  min-height: 15%;
+  height: auto;
+  word-break: break-word;
+  padding: 3%;
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 3px solid black;
+  border-radius: 20px;
+  text-align: left;
+  font-size: 2vh;
+}
+
+#playButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 12vw;
+  height: 9vh;
+  background-color: #ff4136;
+  border: 0.5vh solid black;
+  border-radius: 10px;
+  font-size: 4vh;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#playButton:hover {
+  border: 0.7vh solid black;
+  font-size: 4.5vh;
+}
