@@ -189,6 +189,11 @@ function multiplyQuaternions(q1, q2) {
     q1[3] * q2[3] - q1[0] * q2[0] - q1[1] * q2[1] - q1[2] * q2[2]  // W component
   ];
 }
+function rotatePlayer(player, angle){
+  const rotationQuat = createQuaternionFromAxisAngle([0, 1, 0], angle);
+  const transform = player.getComponentOfType(Transform);
+  transform.rotation = multiplyQuaternions(transform.rotation, rotationQuat);
+}
 
 await init();
 let player1 = loadObject("playerObject", "dynamic");
@@ -210,18 +215,16 @@ document.addEventListener("mouseup", () => {
 });
 document.addEventListener("mousemove", (event) => {
   if (rotate) {
-    const angle = event.movementX / 100;
-
-    const rotationQuat = createQuaternionFromAxisAngle([0, 1, 0], angle);
-
-    const transform1 = player1.getComponentOfType(Transform);
-    const transform2 = player2.getComponentOfType(Transform);
-
-    transform1.rotation = multiplyQuaternions(transform1.rotation, rotationQuat);
-    transform2.rotation = multiplyQuaternions(transform2.rotation, rotationQuat);
+    rotatePlayer(player1, event.movementX * 0.01);
+    rotatePlayer(player2, event.movementX * 0.01);
   }
 });
-
+let constantRotation = setInterval(function(){
+  if(introPage === "main"){
+    rotatePlayer(player1, 0.003);
+    rotatePlayer(player2, 0.003);
+  }
+}, 5);
 setAABBs();
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
