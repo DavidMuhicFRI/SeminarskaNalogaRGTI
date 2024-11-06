@@ -106,7 +106,7 @@ function initializeTheLoader(){
 
 async function initializeTheScene(){
   await loader.load('scene/test.gltf'); // Load the scene
-  //scene = await loader.loadScene(loader.defaultScene); // Load the default scene
+  scene = await loader.loadScene(loader.defaultScene); // Load the default scene
   scene = new Node();
 }
 
@@ -120,13 +120,13 @@ function initializeTheCamera(){
     far: 100,
   }));
   camera.addComponent(new Transform({
-    translation: [0, 8, 10],
+    translation: [0, 0, 5],
     rotation: [0, 0, 0, 1],
   }));
   camera.isDynamic = true;
   camera.aabb = {
-    min: [-0.5, -8.2, -0.6],
-    max: [0.5, 0, 0.6],
+    min: [-0.5, -0.5, -0.5],
+    max: [0.5, 0.5, 0.5],
   };
   scene.addChild(camera);
 }
@@ -134,7 +134,7 @@ function initializeTheCamera(){
 async function initializeTheLight(canvas){
   light = new Node();
   light.addComponent(new Transform({
-    translation: [0.4,-0.9,0],
+    translation: [0, 0, -5],
   }));
   light.addComponent(new Light({
     domElement: canvas,
@@ -219,9 +219,9 @@ function rotatePlayer(player, angle){
 
 await init();
 let player1 = loadObject("playerObject", "dynamic");
-player1.getComponentOfType(Transform).translation = [-12, 8, -12];
-let player2 = loadObject("playerObject2", "dynamic");
-player2.getComponentOfType(Transform).translation = [12, 8, -12];
+let transform1 = player1.getComponentOfType(Transform);
+transform1.translation = [0, 0, 0];
+transform1.scale = [0.3, 0.5, 0.5];
 document.addEventListener("mousedown", () => {
   if(introPage === "main") {
     document.body.requestPointerLock();
@@ -238,13 +238,11 @@ document.addEventListener("mouseup", () => {
 document.addEventListener("mousemove", (event) => {
   if (rotate) {
     rotatePlayer(player1, event.movementX * 0.01);
-    rotatePlayer(player2, event.movementX * 0.01);
   }
 });
 let constantRotation = setInterval(function(){
   if(introPage === "main" && !rotate){
     rotatePlayer(player1, 0.003);
-    rotatePlayer(player2, 0.003);
   }
 }, 5);
 setAABBs();

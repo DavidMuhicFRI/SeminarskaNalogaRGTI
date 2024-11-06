@@ -14,7 +14,7 @@ export class FirstPersonController {
         pointerSensitivity = 0.002,
     } = {}) {
         this.node = node;
-        this.domElement = domElement;
+        this.domElement = domElement ? domElement : document.querySelector("canvas");
 
         this.keys = {};
 
@@ -36,6 +36,7 @@ export class FirstPersonController {
         this.keyupHandler = this.keyupHandler.bind(this);
 
         const element = this.domElement;
+        console.log(element);
         const doc = element.ownerDocument;
 
         doc.addEventListener('keydown', this.keydownHandler);
