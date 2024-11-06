@@ -33,7 +33,7 @@ const charactersImg = document.getElementById('introCharacters');
 document.addEventListener("click", () => {
     introPage = "main";
     $("#intro").hide();
-  $("#characterPage").show();
+    $("#characterPage").show();
 });
 
 
@@ -83,46 +83,10 @@ setTimeout(function(){
 },4450);
 
 
-/////////////////////////////////////////////////////////////////////////////CHARACTER PAGE////////////////////////////////////////////////////
-
-async function initializeRendererForCharacter(canvasId) {
-  const canvas = document.getElementById(canvasId);
-  const renderer = new UnlitRenderer(canvas);
-  await renderer.initialize();
-  return renderer;
-}
-async function loadCharacterForDisplay(renderer, scenePath, sceneNode) {
-  const loader = new GLTFLoader();
-  const scene = await loader.load(scenePath);
-  const node = loader.loadNode(sceneNode); // Adjust for your specific scene node
-  renderer.scene.addChild(node);
-  return node;
-}
-function renderCharacter(renderer, camera) {
-  function renderLoop() {
-    renderer.render(scene, camera);
-    requestAnimationFrame(renderLoop);
-  }
-  renderLoop();
-}
-async function setupCharacterCanvas(canvasId, scenePath, sceneNode) {
-  const renderer = await initializeRendererForCharacter(canvasId);
-  const character = await loadCharacterForDisplay(renderer, scenePath, sceneNode);
-  const camera = initializeCamera(canvasId); // Adjust for each canvas instance
-  renderCharacter(renderer, camera);
-}
-// Example usage for left and right character displays
-setupCharacterCanvas('characterDisplayLeft', 'path/to/characterModel.glb', 'CharacterNodeLeft');
-setupCharacterCanvas('characterDisplayRight', 'path/to/characterModel.glb', 'CharacterNodeRight');
-
-
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
 
-const canvas = document.getElementById('canvas1');
-const canvas2 = document.getElementById('canvas2');
-let renderers = [];
+const canvas = document.querySelector('canvas');
 let renderer;
-let renderer2;
 let loader;
 let scene;
 let physics;
@@ -131,10 +95,9 @@ let updateSystem;
 let camera;
 let light;
 
-async function initializeTheRenderer(rendererObject, canvas){
-    rendererObject = new Renderer(canvas);
-    await rendererObject.initialize();
-    renderers.push(rendererObject);
+async function initializeTheRenderer(){
+    renderer = new Renderer(canvas);
+    await renderer.initialize();
 }
 
 function initializeTheLoader(){
@@ -206,10 +169,7 @@ function update(time, dt) {
 }
 
 function render() {
-  for (const renderer of renderers) {
-    //console.log(renderer);
-    renderer.render(scene, camera, light);
-  }
+  renderer.render(scene, camera, light);
 }
 
 function resize({ displaySize: { width, height }}) {
@@ -218,7 +178,6 @@ function resize({ displaySize: { width, height }}) {
 
 async function init(){
   await initializeTheRenderer(renderer, canvas);
-  await initializeTheRenderer(renderer2, canvas2);
   await initializeTheLoader();
   await initializeTheScene();
   await initializeTheCamera();
