@@ -339,7 +339,7 @@ export class Renderer extends BaseRenderer {
             colorAttachments: [
                 {
                     view: this.context.getCurrentTexture().createView(),
-                    clearValue: [0.2, 0.2, 1, 1],
+                    clearValue: [0.1, 0.1, 0.6, 1],
                     loadOp: 'clear',
                     storeOp: 'store',
                 }

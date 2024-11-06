@@ -120,8 +120,8 @@ function initializeTheCamera(){
     far: 100,
   }));
   camera.addComponent(new Transform({
-    translation: [0, 0, 5],
-    rotation: [0, 0, 0, 1],
+    translation: [0, 2, 5],
+    rotation: [-0.15, 0, 0, 1],
   }));
   camera.isDynamic = true;
   camera.aabb = {
@@ -134,12 +134,12 @@ function initializeTheCamera(){
 async function initializeTheLight(canvas){
   light = new Node();
   light.addComponent(new Transform({
-    translation: [0, 3, 0],
-    rotation: [-0.38, 0, 0, 1],
+    translation: [0.2, 3, 0],
+    rotation: [-0.3, 0.1, 0, 1],
   }));
   light.addComponent(new Light({
-    color: [255, 255, 255],
-    intensity: 3,
+    color: [240, 240, 200],
+    intensity: 5,
     attenuation: [0.001, 0.1, 0.3],
     ambientOff: 0.01,
     ambientOn: 0.04,
@@ -229,9 +229,18 @@ function rotatePlayer(player, angle){
 await init();
 let player1 = loadObject("playerObject", "dynamic");
 let transform1 = player1.getComponentOfType(Transform);
-transform1.translation = [0, 0.3, 0];
+transform1.translation = [0, 0.5, 0];
 transform1.scale = [0.35, 0.7, 0.6];
-document.addEventListener("mousedown", () => {
+let floor = loadObject("Floor", "static");
+let transform2 = floor.getComponentOfType(Transform);
+transform2.translation = [0, -2.3, 0];
+transform2.scale = [10, 0.1, 10];
+let wall1 = loadObject("Wall1", "static");
+let transform3 = wall1.getComponentOfType(Transform);
+transform3.translation = [0, 0, -5];
+transform3.scale = [10, 10, 0.1];
+
+canvas.addEventListener("mousedown", () => {
   if(introPage === "main") {
     document.body.requestPointerLock();
     rotate = true;
@@ -270,28 +279,6 @@ function loadObject(name, type){
   }
   scene.addChild(object);
   return object;
-}
-
-
-function loadPlayer(playerObject){
-    let player = new Node();
-    player.name = playerObject.name;
-    player.addComponent(new Transform({
-    translation: [0, 0, 0],
-    rotation: [0, 0, 0, 1],
-    scale: [1, 1, 1],
-  }));
-    player.addComponent(new Player({
-        head: playerObject.head,
-        torso: playerObject.torso,
-        armL: playerObject.armL,
-        armR: playerObject.armR,
-        legL: playerObject.legL,
-        legR: playerObject.legR,
-        node: player
-    }));
-    scene.addChild(player);
-    return player;
 }
 
 /////////////////////////////////////////////////////////////////////////////PHYSICS///////////////////////////////////////////////////////////
