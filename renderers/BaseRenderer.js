@@ -1,5 +1,5 @@
 import * as WebGPU from '../WebGPU.js';
-
+import { mat4 } from '../glm.js';
 import { createVertexBuffer } from '../core/VertexUtils.js';
 
 export class BaseRenderer {
@@ -12,7 +12,7 @@ export class BaseRenderer {
     async initialize() {
         const adapter = await navigator.gpu.requestAdapter();
         const device = await adapter.requestDevice();
-        const context = this.canvas.getContext('webgpu');
+        const context = this.canvas.getContext("webgpu", { alpha: true });
         const format = navigator.gpu.getPreferredCanvasFormat();
         context.configure({ device, format });
 
@@ -20,6 +20,15 @@ export class BaseRenderer {
         this.context = context;
         this.format = format;
     }
+
+  mat3tomat4(matrix) {
+    return mat4.fromValues(
+      matrix[0], matrix[1], matrix[2], 0,
+      matrix[3], matrix[4], matrix[5], 0,
+      matrix[6], matrix[7], matrix[8], 0,
+      0, 0, 0, 1,
+    );
+  }
 
     prepareImage(image, isSRGB = false) {
         if (this.gpuObjects.has(image)) {

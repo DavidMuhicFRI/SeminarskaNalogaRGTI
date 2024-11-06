@@ -7,6 +7,13 @@ body, html {
     font-family: sans-serif;
 }
 
+#canvas1{
+
+}
+#canvas2{
+
+}
+
 #intro{
   background-color: black;
   position: absolute;
@@ -182,7 +189,13 @@ body, html {
   background-color: blue;
   width: 50%;
   height: 100%;
-  opacity: 0;
+  opacity: 1;
+}
+#characterDisplayRight {
+  background-color: blue;
+  width: 50%;
+  height: 100%;
+  opacity: 1;
 }
 .characterBottom {
   display: flex;
@@ -219,7 +232,7 @@ body, html {
   word-break: break-word;
   padding: 3%;
   background-color: rgba(255, 255, 255, 0.6);
-  border: 3px solid black;
+  border: 1px solid black;
   border-radius: 20px;
   text-align: left;
   font-size: 2vh;

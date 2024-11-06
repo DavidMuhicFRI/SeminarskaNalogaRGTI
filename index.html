@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="style.css"></head>
 <body>
     <div class="fullscreen no-touch pixelated">
-        <canvas></canvas>
         <div id="cursor"></div>
     </div>
   <div id="intro">
@@ -37,7 +36,9 @@
           </div>
           <div class="characterMid">
             <img id="CPLeftPreviousCharacter" src="previousButton.png" class="arrowButton">
-            <div id="characterDisplayLeft"></div>
+            <div id="characterDisplayLeft">
+              <canvas id="canvas1"></canvas>
+            </div>
             <img id="CPLeftNextCharacter" src="nextButton.png" class="arrowButton">
           </div>
           <div class="characterBottom">
@@ -56,7 +57,9 @@
           </div>
           <div class="characterMid">
             <img id="CPRightPreviousCharacter" src="previousButton.png" class="arrowButton">
-            <div id="characterDisplayRight"></div>
+            <div id="characterDisplayRight">
+              <canvas id="canvas2"></canvas>
+            </div>
             <img id="CPRightNextCharacter" src="nextButton.png" class="arrowButton">
           </div>
           <div class="characterBottom">
