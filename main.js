@@ -19,10 +19,12 @@ import {
 
 import { Physics } from './Physics.js';
 import { Player } from "./Player.js";
+import {Renderer} from "./renderers/Renderer.js";
+import {Light} from "./core/Light.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
-
-
+$("#characterPage").hide();
+$("#canvas").hide();
 
 let introPage = "intro";
 const introLogo = document.getElementById('introLogo');
@@ -31,6 +33,7 @@ const charactersImg = document.getElementById('introCharacters');
 document.addEventListener("click", () => {
     introPage = "main";
     $("#intro").hide();
+  $("#characterPage").show();
 });
 
 
@@ -66,6 +69,8 @@ setTimeout(function(){
       }, 500);
       setTimeout(function(){
         $("#intro").hide();
+        $("#characterPage").show();
+        $("#canvas").show();
         introPage = "main";
       }, 3200);
     }else if(top > 10){
@@ -113,18 +118,23 @@ setupCharacterCanvas('characterDisplayRight', 'path/to/characterModel.glb', 'Cha
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
 
-const canvas = document.querySelector('canvas');
+const canvas = document.getElementById('canvas1');
+const canvas2 = document.getElementById('canvas2');
+let renderers = [];
 let renderer;
+let renderer2;
 let loader;
 let scene;
 let physics;
 let resizeSystem;
 let updateSystem;
 let camera;
+let light;
 
-async function initializeTheRenderer(){
-    renderer = new UnlitRenderer(canvas);
-    await renderer.initialize();
+async function initializeTheRenderer(rendererObject, canvas){
+    rendererObject = new Renderer(canvas);
+    await rendererObject.initialize();
+    renderers.push(rendererObject);
 }
 
 function initializeTheLoader(){
@@ -158,6 +168,18 @@ function initializeTheCamera(){
   scene.addChild(camera);
 }
 
+async function initializeTheLight(canvas){
+  light = new Node();
+  light.addComponent(new Transform({
+    translation: [0.4,-0.9,0],
+  }));
+  light.addComponent(new Light({
+    domElement: canvas,
+    node: light,
+  }));
+  camera.addChild(light);
+}
+
 async function initPhysics(){
   physics = await new Physics();
   physics.scene = scene;
@@ -184,7 +206,10 @@ function update(time, dt) {
 }
 
 function render() {
-  renderer.render(scene, camera);
+  for (const renderer of renderers) {
+    //console.log(renderer);
+    renderer.render(scene, camera, light);
+  }
 }
 
 function resize({ displaySize: { width, height }}) {
@@ -192,10 +217,12 @@ function resize({ displaySize: { width, height }}) {
 }
 
 async function init(){
-  await initializeTheRenderer();
+  await initializeTheRenderer(renderer, canvas);
+  await initializeTheRenderer(renderer2, canvas2);
   await initializeTheLoader();
   await initializeTheScene();
   await initializeTheCamera();
+  await initializeTheLight();
   await initPhysics();
   await initializeSystems();
   startSystems();
@@ -205,6 +232,7 @@ async function init(){
 /////////////////////////////////////////////////////////////////////////////FIRST PAGE////////////////////////////////////////////////////////////
 
 let rotate = false;
+
 function createQuaternionFromAxisAngle(axis, angle) {
   const halfAngle = angle / 2;
   const sinHalfAngle = Math.sin(halfAngle);
