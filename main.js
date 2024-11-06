@@ -78,6 +78,39 @@ setTimeout(function(){
 },4450);
 
 
+/////////////////////////////////////////////////////////////////////////////CHARACTER PAGE////////////////////////////////////////////////////
+
+async function initializeRendererForCharacter(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  const renderer = new UnlitRenderer(canvas);
+  await renderer.initialize();
+  return renderer;
+}
+async function loadCharacterForDisplay(renderer, scenePath, sceneNode) {
+  const loader = new GLTFLoader();
+  const scene = await loader.load(scenePath);
+  const node = loader.loadNode(sceneNode); // Adjust for your specific scene node
+  renderer.scene.addChild(node);
+  return node;
+}
+function renderCharacter(renderer, camera) {
+  function renderLoop() {
+    renderer.render(scene, camera);
+    requestAnimationFrame(renderLoop);
+  }
+  renderLoop();
+}
+async function setupCharacterCanvas(canvasId, scenePath, sceneNode) {
+  const renderer = await initializeRendererForCharacter(canvasId);
+  const character = await loadCharacterForDisplay(renderer, scenePath, sceneNode);
+  const camera = initializeCamera(canvasId); // Adjust for each canvas instance
+  renderCharacter(renderer, camera);
+}
+// Example usage for left and right character displays
+setupCharacterCanvas('characterDisplayLeft', 'path/to/characterModel.glb', 'CharacterNodeLeft');
+setupCharacterCanvas('characterDisplayRight', 'path/to/characterModel.glb', 'CharacterNodeRight');
+
+
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
 
 const canvas = document.querySelector('canvas');

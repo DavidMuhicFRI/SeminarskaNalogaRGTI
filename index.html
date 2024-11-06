@@ -28,27 +28,63 @@
     <p id="name2" class="introText">ALEKS</p>
   </div>
     <div id="characterPage">
-      <div id="CPLeft">
+      <div id="CPLeft" class="characterPageSides">
         <div class="title">PLAYER1</div>
-        <div class="characterContainer">
-          <div class="characterTop">
-            <div id="characterNameLeft" class="character-name">ARNOLD</div>
-            <div id="characterTitleLeft" class="character-title">the titan</div>
+        <div class="characterPageMain">
+          <div class="characterContainer">
+            <div class="characterTop">
+              <div id="characterNameLeft" class="character-name">ARNOLD</div>
+              <div id="characterTitleLeft" class="character-title">the titan</div>
+            </div>
+            <div class="characterBottom">
+              <div class="characterDisplayDiv">
+                <img id="superpowerImgLeft" class="image" src="superpowerImg.png">
+                <img id="CPLeftPreviousCharacter" src="previousButton.png" class="arrowButton">
+                <canvas id="characterDisplayLeft"></canvas>
+                <img id="CPLeftNextCharacter" src="nextButton.png" class="arrowButton">
+              </div>
+              <div id="p1ReadyButton" class="button">READY</div>
+            </div>
           </div>
-          <div class="characterMid">
-            <img id="CPLeftPreviousCharacter" src="previousButton.png" class="arrowButton">
-            <div id="characterDisplayLeft"></div>
-            <img id="CPLeftNextCharacter" src="nextButton.png" class="arrowButton">
-          </div>
-          <div class="characterBottom">
-            <div class="info-box">PASSIVE: takes less damage from direct ball hits</div>
-            <div class="info-box">ABILITY: Throws a mega ball</div>
-            <div class="fun-fact">Fun-fact: can lift your mom</div>
+          <div class="characterExtra">
+            <div class="stat">
+              <div class="statLabel">Difficulty: </div>
+              <div class="barContainer">
+                <div id="difficultyBarLeft" class="bar" style="width: 20%;"></div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Offense: </div>
+              <div class="barContainer">
+                <div id="offenseBarLeft" class="bar" style="width: 97%;"></div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Defense: </div>
+              <div class="barContainer">
+                <div id="defenseBarLeft" class="bar" style="width: 10%;"></div>
+              </div>
+            </div>
+            <div class="info-box">
+              <div class="icon plus">+</div>
+              <p id="strengthLeft">takes less damage from direct ball hits</p>
+            </div>
+            <div class="info-box">
+              <div class="icon minus">-</div>
+              <p id="weaknessLeft">is too strong to throw accurately</p>
+            </div>
+            <div class="info-box">
+              <img id="abilityLeft" class="iconImage" src="superpowerImg.png">
+              <p id="abilityTextLeft">throws a MEGA ball</p>
+            </div>
+            <div class="fun-fact">
+              <p id="funFactLeft">Fun-fact: can lift your mom</p>
+            </div>
           </div>
         </div>
       </div>
-      <div id="CPRight">
-        <div class="title">PLAYER1</div>
+      <div id="CPRight" class="characterPageSides">
+        <div class="title">PLAYER2</div>
         <div class="characterContainer">
           <div class="characterTop">
             <div id="characterNameRight" class="character-name">ARNOLD</div>
@@ -56,7 +92,7 @@
           </div>
           <div class="characterMid">
             <img id="CPRightPreviousCharacter" src="previousButton.png" class="arrowButton">
-            <div id="characterDisplayRight"></div>
+            <canvas id="characterDisplayRight"></canvas>
             <img id="CPRightNextCharacter" src="nextButton.png" class="arrowButton">
           </div>
           <div class="characterBottom">
@@ -66,7 +102,6 @@
           </div>
         </div>
       </div>
-      <div id="playButton">PLAY</div>
     </div>
 </body>
 </html>
