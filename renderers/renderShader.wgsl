@@ -104,9 +104,9 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
         cl = light.color * exp(-pow( 1.25/light.fi * acos(dot(-L,D)), 8));
     }
 
-    let diffuseLight = lambert * attenuation * cl * light.intensity;
-    let specularLight = phong * attenuation * cl * light.intensity;
-    let ambientLight = light.ambient * light.color / d;
+    let diffuseLight = lambert * attenuation * cl * light.intensity * 1.2;
+    let specularLight = phong * attenuation * cl * light.intensity * 1.2;
+    let ambientLight = light.ambient * light.color / d * 1.1;
 
 
     var shadowXY = vec2(input.shadowPos.x/input.shadowPos.w * 0.5 + 0.5, input.shadowPos.y/input.shadowPos.w * -0.5 + 0.5);
@@ -125,6 +125,7 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
         }
     }
     visibility /= 9.0;
+    visibility = min(visibility + 0.1, 1.0);
 
     let shadowPos = input.shadowPos / input.shadowPos.w;
 
@@ -132,7 +133,7 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
         visibility = 0.0;
     }
 
-    const gamma = 2.2;
+    const gamma = 1.8;
     let albedo = pow(textureSample(uTexture, uSampler, input.texcoords).rgb, vec3(gamma));
     let finalColor = albedo * (diffuseLight * visibility + ambientLight) + specularLight * visibility;
 

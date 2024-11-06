@@ -134,11 +134,20 @@ function initializeTheCamera(){
 async function initializeTheLight(canvas){
   light = new Node();
   light.addComponent(new Transform({
-    translation: [0, 0, -5],
+    translation: [0, 3, 0],
+    rotation: [-0.38, 0, 0, 1],
   }));
   light.addComponent(new Light({
-    domElement: canvas,
-    node: light,
+    color: [255, 255, 255],
+    intensity: 3,
+    attenuation: [0.001, 0.1, 0.3],
+    ambientOff: 0.01,
+    ambientOn: 0.04,
+    fi: 0.6,
+    fovy: Math.PI / 2,
+    aspect: 1,
+    near: 0.1,
+    far: 100,
   }));
   camera.addChild(light);
 }
@@ -220,8 +229,8 @@ function rotatePlayer(player, angle){
 await init();
 let player1 = loadObject("playerObject", "dynamic");
 let transform1 = player1.getComponentOfType(Transform);
-transform1.translation = [0, 0, 0];
-transform1.scale = [0.3, 0.5, 0.5];
+transform1.translation = [0, 0.3, 0];
+transform1.scale = [0.35, 0.7, 0.6];
 document.addEventListener("mousedown", () => {
   if(introPage === "main") {
     document.body.requestPointerLock();
