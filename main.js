@@ -86,7 +86,8 @@ let leftPage = document.getElementById("CPLeft");
 let rightPage = document.getElementById("CPRight");
 let backToP1 = document.getElementById("backToP1");
 let forwardToP2 = document.getElementById("forwardToP2");
-let readyButton = document.getElementById("p1ReadyButton");
+let readyButton1 = document.getElementById("p1ReadyButton");
+let readyButton2 = document.getElementById("p2ReadyButton");
 let canvasContainerRight = document.getElementById("canvasContainerRight");
 let canvasContainerLeft = document.getElementById("canvasContainerLeft");
 
@@ -102,10 +103,15 @@ function movePage(page, canvasContainer) {
   }, 10);
 }
 
-readyButton.addEventListener('click', function() {
+readyButton1.addEventListener('click', function() {
   movePage(leftPage, canvasContainerRight);
   document.getElementById('CPLeft').style.left = '-100vw';
   document.getElementById('CPRight').style.left = '0';
+});
+readyButton2.addEventListener('click', function() {
+  movePage(rightPage, canvasContainerLeft);
+  document.getElementById('CPLeft').style.left = '0';
+  document.getElementById('CPRight').style.left = '100vw';
 });
 forwardToP2.addEventListener('click', function() {
   movePage(leftPage, canvasContainerRight);
