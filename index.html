@@ -30,23 +30,37 @@
       <div id="CPLeft" class="characterPageSides">
         <div class="title">PLAYER1</div>
         <div class="characterPageMain">
-          <div class="characterContainer">
-            <div class="characterTop">
+          <div class="characterContainer columnFlex">
+            <div class="characterTop columnFlex">
               <div id="characterNameLeft" class="character-name">ARNOLD</div>
               <div id="characterTitleLeft" class="character-title">the titan</div>
             </div>
-            <div class="characterBottom">
+            <div class="characterBottom columnFlex">
               <div class="characterDisplayDiv">
-                <img id="superpowerImgLeft" class="image" src="superpowerImg.png">
                 <img id="CPLeftPreviousCharacter" src="previousButton.png" class="arrowButton">
-                <canvas id="characterDisplayLeft"></canvas>
+                <div id="canvasContainerLeft" class="canvasContainer">
+                  <img id="superpowerImgLeft" class="image" src="superpowerImg.png">
+                  <canvas id="introCanvas"></canvas>
+                </div>
                 <img id="CPLeftNextCharacter" src="nextButton.png" class="arrowButton">
               </div>
               <div id="p1ReadyButton" class="button">READY</div>
             </div>
           </div>
           <div class="characterExtra">
-            <div class="stat">
+            <div class="info-box">
+              <img id="abilityLeft" class="iconImage" src="superpowerImg.png">
+              <p id="abilityTextLeft">throws a MEGA ball</p>
+            </div>
+            <div class="info-box">
+              <img class="iconImage" src="plusIcon.png">
+              <p id="strengthLeft">takes less damage from direct ball hits</p>
+            </div>
+            <div class="info-box">
+              <img class="iconImage" src="minusIcon.png">
+              <p id="weaknessLeft">is too strong to throw accurately</p>
+            </div>
+            <div class="stat border">
               <div class="statLabel">Difficulty: </div>
               <div class="barContainer">
                 <div id="difficultyBarLeft" class="bar" style="width: 20%;"></div>
@@ -64,40 +78,67 @@
                 <div id="defenseBarLeft" class="bar" style="width: 10%;"></div>
               </div>
             </div>
-            <div class="info-box">
-              <div class="icon plus">+</div>
-              <p id="strengthLeft">takes less damage from direct ball hits</p>
-            </div>
-            <div class="info-box">
-              <div class="icon minus">-</div>
-              <p id="weaknessLeft">is too strong to throw accurately</p>
-            </div>
-            <div class="info-box">
-              <img id="abilityLeft" class="iconImage" src="superpowerImg.png">
-              <p id="abilityTextLeft">throws a MEGA ball</p>
-            </div>
             <div class="fun-fact">
               <p id="funFactLeft">Fun-fact: can lift your mom</p>
             </div>
           </div>
+          <img id="forwardToP2" src="nextButton.png">
         </div>
       </div>
       <div id="CPRight" class="characterPageSides">
         <div class="title">PLAYER2</div>
-        <div class="characterContainer">
-          <div class="characterTop">
-            <div id="characterNameRight" class="character-name">ARNOLD</div>
-            <div id="characterTitleRight" class="character-title">the titan</div>
+        <div class="characterPageMain">
+          <img id="backToP1" src="previousButton.png">
+          <div class="characterExtra">
+            <div class="info-box">
+              <img id="abilityRight" class="iconImage" src="superpowerImg.png">
+              <p id="abilityTextRight">throws a MEGA ball</p>
+            </div>
+            <div class="info-box">
+              <img class="iconImage" src="plusIcon.png">
+              <p id="strengthRight">takes less damage from direct ball hits</p>
+            </div>
+            <div class="info-box">
+              <img class="iconImage" src="minusIcon.png">
+              <p id="weaknessRight">is too strong to throw accurately</p>
+            </div>
+            <div class="stat border">
+              <div class="statLabel">Difficulty: </div>
+              <div class="barContainer">
+                <div id="difficultyBarRight" class="bar" style="width: 20%;"></div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Offense: </div>
+              <div class="barContainer">
+                <div id="offenseBarRight" class="bar" style="width: 97%;"></div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Defense: </div>
+              <div class="barContainer">
+                <div id="defenseBarRight" class="bar" style="width: 10%;"></div>
+              </div>
+            </div>
+            <div class="fun-fact">
+              <p id="funFactRight">Fun-fact: can lift your mom</p>
+            </div>
           </div>
-          <div class="characterMid">
-            <img id="CPRightPreviousCharacter" src="previousButton.png" class="arrowButton">
-            <canvas id="characterDisplayRight"></canvas>
-            <img id="CPRightNextCharacter" src="nextButton.png" class="arrowButton">
-          </div>
-          <div class="characterBottom">
-            <div class="info-box">PASSIVE: takes less damage from direct ball hits</div>
-            <div class="info-box">ABILITY: Throws a mega ball</div>
-            <div class="fun-fact">Fun-fact: can lift your mom</div>
+          <div class="characterContainer columnFlex">
+            <div class="characterTop columnFlex">
+              <div id="characterNameRight" class="character-name">ARNOLD</div>
+              <div id="characterTitleRight" class="character-title">the titan</div>
+            </div>
+            <div class="characterBottom columnFlex">
+              <div class="characterDisplayDiv">
+                <img id="CPRightPreviousCharacter" src="previousButton.png" class="arrowButton">
+                <div id="canvasContainerRight" class="canvasContainer">
+                  <img id="superpowerImgRight" class="image" src="superpowerImg.png">
+                </div>
+                <img id="CPRightNextCharacter" src="nextButton.png" class="arrowButton">
+              </div>
+              <div id="p2ReadyButton" class="button">READY</div>
+            </div>
           </div>
         </div>
       </div>

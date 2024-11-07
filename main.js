@@ -82,6 +82,43 @@ setTimeout(function(){
   }, 5);
 },4450);
 
+let leftPage = document.getElementById("CPLeft");
+let rightPage = document.getElementById("CPRight");
+let backToP1 = document.getElementById("backToP1");
+let forwardToP2 = document.getElementById("forwardToP2");
+let readyButton = document.getElementById("p1ReadyButton");
+let canvasContainerRight = document.getElementById("canvasContainerRight");
+let canvasContainerLeft = document.getElementById("canvasContainerLeft");
+
+function movePage(page, canvasContainer) {
+  const checkPositionInterval = setInterval(() => {
+    const pageRect = page.getBoundingClientRect();
+    const pageMiddle = pageRect.left + pageRect.width / 2;
+
+    if (pageMiddle < 0 || pageMiddle > window.innerWidth) {
+      canvasContainer.appendChild(canvas);
+      clearInterval(checkPositionInterval);
+    }
+  }, 10);
+}
+
+readyButton.addEventListener('click', function() {
+  movePage(leftPage, canvasContainerRight);
+  document.getElementById('CPLeft').style.left = '-100vw';
+  document.getElementById('CPRight').style.left = '0';
+});
+forwardToP2.addEventListener('click', function() {
+  movePage(leftPage, canvasContainerRight);
+  document.getElementById('CPLeft').style.left = '-100vw';
+  document.getElementById('CPRight').style.left = '0';
+});
+
+backToP1.addEventListener('click', function() {
+  movePage(rightPage, canvasContainerLeft);
+  document.getElementById('CPLeft').style.left = '0';
+  document.getElementById('CPRight').style.left = '100vw';
+});
+
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
 

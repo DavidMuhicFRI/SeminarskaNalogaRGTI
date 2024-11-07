@@ -1,6 +1,7 @@
 body, html {
     margin: 0;
     padding: 0;
+    color: white;
 }
 
 * {
@@ -105,6 +106,16 @@ body, html {
     100% { transform: rotate(1800deg); }
 }
 
+#introCanvas {
+  width: 100%;
+  height: 100%;
+}
+.canvasContainer {
+  width: 50%;
+  height: 85%;
+  border-radius: 5%;
+}
+
 #characterPage {
   background-color: black;
   position: absolute;
@@ -123,14 +134,15 @@ body, html {
   top: 0;
   width: 100vw;
   height: 100vh;
+  transition: left 1s cubic-bezier(0.6, 0, 0.4, 1);
 }
 #CPLeft {
   left: 0;
-  background-color: #0072DE;
+  background-color: black;
 }
 #CPRight {
   left: 100vw;
-  background-color: #FF3737;
+  background-color: black;
 }
 .characterPageMain {
   display: flex;
@@ -140,28 +152,38 @@ body, html {
   height: 100%;
   width: 100%;
 }
-.characterContainer {
+.columnFlex {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-evenly;
+}
+.title {
+  font-size: 8vh;
+  font-weight: bold;
+  margin-top: 2vh;
+  font-family: "sans-serif";
+  border-bottom: 2px solid white;
+}
+.characterContainer {
   height: 90%;
   width: 40%;
-  margin-top: -5vh;
+  margin: -7vh 0 0 -5vw;
 }
 .characterTop {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
   height: 15%;
   margin-bottom: -3vh;
 }
+.character-name {
+  font-size: 5vh;
+  font-weight: bolder;
+  margin-bottom: -2vh;
+}
+.character-title {
+  font-size: 2.5vh;
+  font-style: italic;
+}
 .characterBottom {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
   height: 90%;
   width: 100%;
 }
@@ -176,7 +198,7 @@ body, html {
 #p1ReadyButton {
   width: 14vw;
   height: 10vh;
-  background-color: rgba(255, 100, 80, 1);
+  background-color: red;
   font-size: 6vh;
 }
 .arrowButton {
@@ -187,25 +209,24 @@ body, html {
   cursor: pointer;
   transform: scale(1.1);
 }
-#characterDisplayLeft {
-  width: 50%;
-  height: 85%;
-  border: 1px solid black;
-  border-radius: 10%;
-  background-color: gray;
-}
-#characterDisplayRight {
-  width: 60%;
-  height: 85%;
-}
+
 .image {
   position: absolute;
-  top: 22%;
-  left: 35%;
   width: 4%;
-  height: 8%;
-  border: 2px solid black;
-  border-radius: 5px;
+  height: 7%;
+  margin: -2% 0 0 18%;
+}
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  color: black;
+}
+.button:hover {
+  transform: scale(1.1);
 }
 .characterExtra {
   display: flex;
@@ -214,94 +235,6 @@ body, html {
   justify-content: space-evenly;
   height: 90%;
   width: 40%;
-}
-.stat {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-  width: 100%;
-  height: 10%;
-}
-.statLabel {
-  font-weight: bold;
-  width: 15%;
-  font-size: 2.5vh;
-}
-.barContainer {
-  width: 70%;
-  height: 60%;
-  background-color: transparent;
-  overflow: hidden;
-}
-.bar {
-  height: 75%;
-  background-color: lawngreen;
-  border: 2px solid black;
-  border-radius: 15px;
-  transition: width 0.3s ease;
-}
-.icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 10%;
-  height: 80%;
-  font-size: 6vh;
-  font-weight: bold;
-  border: 2px solid black;
-  border-radius: 10px;
-  margin-right: 3vw;
-  flex-shrink: 0;
-}
-.minus {
-  background-color: red;
-}
-.plus {
-  background-color: forestgreen;
-}
-.iconImage {
-  width: 10%;
-  height: 100%;
-  border: 2px solid black;
-  border-radius: 5px;
-  margin-right: 3vw;
-  flex-shrink: 0;
-}
-.button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 0.7vh solid black;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-}
-.button:hover {
-  transform: scale(1.03);
-}
-.title {
-  font-size: 8vh;
-  font-weight: bold;
-  margin-top: 2vh;
-  font-family: "sans-serif";
-}
-.character-name {
-  font-size: 5vh;
-  font-weight: bolder;
-  margin-bottom: -2vh;
-}
-.character-title {
-  font-size: 2.5vh;
-  font-style: italic;
-}
-.fun-fact {
-  font-size: 1.8vh;
-  font-weight: bolder;
-  width: 100%;
-  height: 10%;
-  padding-left: 3%;
-  font-style: italic;
 }
 .info-box {
   display: flex;
@@ -317,4 +250,57 @@ body, html {
 }
 .info-box p {
   flex-grow: 1;
+}
+.stat {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  height: 8%;
+}
+.statLabel {
+  font-weight: bold;
+  width: 15%;
+  font-size: 2.5vh;
+}
+.barContainer {
+  width: 70%;
+  height: 60%;
+  background-color: transparent;
+  overflow: hidden;
+}
+.bar {
+  height: 75%;
+  background-color: lawngreen;
+  border-radius: 7px;
+  transition: width 0.3s ease;
+}
+.border {
+  padding-top: 2vh;
+  border-top: 2px solid white;
+}
+.iconImage {
+  width: 10%;
+  height: 100%;
+  margin-right: 3vw;
+  flex-shrink: 0;
+}
+.fun-fact {
+  font-size: 1.8vh;
+  font-weight: bolder;
+  width: 100%;
+  height: 10%;
+  padding-left: 3%;
+  font-style: italic;
+  color: red;
+}
+#backToP1, #forwardToP2 {
+  width: 7vw;
+  height: 20vh;
+  margin-bottom: 5vh;
+}
+#backToP1:hover, #forwardToP2:hover {
+  transform: scale(1.1);
+  cursor: pointer;
 }
