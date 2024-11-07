@@ -25,15 +25,18 @@ import {Light} from "./core/Light.js";
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 $("#characterPage").hide();
 $("#canvas").hide();
+$("#game").hide();
 
-let introPage = "intro";
+let pageStatus = "intro";
 const introLogo = document.getElementById('introLogo');
 const charactersImg = document.getElementById('introCharacters');
 
 document.addEventListener("click", () => {
-    introPage = "main";
+  if(pageStatus === "intro"){
+    pageStatus = "main";
     $("#intro").hide();
     $("#characterPage").show();
+  }
 });
 
 
@@ -71,7 +74,7 @@ setTimeout(function(){
         $("#intro").hide();
         $("#characterPage").show();
         $("#canvas").show();
-        introPage = "main";
+        pageStatus = "main";
       }, 3200);
     }else if(top > 10){
       $("#introCharacters").hide();
@@ -82,6 +85,7 @@ setTimeout(function(){
   }, 5);
 },4450);
 
+let playerReady = false;
 let leftPage = document.getElementById("CPLeft");
 let rightPage = document.getElementById("CPRight");
 let backToP1 = document.getElementById("backToP1");
@@ -91,7 +95,7 @@ let readyButton2 = document.getElementById("p2ReadyButton");
 let canvasContainerRight = document.getElementById("canvasContainerRight");
 let canvasContainerLeft = document.getElementById("canvasContainerLeft");
 
-function movePage(page, canvasContainer) {
+function movePage(page, canvasContainer, left, right) {
   const checkPositionInterval = setInterval(() => {
     const pageRect = page.getBoundingClientRect();
     const pageMiddle = pageRect.left + pageRect.width / 2;
@@ -101,28 +105,44 @@ function movePage(page, canvasContainer) {
       clearInterval(checkPositionInterval);
     }
   }, 10);
+  document.getElementById('CPLeft').style.left = left;
+  document.getElementById('CPRight').style.left = right;
+}
+
+function startGame(){
+  $("#characterPage").hide();
+  canvas.id = "gameCanvas";
+  document.getElementById("game").appendChild(canvas);
+  $("#game").show();
+  clearInterval(constantRotation);
+  pageStatus = "game";
+  rotate = false;
 }
 
 readyButton1.addEventListener('click', function() {
-  movePage(leftPage, canvasContainerRight);
-  document.getElementById('CPLeft').style.left = '-100vw';
-  document.getElementById('CPRight').style.left = '0';
+  if(playerReady){
+    startGame();
+  }else{
+    playerReady = true;
+    $("#p2ReadyButton").text("START");
+    movePage(leftPage, canvasContainerRight, "-100vw", "0");
+  }
 });
 readyButton2.addEventListener('click', function() {
-  movePage(rightPage, canvasContainerLeft);
-  document.getElementById('CPLeft').style.left = '0';
-  document.getElementById('CPRight').style.left = '100vw';
+  if(playerReady){
+    startGame();
+  }else{
+    playerReady = true;
+    $("#p2ReadyButton").text("START");
+    movePage(rightPage, canvasContainerLeft, "0", "100vw");
+  }
 });
 forwardToP2.addEventListener('click', function() {
-  movePage(leftPage, canvasContainerRight);
-  document.getElementById('CPLeft').style.left = '-100vw';
-  document.getElementById('CPRight').style.left = '0';
+  movePage(leftPage, canvasContainerRight, "-100vw", "0");
 });
 
 backToP1.addEventListener('click', function() {
-  movePage(rightPage, canvasContainerLeft);
-  document.getElementById('CPLeft').style.left = '0';
-  document.getElementById('CPRight').style.left = '100vw';
+  movePage(rightPage, canvasContainerLeft, "0", "100vw");
 });
 
 
@@ -284,31 +304,31 @@ transform3.translation = [0, 0, -5];
 transform3.scale = [10, 10, 0.1];
 
 canvas.addEventListener("mousedown", () => {
-  if(introPage === "main") {
+  if(pageStatus === "main") {
     document.body.requestPointerLock();
     rotate = true;
   }
 });
 canvas.addEventListener("mouseover", () => {
   //change cursor to grabing hand
-  if(introPage === "main"){
+  if(pageStatus === "main"){
     canvas.style.cursor = "grab";
   }
 });
 
 document.addEventListener("mouseup", () => {
-  if(introPage === "main"){
+  if(pageStatus === "main"){
     rotate = false;
     document.exitPointerLock();
   }
 });
-document.addEventListener("mousemove", (event) => {
-  if (rotate) {
+canvas.addEventListener("mousemove", (event) => {
+  if (rotate && pageStatus === "main") {
     rotatePlayer(player1, event.movementX * 0.01);
   }
 });
 let constantRotation = setInterval(function(){
-  if(introPage === "main" && !rotate){
+  if(pageStatus === "main" && !rotate){
     rotatePlayer(player1, 0.003);
   }
 }, 5);
