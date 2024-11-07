@@ -283,6 +283,12 @@ canvas.addEventListener("mousedown", () => {
     rotate = true;
   }
 });
+canvas.addEventListener("mouseover", () => {
+  //change cursor to grabing hand
+  if(introPage === "main"){
+    canvas.style.cursor = "grab";
+  }
+});
 
 document.addEventListener("mouseup", () => {
   if(introPage === "main"){
