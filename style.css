@@ -373,6 +373,7 @@ body, html {
 #gameCanvas {
   width: 100%;
   height: 100%;
+  /*filter: blur(5px);*/
 }
 #gameBackButton{
   visibility: hidden;

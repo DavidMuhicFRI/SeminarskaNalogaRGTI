@@ -24,6 +24,7 @@ intro.addEventListener("click", () => {
   showElement("introCanvas");
 });
 
+//functions for the intro
 function showElement(element){
   document.getElementById(element).style.visibility = "visible";
 }
