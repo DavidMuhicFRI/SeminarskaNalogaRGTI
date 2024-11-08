@@ -1,4 +1,3 @@
-import { vec3, quat } from './glm.js';
 import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
@@ -212,11 +211,15 @@ function startGame(){
   canvas.id = "gameCanvas";
   document.getElementById("game").appendChild(canvas);
   document.body.style.cursor = "grab";
-  document.body.requestFullscreen();
+  document.body.requestFullscreen().catch(err => {
+    console.log(err);
+  });
   document.getElementById("gameBackButton").style.visibility = "visible";
 }
 function cancelGame(){
-  document.exitFullscreen();
+  document.exitFullscreen().catch(err => {
+    console.log(err);
+  });
   $("#characterPage").show();
   $("#game").hide();
   pageStatus = "main";
@@ -364,7 +367,7 @@ function initializeTheCamera(){
   scene.addChild(camera);
 }
 
-async function initializeTheLight(canvas){
+async function initializeTheLight(){
   light = new Node();
   light.addComponent(new Transform({
     translation: [0.2, 3, 0],
