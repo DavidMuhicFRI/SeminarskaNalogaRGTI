@@ -87,6 +87,7 @@ setTimeout(function(){
 
 let player1Ready = false;
 let player2Ready = false;
+let pageOrientation = "left";
 let leftPage = document.getElementById("CPLeft");
 let rightPage = document.getElementById("CPRight");
 let backToP1 = document.getElementById("backToP1");
@@ -95,8 +96,9 @@ let readyButton1 = document.getElementById("p1ReadyButton");
 let readyButton2 = document.getElementById("p2ReadyButton");
 let canvasContainerRight = document.getElementById("canvasContainerRight");
 let canvasContainerLeft = document.getElementById("canvasContainerLeft");
+let gameBackButton = document.getElementById("gameBackButton");
 
-function movePage(page, canvasContainer, left, right) {
+function movePage(page, canvasContainer) {
   const checkPositionInterval = setInterval(() => {
     const pageRect = page.getBoundingClientRect();
     const pageMiddle = pageRect.left + pageRect.width / 2;
@@ -111,19 +113,57 @@ function movePage(page, canvasContainer, left, right) {
       clearInterval(checkPositionInterval);
     }
   }, 10);
+  let left;
+  let right;
+  if(page === leftPage){
+    pageOrientation = "right";
+    left = "-100vw";
+    right = "0";
+  }else{
+    pageOrientation = "left";
+    left = "0";
+    right = "100vw";
+  }
   document.getElementById('CPLeft').style.left = left;
   document.getElementById('CPRight').style.left = right;
 }
 
 function startGame(){
   $("#characterPage").hide();
-  canvas.id = "gameCanvas";
-  document.getElementById("game").appendChild(canvas);
   $("#game").show();
   clearInterval(constantRotation);
   pageStatus = "game";
   rotate = false;
-  document.style.cursor = "grab";
+  canvas.id = "gameCanvas";
+  document.getElementById("game").appendChild(canvas);
+  document.body.style.cursor = "grab";
+  document.body.requestFullscreen();
+  document.getElementById("gameBackButton").style.visibility = "visible";
+}
+
+function cancelGame(){
+  $("#characterPage").show();
+  $("#game").hide();
+  pageStatus = "main";
+  canvas.id = "introCanvas";
+  let container;
+  if(pageOrientation === "left"){
+    container = canvasContainerLeft;
+  }else{
+    container = canvasContainerRight;
+  }
+  container.appendChild(canvas);
+  document.body.style.cursor = "default";
+  constantRotation = setInterval(function(){
+    if(pageStatus === "main" && !rotate){
+      rotatePlayer(player1, 0.003);
+    }
+  }, 5);
+  player1Ready = false;
+  player2Ready = false;
+  turnButtonToReady(readyButton1);
+  turnButtonToReady(readyButton2);
+  document.getElementById("gameBackButton").style.visibility = "hidden";
 }
 
 function turnButtonToCancel(button){
@@ -140,7 +180,9 @@ function turnButtonToReady(button){
     button.style.backgroundColor = "rgba(255, 90, 90, 1)";
   }
 }
-
+gameBackButton.addEventListener('click', function() {
+  cancelGame();
+});
 readyButton1.addEventListener('click', function() {
   if(player1Ready){
     turnButtonToReady(readyButton1);
@@ -151,7 +193,7 @@ readyButton1.addEventListener('click', function() {
     }else{
       player1Ready = true;
       turnButtonToCancel(readyButton1, player1Ready);
-      movePage(leftPage, canvasContainerRight, "-100vw", "0");
+      movePage(leftPage, canvasContainerRight);
     }
   }
 });
@@ -165,16 +207,16 @@ readyButton2.addEventListener('click', function() {
     }else{
       player2Ready = true;
       turnButtonToCancel(readyButton2, player2Ready);
-      movePage(rightPage, canvasContainerLeft, "0", "100vw");
+      movePage(rightPage, canvasContainerLeft);
     }
   }
 });
 forwardToP2.addEventListener('click', function() {
-  movePage(leftPage, canvasContainerRight, "-100vw", "0");
+  movePage(leftPage, canvasContainerRight);
 });
 
 backToP1.addEventListener('click', function() {
-  movePage(rightPage, canvasContainerLeft, "0", "100vw");
+  movePage(rightPage, canvasContainerLeft);
 });
 
 
