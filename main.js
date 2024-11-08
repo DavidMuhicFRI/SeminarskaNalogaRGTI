@@ -44,20 +44,20 @@ document.getElementById('introCharacters').style.opacity = '1';
 setTimeout(function(){
   document.getElementById("name1").style.opacity = '1';
   document.getElementById("name2").style.opacity = '1';
-}, 1000);
+}, 700);
 setTimeout(function(){
   document.getElementById("name1").style.opacity = '0';
   document.getElementById("name2").style.opacity = '0';
-}, 2000);
+}, 1600);
 setTimeout(function(){
   charactersImg.src = "animationTogether.png";
-},3000);
+},2500);
 setTimeout(function(){
   charactersImg.src = "animationNormal.png";
-},3700);
+},3600);
 setTimeout(function(){
   charactersImg.src = "animationUp.png";
-}, 4400);
+}, 4000);
 let top = -100;
 setTimeout(function(){
   $("#introLogo").show();
@@ -69,13 +69,13 @@ setTimeout(function(){
       clearInterval(moveLogo);
       setTimeout(function(){
         introLogo.style.opacity = '0';
-      }, 500);
+      }, 700);
       setTimeout(function(){
         $("#intro").hide();
         $("#characterPage").show();
         $("#canvas").show();
         pageStatus = "main";
-      }, 3200);
+      }, 3600);
     }else if(top > 10){
       $("#introCharacters").hide();
       $("#introAnd").hide();
