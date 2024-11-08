@@ -98,6 +98,20 @@ setTimeout(function(){
   }, 5);
 },4450);
 
+/////////////////////////////////////////////////////////////////////////////CHARACTER PAGE/////////////////////////////////////////////////////////////
+
+const canvas = document.querySelector('canvas');
+
+let renderer;
+let loader;
+let scene;
+let physics;
+let resizeSystem;
+let updateSystem;
+let camera;
+let light;
+
+
 let player1Ready = false;
 let player2Ready = false;
 let pageOrientation = "left";
@@ -110,6 +124,7 @@ let readyButton2 = document.getElementById("p2ReadyButton");
 let canvasContainerRight = document.getElementById("canvasContainerRight");
 let canvasContainerLeft = document.getElementById("canvasContainerLeft");
 let gameBackButton = document.getElementById("gameBackButton");
+
 
 function movePage(page, canvasContainer) {
   const checkPositionInterval = setInterval(() => {
@@ -145,6 +160,30 @@ function constantlyRotate(){
     rotatePlayer(player1, 0.003);
   }
 }
+function createQuaternionFromAxisAngle(axis, angle) {
+  const halfAngle = angle / 2;
+  const sinHalfAngle = Math.sin(halfAngle);
+
+  return [
+    axis[0] * sinHalfAngle,  // X component
+    axis[1] * sinHalfAngle,  // Y component
+    axis[2] * sinHalfAngle,  // Z component
+    Math.cos(halfAngle)      // W component
+  ];
+}
+function multiplyQuaternions(q1, q2) {
+  return [
+    q1[3] * q2[0] + q1[0] * q2[3] + q1[1] * q2[2] - q1[2] * q2[1], // X component
+    q1[3] * q2[1] - q1[0] * q2[2] + q1[1] * q2[3] + q1[2] * q2[0], // Y component
+    q1[3] * q2[2] + q1[0] * q2[1] - q1[1] * q2[0] + q1[2] * q2[3], // Z component
+    q1[3] * q2[3] - q1[0] * q2[0] - q1[1] * q2[1] - q1[2] * q2[2]  // W component
+  ];
+}
+function rotatePlayer(player, angle){
+  const rotationQuat = createQuaternionFromAxisAngle([0, 1, 0], angle);
+  const transform = player.getComponentOfType(Transform);
+  transform.rotation = multiplyQuaternions(transform.rotation, rotationQuat);
+}
 
 function startGame(){
   $("#characterPage").hide();
@@ -159,6 +198,7 @@ function startGame(){
   document.getElementById("gameBackButton").style.visibility = "visible";
 }
 function cancelGame(){
+  document.exitFullscreen();
   $("#characterPage").show();
   $("#game").hide();
   pageStatus = "main";
@@ -199,12 +239,15 @@ gameBackButton.addEventListener('click', function() {
 });
 readyButton1.addEventListener('click', function() {
   if(player1Ready){
+    //button is cancel, set it to ready and unready the player
     turnButtonToReady(readyButton1);
     player1Ready = false;
   } else {
     if(player2Ready){
+      //both players are ready, start the game
       startGame();
     }else{
+      //set player to ready, set the button to cancel and move the page
       player1Ready = true;
       turnButtonToCancel(readyButton1, player1Ready);
       movePage(leftPage, canvasContainerRight);
@@ -228,23 +271,57 @@ readyButton2.addEventListener('click', function() {
 forwardToP2.addEventListener('click', function() {
   movePage(leftPage, canvasContainerRight);
 });
-
 backToP1.addEventListener('click', function() {
   movePage(rightPage, canvasContainerLeft);
 });
 
+let rotate = false;
+
+canvas.addEventListener("mousedown", () => {
+  if(pageStatus === "main") {
+    document.body.requestPointerLock();
+    rotate = true;
+  }
+});
+canvas.addEventListener("mouseover", () => {
+  if(pageStatus === "main"){
+    canvas.style.cursor = "grab";
+  }
+});
+document.addEventListener("mouseup", () => {
+  if(pageStatus === "main"){
+    rotate = false;
+    document.exitPointerLock();
+  }
+});
+canvas.addEventListener("mousemove", (event) => {
+  if (rotate && pageStatus === "main") {
+    rotatePlayer(player1, event.movementX * 0.01);
+  }
+});
+
+//init the game
+await init();
+
+//load the objects
+let player1 = loadObject("playerObject", "static");
+let transform1 = player1.getComponentOfType(Transform);
+transform1.translation = [0, 0.5, 0];
+transform1.scale = [0.35, 0.7, 0.6];
+let floor = loadObject("Floor", "static");
+let transform2 = floor.getComponentOfType(Transform);
+transform2.translation = [0, -2.3, 0];
+transform2.scale = [10, 0.1, 10];
+let wall1 = loadObject("Wall1", "static");
+let transform3 = wall1.getComponentOfType(Transform);
+transform3.translation = [0, 0, -5];
+transform3.scale = [10, 10, 0.1];
+
+let constantRotation = setInterval(constantlyRotate, 5);
+
+//setAABBs();
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
-
-const canvas = document.querySelector('canvas');
-let renderer;
-let loader;
-let scene;
-let physics;
-let resizeSystem;
-let updateSystem;
-let camera;
-let light;
 
 async function initializeTheRenderer(){
     renderer = new Renderer(canvas);
@@ -347,75 +424,8 @@ async function init(){
   startSystems();
 }
 
-
 /////////////////////////////////////////////////////////////////////////////FIRST PAGE////////////////////////////////////////////////////////////
 
-let rotate = false;
-
-function createQuaternionFromAxisAngle(axis, angle) {
-  const halfAngle = angle / 2;
-  const sinHalfAngle = Math.sin(halfAngle);
-
-  return [
-    axis[0] * sinHalfAngle,  // X component
-    axis[1] * sinHalfAngle,  // Y component
-    axis[2] * sinHalfAngle,  // Z component
-    Math.cos(halfAngle)      // W component
-  ];
-}
-function multiplyQuaternions(q1, q2) {
-  return [
-    q1[3] * q2[0] + q1[0] * q2[3] + q1[1] * q2[2] - q1[2] * q2[1], // X component
-    q1[3] * q2[1] - q1[0] * q2[2] + q1[1] * q2[3] + q1[2] * q2[0], // Y component
-    q1[3] * q2[2] + q1[0] * q2[1] - q1[1] * q2[0] + q1[2] * q2[3], // Z component
-    q1[3] * q2[3] - q1[0] * q2[0] - q1[1] * q2[1] - q1[2] * q2[2]  // W component
-  ];
-}
-function rotatePlayer(player, angle){
-  const rotationQuat = createQuaternionFromAxisAngle([0, 1, 0], angle);
-  const transform = player.getComponentOfType(Transform);
-  transform.rotation = multiplyQuaternions(transform.rotation, rotationQuat);
-}
-
-await init();
-let player1 = loadObject("playerObject", "dynamic");
-let transform1 = player1.getComponentOfType(Transform);
-transform1.translation = [0, 0.5, 0];
-transform1.scale = [0.35, 0.7, 0.6];
-let floor = loadObject("Floor", "static");
-let transform2 = floor.getComponentOfType(Transform);
-transform2.translation = [0, -2.3, 0];
-transform2.scale = [10, 0.1, 10];
-let wall1 = loadObject("Wall1", "static");
-let transform3 = wall1.getComponentOfType(Transform);
-transform3.translation = [0, 0, -5];
-transform3.scale = [10, 10, 0.1];
-
-canvas.addEventListener("mousedown", () => {
-  if(pageStatus === "main") {
-    document.body.requestPointerLock();
-    rotate = true;
-  }
-});
-canvas.addEventListener("mouseover", () => {
-  if(pageStatus === "main"){
-    canvas.style.cursor = "grab";
-  }
-});
-
-document.addEventListener("mouseup", () => {
-  if(pageStatus === "main"){
-    rotate = false;
-    document.exitPointerLock();
-  }
-});
-canvas.addEventListener("mousemove", (event) => {
-  if (rotate && pageStatus === "main") {
-    rotatePlayer(player1, event.movementX * 0.01);
-  }
-});
-let constantRotation = setInterval(constantlyRotate, 5);
-setAABBs();
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
 
