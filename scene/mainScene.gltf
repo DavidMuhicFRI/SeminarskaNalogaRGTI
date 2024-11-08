@@ -1255,9 +1255,9 @@
 			"uri":"wallTexture.jpg"
 		},
 		{
-			"mimeType":"image/jpeg",
-			"name":"floorTexture3",
-			"uri":"floorTexture3.jpg"
+			"mimeType":"image/png",
+			"name":"floorTexture",
+			"uri":"floorTexture.png"
 		}
 	],
 	"accessors":[
