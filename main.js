@@ -1,24 +1,12 @@
-import { vec3, quat } from './glm.js';
 import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
-
 import { GLTFLoader } from './loaders/GLTFLoader.js';
-import { UnlitRenderer } from './renderers/UnlitRenderer.js';
-import { BaseRenderer} from "./renderers/BaseRenderer.js";
-import { FirstPersonController } from './controllers/FirstPersonController.js';
-import { OrbitController } from './controllers/OrbitController.js';
-import { TouchController } from './controllers/TouchController.js';
-import { TurntableController} from "./controllers/TurntableController.js";
-
 import { Camera, Model, Transform, Node } from './core.js';
-
 import {
     calculateAxisAlignedBoundingBox,
     mergeAxisAlignedBoundingBoxes,
 } from './core/MeshUtils.js';
-
 import { Physics } from './Physics.js';
-import { Player } from "./Player.js";
 import { Renderer } from "./renderers/Renderer.js";
 import { Light } from "./core/Light.js";
 
@@ -223,11 +211,15 @@ function startGame(){
   canvas.id = "gameCanvas";
   document.getElementById("game").appendChild(canvas);
   document.body.style.cursor = "grab";
-  document.body.requestFullscreen();
+  document.body.requestFullscreen().catch(err => {
+    console.log(err);
+  });
   document.getElementById("gameBackButton").style.visibility = "visible";
 }
 function cancelGame(){
-  document.exitFullscreen();
+  document.exitFullscreen().catch(err => {
+    console.log(err);
+  });
   $("#characterPage").show();
   $("#game").hide();
   pageStatus = "main";
@@ -375,7 +367,7 @@ function initializeTheCamera(){
   scene.addChild(camera);
 }
 
-async function initializeTheLight(canvas){
+async function initializeTheLight(){
   light = new Node();
   light.addComponent(new Transform({
     translation: [0.2, 3, 0],
