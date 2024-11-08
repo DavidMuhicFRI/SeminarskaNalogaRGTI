@@ -173,13 +173,13 @@ body, html {
   color: rgba(255, 90, 90, 1);
 }
 .characterContainer {
-  height: 90%;
+  height: 110%;
   width: 40%;
   margin: -4vh 0 0 -5vw;
 }
 .characterTop {
   height: 15%;
-  margin-bottom: -6vh;
+  margin-bottom: -10vh;
 }
 .character-name {
   font-size: 5vh;
