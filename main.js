@@ -110,7 +110,7 @@ let player1Ready = false;
 let player2Ready = false;
 let pageOrientation = "left"; //set to left if canvas is in canvasContainerLeft, right if in canvasContainerRight
 
-//doms for the character page
+//DOMs for the character page
 let leftPage = document.getElementById("CPLeft");
 let rightPage = document.getElementById("CPRight");
 let canvasContainerRight = document.getElementById("canvasContainerRight");
@@ -198,7 +198,6 @@ function rotatePlayer(player, angle){
   const transform = player.getComponentOfType(Transform);
   transform.rotation = multiplyQuaternions(transform.rotation, rotationQuat);
 }
-
 
 //starting and exiting the game
 function startGame(){
@@ -327,7 +326,7 @@ transform3.scale = [10, 10, 0.1];
 
 let constantRotation = setInterval(constantlyRotate, 5);
 
-//setAABBs();
+setAABBs();
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
 
