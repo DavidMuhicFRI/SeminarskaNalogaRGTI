@@ -19,8 +19,8 @@ import {
 
 import { Physics } from './Physics.js';
 import { Player } from "./Player.js";
-import {Renderer} from "./renderers/Renderer.js";
-import {Light} from "./core/Light.js";
+import { Renderer } from "./renderers/Renderer.js";
+import { Light } from "./core/Light.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 $("#characterPage").hide();
@@ -39,25 +39,38 @@ document.addEventListener("click", () => {
   }
 });
 
-
+//Intro animation
+//show characters
 document.getElementById('introCharacters').style.opacity = '1';
+
+//show names
 setTimeout(function(){
   document.getElementById("name1").style.opacity = '1';
   document.getElementById("name2").style.opacity = '1';
 }, 700);
+
+//hide names
 setTimeout(function(){
   document.getElementById("name1").style.opacity = '0';
   document.getElementById("name2").style.opacity = '0';
 }, 1600);
+
+//look at each other
 setTimeout(function(){
   charactersImg.src = "animationTogether.png";
 },2500);
+
+//look at the camera
 setTimeout(function(){
   charactersImg.src = "animationNormal.png";
 },3600);
+
+//look up
 setTimeout(function(){
   charactersImg.src = "animationUp.png";
 }, 4000);
+
+//logo drops and disappears
 let top = -100;
 setTimeout(function(){
   $("#introLogo").show();
@@ -127,6 +140,11 @@ function movePage(page, canvasContainer) {
   document.getElementById('CPLeft').style.left = left;
   document.getElementById('CPRight').style.left = right;
 }
+function constantlyRotate(){
+  if(pageStatus === "main" && !rotate){
+    rotatePlayer(player1, 0.003);
+  }
+}
 
 function startGame(){
   $("#characterPage").hide();
@@ -140,7 +158,6 @@ function startGame(){
   document.body.requestFullscreen();
   document.getElementById("gameBackButton").style.visibility = "visible";
 }
-
 function cancelGame(){
   $("#characterPage").show();
   $("#game").hide();
@@ -154,11 +171,7 @@ function cancelGame(){
   }
   container.appendChild(canvas);
   document.body.style.cursor = "default";
-  constantRotation = setInterval(function(){
-    if(pageStatus === "main" && !rotate){
-      rotatePlayer(player1, 0.003);
-    }
-  }, 5);
+  constantRotation = setInterval(constantlyRotate, 5);
   player1Ready = false;
   player2Ready = false;
   turnButtonToReady(readyButton1);
@@ -180,6 +193,7 @@ function turnButtonToReady(button){
     button.style.backgroundColor = "rgba(255, 90, 90, 1)";
   }
 }
+
 gameBackButton.addEventListener('click', function() {
   cancelGame();
 });
@@ -400,11 +414,7 @@ canvas.addEventListener("mousemove", (event) => {
     rotatePlayer(player1, event.movementX * 0.01);
   }
 });
-let constantRotation = setInterval(function(){
-  if(pageStatus === "main" && !rotate){
-    rotatePlayer(player1, 0.003);
-  }
-}, 5);
+let constantRotation = setInterval(constantlyRotate, 5);
 setAABBs();
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
