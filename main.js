@@ -13,36 +13,42 @@ import { Light } from "./core/Light.js";
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
 let pageStatus = "intro";
+const intro = document.getElementById('intro');
 const introLogo = document.getElementById('introLogo');
 const charactersImg = document.getElementById('introCharacters');
 
-document.addEventListener("click", () => {
-  if(pageStatus === "intro"){
-    pageStatus = "main";
-    $("#intro").hide();
-    showElement("characterPage");
-    showElement("introCanvas")
-  }
+intro.addEventListener("click", () => {
+  pageStatus = "main";
+  $("#intro").hide();
+  showElement("characterPage");
+  showElement("introCanvas");
 });
+
 function showElement(element){
   document.getElementById(element).style.visibility = "visible";
+}
+function elementAppear(element){
+  document.getElementById(element).style.opacity = '1';
+}
+function elementDisappear(element){
+  document.getElementById(element).style.opacity = '0';
 }
 
 //Intro animation
 
 //show characters
-document.getElementById('introCharacters').style.opacity = '1';
+elementAppear("introCharacters");
 
 //show names
 setTimeout(function(){
-  document.getElementById("name1").style.opacity = '1';
-  document.getElementById("name2").style.opacity = '1';
+  elementAppear("name1");
+  elementAppear("name2");
 }, 700);
 
 //hide names
 setTimeout(function(){
-  document.getElementById("name1").style.opacity = '0';
-  document.getElementById("name2").style.opacity = '0';
+  elementDisappear("name1");
+  elementDisappear("name2");
 }, 1600);
 
 //look at each other
@@ -71,7 +77,7 @@ setTimeout(function(){
       introLogo.style.top = 22.6 + "vh";
       clearInterval(moveLogo);
       setTimeout(function(){
-        introLogo.style.opacity = '0';
+        elementDisappear("introLogo");
       }, 700);
       setTimeout(function(){
         $("#intro").hide();
@@ -122,16 +128,16 @@ let readyButton2 = document.getElementById("p2ReadyButton");
 let gameBackButton = document.getElementById("gameBackButton");
 
 //functions for the character page
-function movePage(page, canvasContainer) {
+function movePage(page) {
   const checkPositionInterval = setInterval(() => {
     const pageRect = page.getBoundingClientRect();
     const pageMiddle = pageRect.left + pageRect.width / 2;
-
     if (pageMiddle < 0 || pageMiddle > window.innerWidth) {
-      canvasContainer.appendChild(canvas);
       if(page === leftPage){
+        canvasContainerRight.appendChild(canvas);
         canvas.style.borderColor = "rgba(255, 90, 90, 1)";
       } else {
+        canvasContainerLeft.appendChild(canvas);
         canvas.style.borderColor = "rgba(90, 90, 255, 1)";
       }
       clearInterval(checkPositionInterval);
@@ -201,6 +207,7 @@ function rotatePlayer(player, angle){
 function startGame(){
   $("#characterPage").hide();
   showElement("game");
+  $("#game").show(); //for 2nd and later showings
   clearInterval(constantRotation);
   pageStatus = "game";
   rotate = false;
@@ -212,10 +219,8 @@ function startGame(){
   });
   document.getElementById("gameBackButton").style.visibility = "visible";
 }
+
 function cancelGame(){
-  document.exitFullscreen().catch(err => {
-    console.log(err);
-  });
   $("#characterPage").show();
   $("#game").hide();
   pageStatus = "main";
@@ -234,6 +239,9 @@ function cancelGame(){
   turnButtonToReady(readyButton1);
   turnButtonToReady(readyButton2);
   document.getElementById("gameBackButton").style.visibility = "hidden";
+  document.exitFullscreen().catch(err => {
+    console.log(err);
+  });
 }
 
 //button event listeners
@@ -253,7 +261,7 @@ readyButton1.addEventListener('click', function() {
       //set player to ready, set the button to cancel and move the page
       player1Ready = true;
       turnButtonToCancel(readyButton1, player1Ready);
-      movePage(leftPage, canvasContainerRight);
+      movePage(leftPage);
     }
   }
 });
@@ -267,15 +275,15 @@ readyButton2.addEventListener('click', function() {
     }else{
       player2Ready = true;
       turnButtonToCancel(readyButton2, player2Ready);
-      movePage(rightPage, canvasContainerLeft);
+      movePage(rightPage);
     }
   }
 });
 forwardToP2.addEventListener('click', function() {
-  movePage(leftPage, canvasContainerRight);
+  movePage(leftPage);
 });
 backToP1.addEventListener('click', function() {
-  movePage(rightPage, canvasContainerLeft);
+  movePage(rightPage);
 });
 
 //event listeners for model rotation on drag
