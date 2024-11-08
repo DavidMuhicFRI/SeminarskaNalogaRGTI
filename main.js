@@ -123,6 +123,7 @@ function startGame(){
   clearInterval(constantRotation);
   pageStatus = "game";
   rotate = false;
+  document.style.cursor = "grab";
 }
 
 function turnButtonToCancel(button){
@@ -341,7 +342,6 @@ canvas.addEventListener("mousedown", () => {
   }
 });
 canvas.addEventListener("mouseover", () => {
-  //change cursor to grabing hand
   if(pageStatus === "main"){
     canvas.style.cursor = "grab";
   }
