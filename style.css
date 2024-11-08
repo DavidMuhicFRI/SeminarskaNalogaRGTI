@@ -112,6 +112,7 @@ body, html {
   height: 98%;
   border-radius: 10%;
   border: 2px solid rgba(90, 90, 255, 1);
+  visibility: hidden;
 }
 .canvasContainer {
   width: 50%;
@@ -126,6 +127,7 @@ body, html {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  visibility: hidden;
 }
 .characterPageSides {
   display: flex;
@@ -366,6 +368,7 @@ body, html {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  visibility: hidden;
 }
 #gameCanvas {
   width: 100%;

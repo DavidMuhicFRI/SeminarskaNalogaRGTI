@@ -23,9 +23,6 @@ import { Renderer } from "./renderers/Renderer.js";
 import { Light } from "./core/Light.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
-$("#characterPage").hide();
-$("#canvas").hide();
-$("#game").hide();
 
 let pageStatus = "intro";
 const introLogo = document.getElementById('introLogo');
@@ -35,11 +32,16 @@ document.addEventListener("click", () => {
   if(pageStatus === "intro"){
     pageStatus = "main";
     $("#intro").hide();
+    showElement("characterPage");
     $("#characterPage").show();
   }
 });
+function showElement(element){
+  document.getElementById(element).style.visibility = "visible";
+}
 
 //Intro animation
+
 //show characters
 document.getElementById('introCharacters').style.opacity = '1';
 
@@ -85,8 +87,10 @@ setTimeout(function(){
       }, 700);
       setTimeout(function(){
         $("#intro").hide();
+        showElement("characterPage");
         $("#characterPage").show();
-        $("#canvas").show();
+        showElement("introCanvas")
+        $("#introCanvas").show();
         pageStatus = "main";
       }, 3600);
     }else if(top > 10){
@@ -102,6 +106,7 @@ setTimeout(function(){
 
 const canvas = document.querySelector('canvas');
 
+//init the variables
 let renderer;
 let loader;
 let scene;
@@ -111,21 +116,26 @@ let updateSystem;
 let camera;
 let light;
 
-
+//variables for the character page
+let rotate = false; //if the model is rotating
 let player1Ready = false;
 let player2Ready = false;
-let pageOrientation = "left";
+let pageOrientation = "left"; //set to left if canvas is in canvasContainerLeft, right if in canvasContainerRight
+
+//doms for the character page
 let leftPage = document.getElementById("CPLeft");
 let rightPage = document.getElementById("CPRight");
+let canvasContainerRight = document.getElementById("canvasContainerRight");
+let canvasContainerLeft = document.getElementById("canvasContainerLeft");
+
+//buttons for the character page
 let backToP1 = document.getElementById("backToP1");
 let forwardToP2 = document.getElementById("forwardToP2");
 let readyButton1 = document.getElementById("p1ReadyButton");
 let readyButton2 = document.getElementById("p2ReadyButton");
-let canvasContainerRight = document.getElementById("canvasContainerRight");
-let canvasContainerLeft = document.getElementById("canvasContainerLeft");
 let gameBackButton = document.getElementById("gameBackButton");
 
-
+//functions for the character page
 function movePage(page, canvasContainer) {
   const checkPositionInterval = setInterval(() => {
     const pageRect = page.getBoundingClientRect();
@@ -155,6 +165,22 @@ function movePage(page, canvasContainer) {
   document.getElementById('CPLeft').style.left = left;
   document.getElementById('CPRight').style.left = right;
 }
+function turnButtonToCancel(button){
+  button.innerText = "CANCEL";
+  button.style.borderColor = "white";
+  button.style.backgroundColor = "rgba(255, 90, 90, 1)";
+}
+function turnButtonToReady(button){
+  button.innerText = "READY";
+  button.style.borderColor = "black";
+  if(button === readyButton1){
+    button.style.backgroundColor = "rgba(90, 90, 255, 1)";
+  }else{
+    button.style.backgroundColor = "rgba(255, 90, 90, 1)";
+  }
+}
+
+//rotation functions
 function constantlyRotate(){
   if(pageStatus === "main" && !rotate){
     rotatePlayer(player1, 0.003);
@@ -185,8 +211,11 @@ function rotatePlayer(player, angle){
   transform.rotation = multiplyQuaternions(transform.rotation, rotationQuat);
 }
 
+
+//starting and exiting the game
 function startGame(){
   $("#characterPage").hide();
+  showElement("game");
   $("#game").show();
   clearInterval(constantRotation);
   pageStatus = "game";
@@ -219,21 +248,7 @@ function cancelGame(){
   document.getElementById("gameBackButton").style.visibility = "hidden";
 }
 
-function turnButtonToCancel(button){
-  button.innerText = "CANCEL";
-  button.style.borderColor = "white";
-  button.style.backgroundColor = "rgba(255, 90, 90, 1)";
-}
-function turnButtonToReady(button){
-  button.innerText = "READY";
-  button.style.borderColor = "black";
-  if(button === readyButton1){
-    button.style.backgroundColor = "rgba(90, 90, 255, 1)";
-  }else{
-    button.style.backgroundColor = "rgba(255, 90, 90, 1)";
-  }
-}
-
+//button event listeners
 gameBackButton.addEventListener('click', function() {
   cancelGame();
 });
@@ -275,8 +290,7 @@ backToP1.addEventListener('click', function() {
   movePage(rightPage, canvasContainerLeft);
 });
 
-let rotate = false;
-
+//event listeners for model rotation on drag
 canvas.addEventListener("mousedown", () => {
   if(pageStatus === "main") {
     document.body.requestPointerLock();
@@ -288,7 +302,7 @@ canvas.addEventListener("mouseover", () => {
     canvas.style.cursor = "grab";
   }
 });
-document.addEventListener("mouseup", () => {
+canvas.addEventListener("mouseup", () => {
   if(pageStatus === "main"){
     rotate = false;
     document.exitPointerLock();
@@ -300,18 +314,20 @@ canvas.addEventListener("mousemove", (event) => {
   }
 });
 
-//init the game
+//init the systems
 await init();
 
-//load the objects
+//load the objects for character page
 let player1 = loadObject("playerObject", "static");
 let transform1 = player1.getComponentOfType(Transform);
 transform1.translation = [0, 0.5, 0];
 transform1.scale = [0.35, 0.7, 0.6];
+
 let floor = loadObject("Floor", "static");
 let transform2 = floor.getComponentOfType(Transform);
 transform2.translation = [0, -2.3, 0];
 transform2.scale = [10, 0.1, 10];
+
 let wall1 = loadObject("Wall1", "static");
 let transform3 = wall1.getComponentOfType(Transform);
 transform3.translation = [0, 0, -5];
@@ -423,9 +439,6 @@ async function init(){
   await initializeSystems();
   startSystems();
 }
-
-/////////////////////////////////////////////////////////////////////////////FIRST PAGE////////////////////////////////////////////////////////////
-
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
 
