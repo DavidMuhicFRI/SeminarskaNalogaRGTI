@@ -21,7 +21,7 @@ document.addEventListener("click", () => {
     pageStatus = "main";
     $("#intro").hide();
     showElement("characterPage");
-    $("#characterPage").show();
+    showElement("introCanvas")
   }
 });
 function showElement(element){
@@ -76,9 +76,7 @@ setTimeout(function(){
       setTimeout(function(){
         $("#intro").hide();
         showElement("characterPage");
-        $("#characterPage").show();
         showElement("introCanvas")
-        $("#introCanvas").show();
         pageStatus = "main";
       }, 3600);
     }else if(top > 10){
@@ -203,7 +201,6 @@ function rotatePlayer(player, angle){
 function startGame(){
   $("#characterPage").hide();
   showElement("game");
-  $("#game").show();
   clearInterval(constantRotation);
   pageStatus = "game";
   rotate = false;
@@ -327,6 +324,10 @@ transform3.scale = [10, 10, 0.1];
 let constantRotation = setInterval(constantlyRotate, 5);
 
 setAABBs();
+
+/////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
+
+
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
 
