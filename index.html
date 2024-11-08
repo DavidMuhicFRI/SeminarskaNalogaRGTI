@@ -28,7 +28,7 @@
   </div>
     <div id="characterPage">
       <div id="CPLeft" class="characterPageSides">
-        <div class="title">PLAYER1</div>
+        <div class="title player1">PLAYER1</div>
         <div class="characterPageMain">
           <div class="characterContainer columnFlex">
             <div class="characterTop columnFlex">
@@ -37,20 +37,33 @@
             </div>
             <div class="characterBottom columnFlex">
               <div class="characterDisplayDiv">
-                <img id="CPLeftPreviousCharacter" src="previousButton.png" class="arrowButton">
+                <img id="CPLeftPreviousCharacter" src="previousButtonBlue.png" class="arrowButton">
                 <div id="canvasContainerLeft" class="canvasContainer">
-                  <img id="superpowerImgLeft" class="image" src="superpowerImg.png">
+                  <img id="abilityImgLeft" class="image" src="superpowerImg.png">
                   <canvas id="introCanvas"></canvas>
                 </div>
-                <img id="CPLeftNextCharacter" src="nextButton.png" class="arrowButton">
+                <img id="CPLeftNextCharacter" src="nextButtonBlue.png" class="arrowButton">
               </div>
-              <div id="p1ReadyButton" class="button">READY</div>
             </div>
           </div>
-          <div class="characterExtra">
-            <div class="info-box">
-              <img id="abilityLeft" class="iconImage" src="superpowerImg.png">
-              <p id="abilityTextLeft">throws a MEGA ball</p>
+          <div class="characterExtra blueBorder">
+            <div class="stat">
+              <div class="statLabel">Difficulty: </div>
+              <div class="barContainer">
+                <div id="difficultyBarLeft" class="blueBar" style="width: 20%;"></div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Offense: </div>
+              <div class="barContainer">
+                <div id="offenseBarLeft" class="blueBar" style="width: 97%;"></div>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Defense: </div>
+              <div class="barContainer">
+                <div id="defenseBarLeft" class="blueBar" style="width: 10%;"></div>
+              </div>
             </div>
             <div class="info-box">
               <img class="iconImage" src="plusIcon.png">
@@ -60,39 +73,40 @@
               <img class="iconImage" src="minusIcon.png">
               <p id="weaknessLeft">is too strong to throw accurately</p>
             </div>
+            <div class="info-box">
+              <img id="abilityLeft" class="iconImage" src="superpowerImg.png">
+              <p id="abilityTextLeft">throws a MEGA ball</p>
+            </div>
+            <div class="funFact">
+              <p id="funFactLeft">Fun-fact: can lift your mom</p>
+            </div>
+          </div>
+          <img id="forwardToP2" src="nextButtonBlue.png">
+        </div>
+        <div id="p1ReadyButton" class="button">READY</div>
+      </div>
+      <div id="CPRight" class="characterPageSides">
+        <div class="title player2">PLAYER2</div>
+        <div class="characterPageMain">
+          <img id="backToP1" src="previousButton.png">
+          <div class="characterExtra redBorder">
             <div class="stat border">
               <div class="statLabel">Difficulty: </div>
               <div class="barContainer">
-                <div id="difficultyBarLeft" class="bar" style="width: 20%;"></div>
+                <div id="difficultyBarRight" class="redBar" style="width: 20%;"></div>
               </div>
             </div>
             <div class="stat">
               <div class="statLabel">Offense: </div>
               <div class="barContainer">
-                <div id="offenseBarLeft" class="bar" style="width: 97%;"></div>
+                <div id="offenseBarRight" class="redBar" style="width: 97%;"></div>
               </div>
             </div>
             <div class="stat">
               <div class="statLabel">Defense: </div>
               <div class="barContainer">
-                <div id="defenseBarLeft" class="bar" style="width: 10%;"></div>
+                <div id="defenseBarRight" class="redBar" style="width: 10%;"></div>
               </div>
-            </div>
-            <div class="fun-fact">
-              <p id="funFactLeft">Fun-fact: can lift your mom</p>
-            </div>
-          </div>
-          <img id="forwardToP2" src="nextButton.png">
-        </div>
-      </div>
-      <div id="CPRight" class="characterPageSides">
-        <div class="title">PLAYER2</div>
-        <div class="characterPageMain">
-          <img id="backToP1" src="previousButton.png">
-          <div class="characterExtra">
-            <div class="info-box">
-              <img id="abilityRight" class="iconImage" src="superpowerImg.png">
-              <p id="abilityTextRight">throws a MEGA ball</p>
             </div>
             <div class="info-box">
               <img class="iconImage" src="plusIcon.png">
@@ -102,25 +116,11 @@
               <img class="iconImage" src="minusIcon.png">
               <p id="weaknessRight">is too strong to throw accurately</p>
             </div>
-            <div class="stat border">
-              <div class="statLabel">Difficulty: </div>
-              <div class="barContainer">
-                <div id="difficultyBarRight" class="bar" style="width: 20%;"></div>
-              </div>
+            <div class="info-box">
+              <img id="abilityRight" class="iconImage" src="superpowerImg.png">
+              <p id="abilityTextRight">throws a MEGA ball</p>
             </div>
-            <div class="stat">
-              <div class="statLabel">Offense: </div>
-              <div class="barContainer">
-                <div id="offenseBarRight" class="bar" style="width: 97%;"></div>
-              </div>
-            </div>
-            <div class="stat">
-              <div class="statLabel">Defense: </div>
-              <div class="barContainer">
-                <div id="defenseBarRight" class="bar" style="width: 10%;"></div>
-              </div>
-            </div>
-            <div class="fun-fact">
+            <div class="funFact">
               <p id="funFactRight">Fun-fact: can lift your mom</p>
             </div>
           </div>
@@ -133,14 +133,14 @@
               <div class="characterDisplayDiv">
                 <img id="CPRightPreviousCharacter" src="previousButton.png" class="arrowButton">
                 <div id="canvasContainerRight" class="canvasContainer">
-                  <img id="superpowerImgRight" class="image" src="superpowerImg.png">
+                  <img id="abilityImgRight" class="image" src="superpowerImg.png">
                 </div>
                 <img id="CPRightNextCharacter" src="nextButton.png" class="arrowButton">
               </div>
-              <div id="p2ReadyButton" class="button">READY</div>
             </div>
           </div>
         </div>
+        <div id="p2ReadyButton" class="button">READY</div>
       </div>
     </div>
     <div id="game">

@@ -108,13 +108,14 @@ body, html {
 }
 
 #introCanvas {
-  width: 100%;
-  height: 100%;
+  width: 98%;
+  height: 98%;
+  border-radius: 10%;
+  border: 2px solid rgba(90, 90, 255, 1);
 }
 .canvasContainer {
   width: 50%;
   height: 85%;
-  border-radius: 15%;
 }
 
 #characterPage {
@@ -130,7 +131,7 @@ body, html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-around;
   position: absolute;
   top: 0;
   width: 100vw;
@@ -160,29 +161,42 @@ body, html {
   justify-content: space-evenly;
 }
 .title {
-  font-size: 8vh;
+  font-size: 10vh;
   font-weight: bold;
   margin-top: 2vh;
   font-family: "sans-serif";
-  border-bottom: 2px solid white;
+}
+.player1 {
+  color: rgba(90, 90, 255, 1);
+}
+.player2 {
+  color: rgba(255, 90, 90, 1);
 }
 .characterContainer {
   height: 90%;
   width: 40%;
-  margin: -7vh 0 0 -5vw;
+  margin: -4vh 0 0 -5vw;
 }
 .characterTop {
   height: 15%;
-  margin-bottom: -3vh;
+  margin-bottom: -6vh;
 }
 .character-name {
   font-size: 5vh;
   font-weight: bolder;
-  margin-bottom: -2vh;
+}
+#characterNameLeft {
+  color: rgba(90, 90, 255, 1);
+}
+#characterNameRight {
+  color: rgba(255, 90, 90, 1);
 }
 .character-title {
   font-size: 2.5vh;
   font-style: italic;
+}
+#characterTitleLeft {
+  color: rgba(90, 90, 255, 1)
 }
 .characterBottom {
   height: 90%;
@@ -197,16 +211,16 @@ body, html {
   width: 100%;
 }
 #p1ReadyButton {
-  width: 14vw;
-  height: 10vh;
-  background-color: red;
-  font-size: 6vh;
+  width: 20vw;
+  height: 14vh;
+  background-color: rgba(90, 90, 255, 1);
+  font-size: 7vh;
 }
 #p2ReadyButton {
-  width: 14vw;
-  height: 10vh;
-  background-color: blue;
-  font-size: 6vh;
+  width: 20vw;
+  height: 14vh;
+  background-color: rgba(255, 90, 90, 1);
+  font-size: 7vh;
 }
 .arrowButton {
   height: 18%;
@@ -220,17 +234,26 @@ body, html {
 .image {
   position: absolute;
   width: 4%;
-  height: 7%;
+  height: 8%;
   margin: -2% 0 0 18%;
+  border-radius: 5px;
+}
+#abilityImgLeft {
+  border: 2px solid rgba(90, 90, 255, 1);
+}
+#abilityImgRight {
+  border: 2px solid rgba(255, 90, 90, 1);
 }
 .button {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;
+  border-radius: 5px;
+  border: 2px solid black;
   font-weight: bold;
   cursor: pointer;
   color: black;
+  margin: -10vh 0 7vh 0;
 }
 .button:hover {
   transform: scale(1.1);
@@ -240,8 +263,17 @@ body, html {
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-evenly;
-  height: 90%;
-  width: 40%;
+  height: 60%;
+  width: 30%;
+  margin-top: -10vh;
+  border-radius: 5%;
+  padding: 2%;
+}
+.redBorder {
+  border: 2px solid rgba(255, 90, 90, 1);
+}
+.blueBorder {
+  border: 2px solid rgba(90, 90, 255, 1);
 }
 .info-box {
   display: flex;
@@ -277,15 +309,17 @@ body, html {
   background-color: transparent;
   overflow: hidden;
 }
-.bar {
-  height: 75%;
-  background-color: lawngreen;
-  border-radius: 7px;
+.redBar {
+  height: 100%;
+  background-color: rgba(255, 90, 90, 1);
+  border-radius: 4px;
   transition: width 0.3s ease;
 }
-.border {
-  padding-top: 2vh;
-  border-top: 2px solid white;
+.blueBar {
+  height: 100%;
+  background-color: rgba(90, 90, 255, 1);
+  border-radius: 4px;
+  transition: width 0.3s ease;
 }
 .iconImage {
   width: 10%;
@@ -293,19 +327,31 @@ body, html {
   margin-right: 3vw;
   flex-shrink: 0;
 }
-.fun-fact {
+.funFact {
   font-size: 1.8vh;
   font-weight: bolder;
   width: 100%;
   height: 10%;
   padding-left: 3%;
   font-style: italic;
-  color: red;
+}
+#funFactLeft {
+  color: rgba(90, 90, 255, 1);
+}
+#funFactRight {
+  color: rgba(255, 90, 90, 1);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
 }
 #backToP1, #forwardToP2 {
   width: 7vw;
   height: 20vh;
   margin-bottom: 5vh;
+  animation: pulse 1s ease-in-out infinite;
 }
 #backToP1:hover, #forwardToP2:hover {
   transform: scale(1.1);

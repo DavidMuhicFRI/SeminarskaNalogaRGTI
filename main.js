@@ -85,7 +85,8 @@ setTimeout(function(){
   }, 5);
 },4450);
 
-let playerReady = false;
+let player1Ready = false;
+let player2Ready = false;
 let leftPage = document.getElementById("CPLeft");
 let rightPage = document.getElementById("CPRight");
 let backToP1 = document.getElementById("backToP1");
@@ -102,6 +103,11 @@ function movePage(page, canvasContainer, left, right) {
 
     if (pageMiddle < 0 || pageMiddle > window.innerWidth) {
       canvasContainer.appendChild(canvas);
+      if(page === leftPage){
+        canvas.style.borderColor = "rgba(255, 90, 90, 1)";
+      } else {
+        canvas.style.borderColor = "rgba(90, 90, 255, 1)";
+      }
       clearInterval(checkPositionInterval);
     }
   }, 10);
@@ -119,22 +125,47 @@ function startGame(){
   rotate = false;
 }
 
-readyButton1.addEventListener('click', function() {
-  if(playerReady){
-    startGame();
+function turnButtonToCancel(button){
+  button.innerText = "CANCEL";
+  button.style.borderColor = "white";
+  button.style.backgroundColor = "rgba(255, 90, 90, 1)";
+}
+function turnButtonToReady(button){
+  button.innerText = "READY";
+  button.style.borderColor = "black";
+  if(button === readyButton1){
+    button.style.backgroundColor = "rgba(90, 90, 255, 1)";
   }else{
-    playerReady = true;
-    $("#p2ReadyButton").text("START");
-    movePage(leftPage, canvasContainerRight, "-100vw", "0");
+    button.style.backgroundColor = "rgba(255, 90, 90, 1)";
+  }
+}
+
+readyButton1.addEventListener('click', function() {
+  if(player1Ready){
+    turnButtonToReady(readyButton1);
+    player1Ready = false;
+  } else {
+    if(player2Ready){
+      startGame();
+    }else{
+      player1Ready = true;
+      turnButtonToCancel(readyButton1, player1Ready);
+      movePage(leftPage, canvasContainerRight, "-100vw", "0");
+    }
   }
 });
 readyButton2.addEventListener('click', function() {
-  if(playerReady){
-    startGame();
-  }else{
-    playerReady = true;
-    $("#p2ReadyButton").text("START");
-    movePage(rightPage, canvasContainerLeft, "0", "100vw");
+  if(player2Ready){
+    turnButtonToReady(readyButton2);
+    player2Ready = false;
+  } else {
+    if(player1Ready){
+      startGame();
+    }else{
+      player2Ready = true;
+      turnButtonToCancel(readyButton2, player2Ready);
+      movePage(rightPage, canvasContainerLeft, "0", "100vw");
+    }
   }
 });
 forwardToP2.addEventListener('click', function() {
