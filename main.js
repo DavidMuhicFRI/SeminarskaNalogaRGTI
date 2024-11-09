@@ -289,26 +289,29 @@ backToP1.addEventListener('click', function() {
 });
 
 //event listeners for model rotation on drag
-canvas.addEventListener("mousedown", () => {
-  if(pageStatus === "main") {
-    document.body.requestPointerLock();
-    rotate = true;
-  }
+document.addEventListener("pointerlockchange", () => {
+  rotate = document.pointerLockElement === canvas;
 });
-canvas.addEventListener("mouseover", () => {
-  if(pageStatus === "main"){
-    canvas.style.cursor = "grab";
+canvas.addEventListener("mousedown", () => {
+  if (pageStatus === "main") {
+    // Request pointer lock on mouse down
+    canvas.requestPointerLock();
   }
 });
 canvas.addEventListener("mouseup", () => {
-  if(pageStatus === "main"){
-    rotate = false;
+  if (pageStatus === "main") {
+    // Exit pointer lock on mouse up
     document.exitPointerLock();
   }
 });
 canvas.addEventListener("mousemove", (event) => {
   if (rotate && pageStatus === "main") {
-    rotatePlayer(player1, event.movementX * 0.01);
+    rotatePlayer(player1, event.movementX * 0.01); // Rotate player based on mouse movement
+  }
+});
+canvas.addEventListener("mouseover", () => {
+  if (pageStatus === "main") {
+    canvas.style.cursor = "grab";
   }
 });
 
@@ -316,7 +319,7 @@ canvas.addEventListener("mousemove", (event) => {
 await init();
 
 //load the objects for character page
-let player1 = loadObject("playerObject", "static");
+let player1 = loadObject("PlayerBody", "static");
 let transform1 = player1.getComponentOfType(Transform);
 transform1.translation = [0, 0.5, 0];
 transform1.scale = [0.35, 0.7, 0.6];
@@ -333,7 +336,7 @@ transform3.scale = [10, 10, 0.1];
 
 let constantRotation = setInterval(constantlyRotate, 5);
 
-setAABBs();
+//setAABBs();
 
 /////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
 
@@ -351,7 +354,7 @@ function initializeTheLoader(){
 }
 
 async function initializeTheScene(){
-  await loader.load('scene/test.gltf'); // Load the scene
+  await loader.load('scene/mainScene.gltf'); // Load the scene
   scene = await loader.loadScene(loader.defaultScene); // Load the default scene
   scene = new Node();
 }
