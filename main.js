@@ -17,9 +17,10 @@ const intro = document.getElementById('intro');
 const introLogo = document.getElementById('introLogo');
 const charactersImg = document.getElementById('introCharacters');
 
-intro.addEventListener("click", () => {
+intro.addEventListener("click", async() => {
   pageStatus = "main";
   $("#intro").hide();
+  await initCharacterPage();
   showElement("characterPage");
   showElement("introCanvas");
 });
@@ -110,6 +111,8 @@ let camera;
 let light;
 
 //variables for the character page
+let player1;
+let constantRotation;
 let rotate = false; //if the model is rotating
 let player1Ready = false;
 let player2Ready = false;
@@ -205,42 +208,20 @@ function rotatePlayer(player, angle){
 }
 
 //starting and exiting the game
-function startGame(){
+async function startGame(){
+  await initGame();
   $("#characterPage").hide();
   showElement("game");
   $("#game").show(); //for 2nd and later showings
-  clearInterval(constantRotation);
-  pageStatus = "game";
-  rotate = false;
-  canvas.id = "gameCanvas";
-  document.getElementById("game").appendChild(canvas);
-  document.body.style.cursor = "grab";
-  /*document.body.requestFullscreen().catch(err => {
+  document.body.requestFullscreen().catch(err => {
     console.log(err);
   });
-   */
-  document.getElementById("gameBackButton").style.visibility = "visible";
 }
 
-function cancelGame(){
+async function cancelGame(){
+  await initCharacterPage();
   $("#characterPage").show();
   $("#game").hide();
-  pageStatus = "main";
-  canvas.id = "introCanvas";
-  let container;
-  if(pageOrientation === "left"){
-    container = canvasContainerLeft;
-  }else{
-    container = canvasContainerRight;
-  }
-  container.appendChild(canvas);
-  document.body.style.cursor = "default";
-  constantRotation = setInterval(constantlyRotate, 5);
-  player1Ready = false;
-  player2Ready = false;
-  turnButtonToReady(readyButton1);
-  turnButtonToReady(readyButton2);
-  document.getElementById("gameBackButton").style.visibility = "hidden";
   document.exitFullscreen().catch(err => {
     console.log(err);
   });
@@ -248,7 +229,9 @@ function cancelGame(){
 
 //button event listeners
 gameBackButton.addEventListener('click', function() {
-  cancelGame();
+  cancelGame().then(() => {
+    console.log("Game cancelled");
+  });
 });
 readyButton1.addEventListener('click', function() {
   if(player1Ready){
@@ -258,7 +241,9 @@ readyButton1.addEventListener('click', function() {
   } else {
     if(player2Ready){
       //both players are ready, start the game
-      startGame();
+      startGame().then(() => {
+        console.log("Game started");
+      });
     }else{
       //set player to ready, set the button to cancel and move the page
       player1Ready = true;
@@ -273,7 +258,9 @@ readyButton2.addEventListener('click', function() {
     player2Ready = false;
   } else {
     if(player1Ready){
-      startGame();
+      startGame().then(() => {
+        console.log("Game started");
+      });
     }else{
       player2Ready = true;
       turnButtonToCancel(readyButton2, player2Ready);
@@ -316,31 +303,60 @@ canvas.addEventListener("mouseover", () => {
 });
 
 //init the systems
-await init();
+async function initCharacterPage() {
+  //correct the page variables and buttons
+  pageStatus = "main";
+  canvas.id = "introCanvas";
+  let container;
+  if(pageOrientation === "left"){
+    container = canvasContainerLeft;
+  }else{
+    container = canvasContainerRight;
+  }
+  container.appendChild(canvas);
+  document.body.style.cursor = "default";
+  player1Ready = false;
+  player2Ready = false;
+  turnButtonToReady(readyButton1);
+  turnButtonToReady(readyButton2);
+  document.getElementById("gameBackButton").style.visibility = "hidden";
+
+  //initialize the intro systems
+  await init(true);
 
 //load the objects for character page
-let player1 = loadObject("PlayerBody", "static");
-let transform1 = player1.getComponentOfType(Transform);
-transform1.translation = [0, 0.5, 0];
-transform1.scale = [0.35, 0.7, 0.6];
+  player1 = loadObject("PlayerBody", "static");
+  let transform1 = player1.getComponentOfType(Transform);
+  transform1.translation = [0, 0.5, 0];
+  transform1.scale = [0.35, 0.7, 0.6];
 
-let floor = loadObject("Floor", "static");
-let transform2 = floor.getComponentOfType(Transform);
-transform2.translation = [0, -2.3, 0];
-transform2.scale = [10, 0.1, 10];
+  let floor = loadObject("Floor", "static");
+  let transform2 = floor.getComponentOfType(Transform);
+  transform2.translation = [0, -2.3, 0];
+  transform2.scale = [10, 0.1, 10];
 
-let wall1 = loadObject("Wall1", "static");
-let transform3 = wall1.getComponentOfType(Transform);
-transform3.translation = [0, 0, -5];
-transform3.scale = [10, 10, 0.1];
+  let wall1 = loadObject("Wall1", "static");
+  let transform3 = wall1.getComponentOfType(Transform);
+  transform3.translation = [0, 0, -5];
+  transform3.scale = [10, 10, 0.1];
 
-let constantRotation = setInterval(constantlyRotate, 5);
-
-//setAABBs();
+  //rotate the player
+  constantRotation = setInterval(constantlyRotate, 5);
+}
 
 /////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
 
-
+async function initGame(){
+  await init(false);
+  clearInterval(constantRotation);
+  pageStatus = "game";
+  rotate = false;
+  canvas.id = "gameCanvas";
+  document.getElementById("game").appendChild(canvas);
+  document.body.style.cursor = "grab";
+  document.getElementById("gameBackButton").style.visibility = "visible";
+  //setAABBs();
+}
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
 
@@ -353,10 +369,13 @@ function initializeTheLoader(){
   loader = new GLTFLoader();
 }
 
-async function initializeTheScene(){
+async function initializeTheScene(intro){
   await loader.load('scene/mainScene.gltf'); // Load the scene
-  scene = await loader.loadScene(loader.defaultScene); // Load the default scene
-  scene = new Node();
+  if(intro){
+    scene = new Node();
+  }else{
+    scene = await loader.loadScene(loader.defaultScene); // Load the default scene
+  }
 }
 
 function initializeTheCamera(){
@@ -422,7 +441,6 @@ function update(time, dt) {
       component.update?.(time, dt);
     }
   });
-
   physics.update(time, dt);
 }
 
@@ -434,10 +452,10 @@ function resize({ displaySize: { width, height }}) {
   camera.getComponentOfType(Camera).aspect = width / height;
 }
 
-async function init(){
+async function init(intro){
   await initializeTheRenderer(renderer, canvas);
   await initializeTheLoader();
-  await initializeTheScene();
+  await initializeTheScene(intro);
   await initializeTheCamera();
   await initializeTheLight();
   await initPhysics();
@@ -473,3 +491,5 @@ function setAABBs(){
         node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
     });
 }
+
+
