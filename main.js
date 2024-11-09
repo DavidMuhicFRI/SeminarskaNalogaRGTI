@@ -215,9 +215,10 @@ function startGame(){
   canvas.id = "gameCanvas";
   document.getElementById("game").appendChild(canvas);
   document.body.style.cursor = "grab";
-  document.body.requestFullscreen().catch(err => {
+  /*document.body.requestFullscreen().catch(err => {
     console.log(err);
   });
+   */
   document.getElementById("gameBackButton").style.visibility = "visible";
 }
 

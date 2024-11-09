@@ -39,7 +39,7 @@
               <div class="characterDisplayDiv">
                 <img id="CPLeftPreviousCharacter" src="previousButtonBlue.png" class="arrowButton">
                 <div id="canvasContainerLeft" class="canvasContainer">
-                  <img id="abilityImgLeft" class="image" src="superpowerImg.png">
+                  <img id="abilityImgLeft" class="image" src="arnoldAbility.png">
                   <canvas id="introCanvas"></canvas>
                 </div>
                 <img id="CPLeftNextCharacter" src="nextButtonBlue.png" class="arrowButton">
@@ -74,7 +74,7 @@
               <p id="weaknessLeft">is too strong to throw accurately</p>
             </div>
             <div class="info-box">
-              <img id="abilityLeft" class="iconImage" src="superpowerImg.png">
+              <img id="abilityLeft" class="iconImage" src="arnoldAbility.png">
               <p id="abilityTextLeft">throws a MEGA ball</p>
             </div>
             <div class="funFact">
@@ -117,7 +117,7 @@
               <p id="weaknessRight">is too strong to throw accurately</p>
             </div>
             <div class="info-box">
-              <img id="abilityRight" class="iconImage" src="superpowerImg.png">
+              <img id="abilityRight" class="iconImage" src="chronoAbility.png">
               <p id="abilityTextRight">throws a MEGA ball</p>
             </div>
             <div class="funFact">
@@ -133,7 +133,7 @@
               <div class="characterDisplayDiv">
                 <img id="CPRightPreviousCharacter" src="previousButton.png" class="arrowButton">
                 <div id="canvasContainerRight" class="canvasContainer">
-                  <img id="abilityImgRight" class="image" src="superpowerImg.png">
+                  <img id="abilityImgRight" class="image" src="chronoAbility.png">
                 </div>
                 <img id="CPRightNextCharacter" src="nextButton.png" class="arrowButton">
               </div>
@@ -144,6 +144,59 @@
       </div>
     </div>
     <div id="game">
+      <div class="header">
+        <div class="title2">PLAYER1</div>
+        <div id="headerNameLeft" class="headerName">ARNOLD</div>
+        <div class="headerMiddle">
+          <p id="p1Score">0</p>
+          <p id="p2Score">0</p>
+        </div>
+        <div id="headerNameRight" class="headerName">ZARA</div>
+        <div class="title2">PLAYER2</div>
+      </div>
+      <div id="leftBarHeader" class="bar2"></div>
+      <div id="rightBarHeader" class="bar2"></div>
+      <div id="abilityContainerLeft" class="abilityContainer">
+        <div id="abilityBarLeft" class="abilityBar"></div>
+      </div>
+      <div id="abilityContainerRight" class="abilityContainer">
+        <div id="abilityBarRight" class="abilityBar"></div>
+      </div>
+      <div id="countdown">30</div>
+      <div id="heartsLeft" class="hearts">
+        <img src="heartImg.png" class="heartsItem">
+      </div>
+      <div id="heartsRight" class="hearts">
+        <img src="heartImg.png" class="heartsItem">
+      </div>
+      <div id="cupsLeft" class="cups">
+        <div class="cupsTop">
+          <div id="leftCup1" class="cup"></div>
+        </div>
+        <div class="cupsMiddle">
+          <div id="leftCup2" class="cup"></div>
+          <div id="leftCup3" class="cup"></div>
+        </div>
+        <div class="cupsBottom">
+          <div id="leftCup4" class="cup"></div>
+          <div id="leftCup5" class="cup"></div>
+          <div id="leftCup6" class="cup"></div>
+        </div>
+      </div>
+      <div id="cupsRight" class="cups">
+        <div class="cupsTop">
+          <div id="rightCup1" class="cup"></div>
+        </div>
+        <div class="cupsMiddle">
+          <div id="rightCup2" class="cup"></div>
+          <div id="rightCup3" class="cup"></div>
+        </div>
+        <div class="cupsBottom">
+          <div id="rightCup4" class="cup"></div>
+          <div id="rightCup5" class="cup"></div>
+          <div id="rightCup6" class="cup"></div>
+        </div>
+      </div>
     </div>
     <div id="gameBackButton">BACK</div>
 </body>
