@@ -116,8 +116,8 @@ let camera;
 let light;
 
 //variables for the character page
-let player1;
-let constantRotation;
+let player1; //the player object for character page purposes
+let constantRotation; //interval for the rotation
 let rotate = false; //if the model is rotating
 let player1Ready = false;
 let player2Ready = false;
