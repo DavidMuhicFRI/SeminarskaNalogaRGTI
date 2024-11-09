@@ -12,17 +12,19 @@ import { Light } from "./core/Light.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
+let skipIntro = false;
 let pageStatus = "intro";
 const intro = document.getElementById('intro');
 const introLogo = document.getElementById('introLogo');
 const charactersImg = document.getElementById('introCharacters');
 
 intro.addEventListener("click", async() => {
+  await initCharacterPage();
   pageStatus = "main";
   $("#intro").hide();
-  await initCharacterPage();
   showElement("characterPage");
   showElement("introCanvas");
+  skipIntro = true;
 });
 
 //functions for the intro
@@ -81,11 +83,14 @@ setTimeout(function(){
       setTimeout(function(){
         elementDisappear("introLogo");
       }, 700);
-      setTimeout(function(){
-        $("#intro").hide();
-        showElement("characterPage");
-        showElement("introCanvas")
-        pageStatus = "main";
+      setTimeout(async function(){
+        if(!skipIntro) {
+          await initCharacterPage();
+          $("#intro").hide();
+          showElement("characterPage");
+          showElement("introCanvas")
+          pageStatus = "main";
+        }
       }, 3600);
     }else if(top > 10){
       $("#introCharacters").hide();

@@ -376,7 +376,6 @@ body, html {
   /*filter: blur(5px);*/
 }
 #gameBackButton{
-  display: none;
   visibility: hidden;
   position: absolute;
   top: 2vh;
