@@ -292,14 +292,14 @@ canvas.addEventListener("mousemove", (event) => {
     rotatePlayer(player1, event.movementX * 0.01); // Rotate player based on mouse movement
   }else if(pageStatus === "game" && ballGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
-    console.log(dragEnd);
     let transform = ball.getComponentOfType(Transform);
-    console.log(calculateDragDistance());
-    console.log(calculateDragForce());
     let force = calculateDragForce();
-    let dragToughness = 0.01 / (Math.pow(force, 1/3) + 1);
+    let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
+    dragToughness > 0.01 ? dragToughness = 0.01 : dragToughness;
     transform.translation[0] -= event.movementX * 0.01;
-    transform.translation[1] -= event.movementY * dragToughness;
+    if(calculateDragForce() > 0){
+      transform.translation[1] -= event.movementY * dragToughness;
+    }
     if(playerTurn === 1) {
       transform.translation[2] -= event.movementY * dragToughness;
     }else{
@@ -382,8 +382,7 @@ canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game"){
     ballGrabbed = false;
     ballSelectInterval = setInterval(blinkBall, 40);
-    console.log(Math.abs(calculateDragDistance()));
-    if(calculateDragDistance() < 50){
+    if(calculateDragDistance() < 50 || calculateDragForce() < 0){
       setBall();
     }else{
       throwBall();
