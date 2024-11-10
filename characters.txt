@@ -1,0 +1,48 @@
+1. Chad/Tren-t
+pros: maximum power increased by 20%, body hits apply bleeding vision
+cons: is bald
+ability: (MEGA BALL) throws a mega ball that knocks out the enemy for a round
+theme design:
+
+2. Chrono
+pros: gets extra energy based on remaining turn time
+cons: turn time reduced by 10 seconds
+ability: (REWIND) can revert the enemy's last move or his own throw
+
+3. Spring
+pros: can manually set the bounciness of her balls
+cons: only gets energy with ball bounces
+ability: (BOUNCER) throws a super bouncy ball that speeds up with each bounce
+
+4. Tripp
+pros: can see what potion is in every cup
+cons: potions effect him 1.5x more
+ability: (SOUL SWAP)can switch his debuffs and health with the enemy's
+
+5. EVO
+pros: gets buffs with evolving
+cons: has to recharge every 3 turns
+ability: (EVOLVE) can evolve into a stronger form
+1. no longer receives physical damage from body throws
+2. no longer receives debuffs
+3. aimbot
+
+6. Vision
+pros: sees well in the dark, debuffs are weaker in darkness
+cons: sees bad in the light, debuffs are stronger in light
+ability: (DARKNESS) turns the lights down a bit
+
+7. Curve
+pros: can manually set his gravity
+cons: less accurate throws
+ability: (CURVE) can curve his throw
+
+8. Red
+pros: can steal the enemy's energy with hitting cups and health with body hits
+cons: has less health
+ability: (TRANSFUSION) can transfer his health to energy and vice versa
+
+
+
+
+

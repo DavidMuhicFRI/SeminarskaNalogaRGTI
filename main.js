@@ -48,28 +48,28 @@ elementAppear("introCharacters");
 setTimeout(function(){
   elementAppear("name1");
   elementAppear("name2");
-}, 700);
+}, 600);
 
 //hide names
 setTimeout(function(){
   elementDisappear("name1");
   elementDisappear("name2");
-}, 1600);
+}, 1700);
 
 //look at each other
 setTimeout(function(){
   charactersImg.src = "animationTogether.png";
-},2500);
+},2000);
 
 //look at the camera
 setTimeout(function(){
   charactersImg.src = "animationNormal.png";
-},3600);
+},3000);
 
 //look up
 setTimeout(function(){
   charactersImg.src = "animationUp.png";
-}, 4000);
+}, 3400);
 
 //logo drops and disappears
 let top = -100;
@@ -83,7 +83,7 @@ setTimeout(function(){
       clearInterval(moveLogo);
       setTimeout(function(){
         elementDisappear("introLogo");
-      }, 700);
+      }, 400);
       setTimeout(async function(){
         if(!skipIntro) {
           await initCharacterPage();
@@ -92,7 +92,7 @@ setTimeout(function(){
           showElement("introCanvas")
           pageStatus = "main";
         }
-      }, 3600);
+      }, 3400);
     }else if(top > 10){
       $("#introCharacters").hide();
       $("#introAnd").hide();
@@ -100,7 +100,7 @@ setTimeout(function(){
       $("#name2").hide();
     }
   }, 5);
-},4450);
+},3450);
 
 /////////////////////////////////////////////////////////////////////////////CHARACTER PAGE/////////////////////////////////////////////////////////////
 
@@ -185,7 +185,7 @@ function turnButtonToReady(button){
 //rotation functions
 function constantlyRotate(){
   if(pageStatus === "main" && !rotate){
-    rotatePlayer(player1, 0.003);
+    rotatePlayer(player1, 0.002);
   }
 }
 function createQuaternionFromAxisAngle(axis, angle) {
@@ -216,21 +216,17 @@ function rotatePlayer(player, angle){
 //starting and exiting the game
 async function startGame(){
   await initGame();
+  console.log("scene:", scene);
   $("#characterPage").hide();
   showElement("game");
   $("#game").show(); //for 2nd and later showings
-  document.body.requestFullscreen().catch(err => {
-    console.log(err);
-  });
 }
 
+//exit game
 async function cancelGame(){
   await initCharacterPage();
   $("#characterPage").show();
   $("#game").hide();
-  document.exitFullscreen().catch(err => {
-    console.log(err);
-  });
 }
 
 //button event listeners
@@ -291,15 +287,24 @@ canvas.addEventListener("mousedown", () => {
     canvas.requestPointerLock();
   }
 });
-canvas.addEventListener("mouseup", () => {
-  if (pageStatus === "main") {
-    // Exit pointer lock on mouse up
-    document.exitPointerLock();
-  }
-});
 canvas.addEventListener("mousemove", (event) => {
   if (rotate && pageStatus === "main") {
     rotatePlayer(player1, event.movementX * 0.01); // Rotate player based on mouse movement
+  }else if(pageStatus === "game" && ballGrabbed){
+    dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
+    console.log(dragEnd);
+    let transform = ball.getComponentOfType(Transform);
+    console.log(calculateDragDistance());
+    console.log(calculateDragForce());
+    let force = calculateDragForce();
+    let dragToughness = 0.01 / (Math.pow(force, 1/3) + 1);
+    transform.translation[0] -= event.movementX * 0.01;
+    transform.translation[1] -= event.movementY * dragToughness;
+    if(playerTurn === 1) {
+      transform.translation[2] -= event.movementY * dragToughness;
+    }else{
+      transform.translation[2] += event.movementY * dragToughness;
+    }
   }
 });
 canvas.addEventListener("mouseover", () => {
@@ -352,16 +357,98 @@ async function initCharacterPage() {
 
 /////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
 
+let playerTurn = 1;
+let player1Object;
+let player2Object;
+let ball;
+let ballBlink = 0;
+let ballSelectInterval;
+let ballGrabbed = false;
+let dragStart = [0, 0];
+let dragEnd = [0, 0];
+
+document.getElementById("ballDiv").addEventListener("mousedown", function(event){
+  ballGrabbed = true;
+  dragStart = [event.clientX, event.clientY];
+  dragEnd = [event.clientX, event.clientY];
+  clearInterval(ballSelectInterval);
+  //cursor lock
+  canvas.requestPointerLock();
+  let transform = ball.getComponentOfType(Transform);
+  transform.scale = [0.18, 0.18, 0.18];
+});
+
+canvas.addEventListener("mouseup", () => {
+  if(pageStatus === "game"){
+    ballGrabbed = false;
+    ballSelectInterval = setInterval(blinkBall, 40);
+    console.log(Math.abs(calculateDragDistance()));
+    if(calculateDragDistance() < 50){
+      setBall();
+    }else{
+      throwBall();
+    }
+  }
+  document.exitPointerLock();
+});
+
 async function initGame(){
-  await init(false);
-  clearInterval(constantRotation);
   pageStatus = "game";
   rotate = false;
   canvas.id = "gameCanvas";
   document.getElementById("game").appendChild(canvas);
-  document.body.style.cursor = "grab";
+  await init(false);
+  clearInterval(constantRotation);
+  document.body.style.cursor = "default";
   document.getElementById("gameBackButton").style.visibility = "visible";
+  initGameObjects();
   //setAABBs();
+}
+
+function calculateDragDistance(){
+  return Math.sqrt(Math.pow(dragEnd[0] - dragStart[0], 2) + Math.pow(dragEnd[1] - dragStart[1], 2));
+}
+function calculateDragAngle(){
+  return Math.atan((dragEnd[1] - dragStart[1]) / (dragEnd[0] - dragStart[0]));
+}
+function calculateDragForce(){
+  return dragEnd[1] - dragStart[1];
+}
+
+function throwBall(){
+
+}
+
+function blinkBall(){
+  let ballTransform = ball.getComponentOfType(Transform);
+  if(!ballGrabbed){
+    if(ballTransform.scale[0] < 0.22 && ballBlink === 0){
+      ballTransform.scale = ballTransform.scale.map(x => x + 0.002);
+    }else if(ballTransform.scale[0] > 0.15 && ballBlink === 1){
+      ballTransform.scale = ballTransform.scale.map(x => x - 0.002);
+    }else if(ballTransform.scale[0] >= 0.22){
+      ballBlink = 1;
+    }else{
+      ballBlink = 0;
+    }
+  }
+}
+
+function setBall(){
+  let transform = ball.getComponentOfType(Transform);
+  if(playerTurn === 1){
+    transform.translation = [0, 6.5, -5];
+  }else{
+    transform.translation = [0, 6.5, 5];
+  }
+  if(!ballSelectInterval){
+    ballSelectInterval = setInterval(blinkBall, 20);
+  }
+}
+
+function initGameObjects(){
+  ball = getObject("Ball", "dynamic");
+  setBall();
 }
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
@@ -401,8 +488,8 @@ function initializeTheCamera(intro){
   }else{
     //camera.addComponent(new FirstPersonController(camera, canvas));
     camera.addComponent(new Transform({
-      translation: [0, 9, 10.5],
-      rotation: [0.128, 0, 0, -1],
+      translation: [0, 9, -10.5],
+      rotation: [0, 1, 0.13, 0],
     }));
   }
   camera.isStatic = true;
@@ -475,8 +562,8 @@ function update(time, dt) {
       component.update?.(time, dt);
     }
   });
-  physics.update(time, dt);
-  console.log(camera.getComponentOfType(Transform).translation, camera.getComponentOfType(Transform).rotation);
+  //console.log(camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation, camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).rotation);
+  //physics.update(time, dt);
 }
 
 function render() {
@@ -499,6 +586,21 @@ async function init(intro){
 }
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
+
+function getObject(name, type){
+  let object = scene.find(node => node.name === name);
+  if(!object){
+    object = loadObject(name, type);
+  }
+  if(type){
+    if(type === "static"){
+      object.isStatic = true;
+    }else{
+      object.isDynamic = true;
+    }
+  }
+  return object;
+}
 
 function loadObject(name, type){
   let object = loader.loadNode(name);

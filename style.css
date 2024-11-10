@@ -378,7 +378,7 @@ body, html {
 #gameBackButton{
   visibility: hidden;
   position: absolute;
-  top: 2vh;
+  top: 95vh;
   left: 2vw;
   width: 5vw;
   height: 3vh;
@@ -553,4 +553,17 @@ body, html {
   background-color: white;
   border-radius: 50%;
   border: 0.5vh solid black;
+}
+#ballDiv{
+  position: absolute;
+  top: 62.8vh;
+  left: 48.6vw;
+  width: 5vh;
+  height: 5vh;
+  border-radius: 50%;
+  background-color: transparent;
+  z-index: 1;
+}
+#ballDiv:hover {
+  cursor: grab;
 }
