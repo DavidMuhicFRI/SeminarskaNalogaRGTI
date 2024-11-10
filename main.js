@@ -399,10 +399,10 @@ function initializeTheCamera(intro){
       rotation: [-0.15, 0, 0, 1],
     }));
   }else{
-    camera.addComponent(new FirstPersonController(camera, canvas));
+    //camera.addComponent(new FirstPersonController(camera, canvas));
     camera.addComponent(new Transform({
-      translation: [15.3, 14.5, 0],
-      rotation: [-0.20, 0.7, 0.2, 0.7],
+      translation: [0, 9, 10.5],
+      rotation: [0.128, 0, 0, -1],
     }));
   }
   camera.isStatic = true;
@@ -476,6 +476,7 @@ function update(time, dt) {
     }
   });
   physics.update(time, dt);
+  console.log(camera.getComponentOfType(Transform).translation, camera.getComponentOfType(Transform).rotation);
 }
 
 function render() {
