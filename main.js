@@ -185,7 +185,7 @@ function turnButtonToReady(button){
 //rotation functions
 function constantlyRotate(){
   if(pageStatus === "main" && !rotate){
-    rotatePlayer(player1, 0.003);
+    rotatePlayer(player1, 0.002);
   }
 }
 function createQuaternionFromAxisAngle(axis, angle) {
@@ -287,15 +287,20 @@ canvas.addEventListener("mousedown", () => {
     canvas.requestPointerLock();
   }
 });
-canvas.addEventListener("mouseup", () => {
-  if (pageStatus === "main") {
-    // Exit pointer lock on mouse up
-    document.exitPointerLock();
-  }
-});
 canvas.addEventListener("mousemove", (event) => {
   if (rotate && pageStatus === "main") {
     rotatePlayer(player1, event.movementX * 0.01); // Rotate player based on mouse movement
+  }else if(pageStatus === "game" && ballGrabbed){
+    dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
+    console.log(dragEnd);
+    let transform = ball.getComponentOfType(Transform);
+    transform.translation[0] -= event.movementX * 0.01;
+    transform.translation[1] -= event.movementY * 0.01;
+    if(playerTurn === 1) {
+      transform.translation[2] -= event.movementY * 0.01;
+    }else{
+      transform.translation[2] += event.movementY * 0.01;
+    }
   }
 });
 canvas.addEventListener("mouseover", () => {
@@ -352,6 +357,36 @@ let playerTurn = 1;
 let player1Object;
 let player2Object;
 let ball;
+let ballBlink = 0;
+let ballSelectInterval;
+let ballGrabbed = false;
+let dragStart = [0, 0];
+let dragEnd = [0, 0];
+
+document.getElementById("ballDiv").addEventListener("mousedown", function(event){
+  ballGrabbed = true;
+  dragStart = [event.clientX, event.clientY];
+  dragEnd = [event.clientX, event.clientY];
+  clearInterval(ballSelectInterval);
+  //cursor lock
+  canvas.requestPointerLock();
+  let transform = ball.getComponentOfType(Transform);
+  transform.scale = [0.18, 0.18, 0.18];
+});
+
+canvas.addEventListener("mouseup", () => {
+  if(pageStatus === "game"){
+    ballGrabbed = false;
+    ballSelectInterval = setInterval(blinkBall, 20);
+    console.log(Math.abs(dragEnd[0] - dragStart[0]) + Math.abs(dragEnd[1] - dragStart[1]));
+    if(Math.abs(dragEnd[0] - dragStart[0]) + Math.abs(dragEnd[1] - dragStart[1]) < 20){
+      setBall();
+    }else{
+
+    }
+  }
+  document.exitPointerLock();
+});
 
 async function initGame(){
   pageStatus = "game";
@@ -359,12 +394,26 @@ async function initGame(){
   canvas.id = "gameCanvas";
   document.getElementById("game").appendChild(canvas);
   await init(false);
-  console.log(scene);
   clearInterval(constantRotation);
-  document.body.style.cursor = "grab";
+  document.body.style.cursor = "default";
   document.getElementById("gameBackButton").style.visibility = "visible";
   initGameObjects();
   //setAABBs();
+}
+
+function blinkBall(){
+  let ballTransform = ball.getComponentOfType(Transform);
+  if(!ballGrabbed){
+    if(ballTransform.scale[0] < 0.22 && ballBlink === 0){
+      ballTransform.scale = ballTransform.scale.map(x => x + 0.002);
+    }else if(ballTransform.scale[0] > 0.15 && ballBlink === 1){
+      ballTransform.scale = ballTransform.scale.map(x => x - 0.002);
+    }else if(ballTransform.scale[0] >= 0.22){
+      ballBlink = 1;
+    }else{
+      ballBlink = 0;
+    }
+  }
 }
 
 function setBall(){
@@ -373,6 +422,9 @@ function setBall(){
     transform.translation = [0, 6.5, -5];
   }else{
     transform.translation = [0, 6.5, 5];
+  }
+  if(!ballSelectInterval){
+    ballSelectInterval = setInterval(blinkBall, 20);
   }
 }
 
