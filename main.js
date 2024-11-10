@@ -1,7 +1,7 @@
 import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
-import { Camera, Model, Transform, Node } from './core.js';
+import { Camera, Model, Transform, Node, Ball } from './core.js';
 import {
     calculateAxisAlignedBoundingBox,
     mergeAxisAlignedBoundingBoxes,
@@ -285,6 +285,8 @@ canvas.addEventListener("mousedown", () => {
   if (pageStatus === "main") {
     // Request pointer lock on mouse down
     canvas.requestPointerLock();
+  }else if(pageStatus === "game" && ballGrabbed){
+
   }
 });
 canvas.addEventListener("mousemove", (event) => {
@@ -292,19 +294,8 @@ canvas.addEventListener("mousemove", (event) => {
     rotatePlayer(player1, event.movementX * 0.01); // Rotate player based on mouse movement
   }else if(pageStatus === "game" && ballGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
-    let transform = ball.getComponentOfType(Transform);
-    let force = calculateDragForce();
-    let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
-    dragToughness > 0.01 ? dragToughness = 0.01 : dragToughness;
-    transform.translation[0] -= event.movementX * 0.01;
-    if(calculateDragForce() > 0){
-      transform.translation[1] -= event.movementY * dragToughness;
-    }
-    if(playerTurn === 1) {
-      transform.translation[2] -= event.movementY * dragToughness;
-    }else{
-      transform.translation[2] += event.movementY * dragToughness;
-    }
+    ballDrag(event);
+    arrowDrag(event);
   }
 });
 canvas.addEventListener("mouseover", () => {
@@ -367,29 +358,54 @@ let ballGrabbed = false;
 let dragStart = [0, 0];
 let dragEnd = [0, 0];
 
+
+const arrow = document.getElementById('arrow');
+
+
+//event listeners for the game
 document.getElementById("ballDiv").addEventListener("mousedown", function(event){
   ballGrabbed = true;
+
   dragStart = [event.clientX, event.clientY];
   dragEnd = [event.clientX, event.clientY];
+
   clearInterval(ballSelectInterval);
   //cursor lock
   canvas.requestPointerLock();
   let transform = ball.getComponentOfType(Transform);
   transform.scale = [0.18, 0.18, 0.18];
 });
-
 canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game"){
     ballGrabbed = false;
-    ballSelectInterval = setInterval(blinkBall, 40);
-    if(calculateDragDistance() < 50 || calculateDragForce() < 0){
+    ballSelectInterval = setInterval(blinkBall, 30);
+    if(calculateDragDistance() < 85 || calculateDragForce() < 0){
       setBall();
     }else{
+      ball.getComponentOfType(Ball).startPosition = [0, 6.5, -5];
       throwBall();
     }
   }
   document.exitPointerLock();
 });
+
+function arrowDrag(event){
+}
+
+//game functions
+function ballDrag(event){
+  let transform = ball.getComponentOfType(Transform);
+  let force = calculateDragForce();
+  let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
+  dragToughness = Math.min(dragToughness, 0.01);
+  transform.translation[0] -= event.movementX * 0.01;
+  transform.translation[1] -= event.movementY * dragToughness;
+  if(playerTurn === 1) {
+    transform.translation[2] -= event.movementY * dragToughness;
+  }else{
+    transform.translation[2] += event.movementY * dragToughness;
+  }
+}
 
 async function initGame(){
   pageStatus = "game";
@@ -413,9 +429,15 @@ function calculateDragAngle(){
 function calculateDragForce(){
   return dragEnd[1] - dragStart[1];
 }
+function calculateDragSideForce(){
+  return dragEnd[0] - dragStart[0];
+}
 
 function throwBall(){
-
+  const ballObject = ball.getComponentOfType(Ball);
+  ballObject.acceleration = calculateDragForce();
+  ballObject.moving = true;
+  ballObject.setStartVelocity();
 }
 
 function blinkBall(){
@@ -440,6 +462,7 @@ function setBall(){
   }else{
     transform.translation = [0, 6.5, 5];
   }
+  ball.getComponentOfType(Ball).startPosition = transform.translation;
   if(!ballSelectInterval){
     ballSelectInterval = setInterval(blinkBall, 20);
   }
@@ -447,6 +470,7 @@ function setBall(){
 
 function initGameObjects(){
   ball = getObject("Ball", "dynamic");
+  ball.addComponent(new Ball(ball, canvas));
   setBall();
 }
 

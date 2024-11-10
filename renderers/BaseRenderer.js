@@ -22,6 +22,7 @@ export class BaseRenderer {
     }
 
   mat3tomat4(matrix) {
+      //console.log(matrix);
     return mat4.fromValues(
       matrix[0], matrix[1], matrix[2], 0,
       matrix[3], matrix[4], matrix[5], 0,
