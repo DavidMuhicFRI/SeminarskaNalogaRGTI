@@ -433,12 +433,12 @@ async function initializeTheLight(intro){
     }));
   }else{
     light.addComponent(new Transform({
-      translation: [0, 5, 0],
-      rotation: [0, 0.5, 0, 1],
+      translation: [0, 7, 0],
+      rotation: [-0.35, 0, 0, 1],
   }));
     light.addComponent(new Light({
       color: [250, 245, 220],
-      intensity: 500,
+      intensity: 20,
       attenuation: [0.001, 0.01, 0.03],
       ambientOff: 0.01,
       ambientOn: 0.04,
@@ -446,7 +446,7 @@ async function initializeTheLight(intro){
       fovy: Math.PI / 1.2,
       aspect: 1,
       near: 0.1,
-      far: 100,
+      far: 10,
     }));
   }
   camera.addChild(light);
