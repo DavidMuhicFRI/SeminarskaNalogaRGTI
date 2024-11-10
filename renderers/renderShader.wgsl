@@ -113,7 +113,7 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
 
 
     var visibility = 0.0;
-    let oneOverShadowDepthTextureSize = 1.0 / 4096;
+    let oneOverShadowDepthTextureSize = 1.0 / 2048;
     for (var y = -1; y <= 1; y++) {
         for (var x = -1; x <= 1; x++) {
             let offset = vec2<f32>(vec2(x, y)) * oneOverShadowDepthTextureSize;

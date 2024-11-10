@@ -48,28 +48,28 @@ elementAppear("introCharacters");
 setTimeout(function(){
   elementAppear("name1");
   elementAppear("name2");
-}, 700);
+}, 600);
 
 //hide names
 setTimeout(function(){
   elementDisappear("name1");
   elementDisappear("name2");
-}, 1600);
+}, 1700);
 
 //look at each other
 setTimeout(function(){
   charactersImg.src = "animationTogether.png";
-},2500);
+},2000);
 
 //look at the camera
 setTimeout(function(){
   charactersImg.src = "animationNormal.png";
-},3600);
+},3000);
 
 //look up
 setTimeout(function(){
   charactersImg.src = "animationUp.png";
-}, 4000);
+}, 3400);
 
 //logo drops and disappears
 let top = -100;
@@ -83,7 +83,7 @@ setTimeout(function(){
       clearInterval(moveLogo);
       setTimeout(function(){
         elementDisappear("introLogo");
-      }, 700);
+      }, 400);
       setTimeout(async function(){
         if(!skipIntro) {
           await initCharacterPage();
@@ -92,7 +92,7 @@ setTimeout(function(){
           showElement("introCanvas")
           pageStatus = "main";
         }
-      }, 3600);
+      }, 3400);
     }else if(top > 10){
       $("#introCharacters").hide();
       $("#introAnd").hide();
@@ -100,7 +100,7 @@ setTimeout(function(){
       $("#name2").hide();
     }
   }, 5);
-},4450);
+},3450);
 
 /////////////////////////////////////////////////////////////////////////////CHARACTER PAGE/////////////////////////////////////////////////////////////
 
@@ -216,21 +216,17 @@ function rotatePlayer(player, angle){
 //starting and exiting the game
 async function startGame(){
   await initGame();
+  console.log("scene:", scene);
   $("#characterPage").hide();
   showElement("game");
   $("#game").show(); //for 2nd and later showings
-  document.body.requestFullscreen().catch(err => {
-    console.log(err);
-  });
 }
 
+//exit game
 async function cancelGame(){
   await initCharacterPage();
   $("#characterPage").show();
   $("#game").hide();
-  document.exitFullscreen().catch(err => {
-    console.log(err);
-  });
 }
 
 //button event listeners
@@ -352,16 +348,37 @@ async function initCharacterPage() {
 
 /////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
 
+let playerTurn = 1;
+let player1Object;
+let player2Object;
+let ball;
+
 async function initGame(){
-  await init(false);
-  clearInterval(constantRotation);
   pageStatus = "game";
   rotate = false;
   canvas.id = "gameCanvas";
   document.getElementById("game").appendChild(canvas);
+  await init(false);
+  console.log(scene);
+  clearInterval(constantRotation);
   document.body.style.cursor = "grab";
   document.getElementById("gameBackButton").style.visibility = "visible";
+  initGameObjects();
   //setAABBs();
+}
+
+function setBall(){
+  let transform = ball.getComponentOfType(Transform);
+  if(playerTurn === 1){
+    transform.translation = [0, 6.5, -5];
+  }else{
+    transform.translation = [0, 6.5, 5];
+  }
+}
+
+function initGameObjects(){
+  ball = getObject("Ball", "dynamic");
+  setBall();
 }
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
@@ -401,8 +418,8 @@ function initializeTheCamera(intro){
   }else{
     //camera.addComponent(new FirstPersonController(camera, canvas));
     camera.addComponent(new Transform({
-      translation: [0, 9, 10.5],
-      rotation: [0.128, 0, 0, -1],
+      translation: [0, 9, -10.5],
+      rotation: [0, 1, 0.13, 0],
     }));
   }
   camera.isStatic = true;
@@ -475,8 +492,8 @@ function update(time, dt) {
       component.update?.(time, dt);
     }
   });
-  physics.update(time, dt);
-  console.log(camera.getComponentOfType(Transform).translation, camera.getComponentOfType(Transform).rotation);
+  //console.log(camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation, camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).rotation);
+  //physics.update(time, dt);
 }
 
 function render() {
@@ -499,6 +516,21 @@ async function init(intro){
 }
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
+
+function getObject(name, type){
+  let object = scene.find(node => node.name === name);
+  if(!object){
+    object = loadObject(name, type);
+  }
+  if(type){
+    if(type === "static"){
+      object.isStatic = true;
+    }else{
+      object.isDynamic = true;
+    }
+  }
+  return object;
+}
 
 function loadObject(name, type){
   let object = loader.loadNode(name);

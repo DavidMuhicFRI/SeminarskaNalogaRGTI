@@ -443,6 +443,7 @@ export class GLTFLoader {
         const node = new Node();
 
         node.addComponent(new Transform(gltfSpec));
+        node.name = gltfSpec.name;
 
         if (gltfSpec.children) {
             for (const childIndex of gltfSpec.children) {

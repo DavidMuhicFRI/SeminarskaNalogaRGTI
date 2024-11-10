@@ -2,6 +2,7 @@
 pros: maximum power increased by 20%, body hits apply bleeding vision
 cons: is bald
 ability: (MEGA BALL) throws a mega ball that knocks out the enemy for a round
+theme design:
 
 2. Chrono
 pros: gets extra energy based on remaining turn time
