@@ -31,13 +31,24 @@ export function calculateAxisAlignedBoundingBox(mesh) {
 }
 
 export function mergeAxisAlignedBoundingBoxes(boxes) {
-    const initial = {
-        min: vec3.clone(boxes[0].min),
-        max: vec3.clone(boxes[0].max),
-    };
+  if (boxes.length === 0) {
+    console.error("Error: 'boxes' array is empty in mergeAxisAlignedBoundingBoxes.");
+    return null;
+  }
 
-    return {
-        min: boxes.reduce(({ min: amin }, { min: bmin }) => vec3.min(amin, amin, bmin), initial),
-        max: boxes.reduce(({ max: amax }, { max: bmax }) => vec3.max(amax, amax, bmax), initial),
-    };
+  const initialBox = boxes.find(box => box && box.min && box.max);
+  if (!initialBox) {
+    console.error("Error: No valid bounding boxes in 'boxes' array.");
+    return null;
+  }
+
+  const initial = {
+    min: vec3.clone(initialBox.min),
+    max: vec3.clone(initialBox.max),
+  };
+
+  return {
+    min: boxes.reduce((accMin, box) => box && box.min ? vec3.min(accMin, accMin, box.min) : accMin, initial.min),
+    max: boxes.reduce((accMax, box) => box && box.max ? vec3.max(accMax, accMax, box.max) : accMax, initial.max),
+  };
 }

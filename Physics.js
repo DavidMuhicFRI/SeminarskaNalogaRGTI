@@ -187,8 +187,6 @@ export class Physics {
         if (!transform) {
             return;
         }
-        //avoiding movement on Y axis
-        minDirection[1] = 0;
         vec3.add(transform.translation, transform.translation, minDirection);
     }
 }

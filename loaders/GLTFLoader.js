@@ -444,6 +444,7 @@ export class GLTFLoader {
 
         node.addComponent(new Transform(gltfSpec));
         node.name = gltfSpec.name;
+        node.isStatic = true;
 
         if (gltfSpec.children) {
             for (const childIndex of gltfSpec.children) {

@@ -567,3 +567,10 @@ body, html {
 #ballDiv:hover {
   cursor: grab;
 }
+#arrow {
+  position: absolute;
+  width: 0;
+  height: 5vh;
+  transform-origin: bottom;
+  rotate: 180deg;
+}

@@ -1,5 +1,5 @@
-import { Transform } from "./core/Transform.js";
-import { vec3 } from "./glm.js";
+import { Transform } from "./Transform.js";
+import { vec3 } from "../glm.js";
 
 export class Player {
   constructor({
