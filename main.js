@@ -294,12 +294,16 @@ canvas.addEventListener("mousemove", (event) => {
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
     console.log(dragEnd);
     let transform = ball.getComponentOfType(Transform);
+    console.log(calculateDragDistance());
+    console.log(calculateDragForce());
+    let force = calculateDragForce();
+    let dragToughness = 0.01 / (Math.pow(force, 1/3) + 1);
     transform.translation[0] -= event.movementX * 0.01;
-    transform.translation[1] -= event.movementY * 0.01;
+    transform.translation[1] -= event.movementY * dragToughness;
     if(playerTurn === 1) {
-      transform.translation[2] -= event.movementY * 0.01;
+      transform.translation[2] -= event.movementY * dragToughness;
     }else{
-      transform.translation[2] += event.movementY * 0.01;
+      transform.translation[2] += event.movementY * dragToughness;
     }
   }
 });
@@ -377,12 +381,12 @@ document.getElementById("ballDiv").addEventListener("mousedown", function(event)
 canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game"){
     ballGrabbed = false;
-    ballSelectInterval = setInterval(blinkBall, 20);
-    console.log(Math.abs(dragEnd[0] - dragStart[0]) + Math.abs(dragEnd[1] - dragStart[1]));
-    if(Math.abs(dragEnd[0] - dragStart[0]) + Math.abs(dragEnd[1] - dragStart[1]) < 20){
+    ballSelectInterval = setInterval(blinkBall, 40);
+    console.log(Math.abs(calculateDragDistance()));
+    if(calculateDragDistance() < 50){
       setBall();
     }else{
-
+      throwBall();
     }
   }
   document.exitPointerLock();
@@ -399,6 +403,20 @@ async function initGame(){
   document.getElementById("gameBackButton").style.visibility = "visible";
   initGameObjects();
   //setAABBs();
+}
+
+function calculateDragDistance(){
+  return Math.sqrt(Math.pow(dragEnd[0] - dragStart[0], 2) + Math.pow(dragEnd[1] - dragStart[1], 2));
+}
+function calculateDragAngle(){
+  return Math.atan((dragEnd[1] - dragStart[1]) / (dragEnd[0] - dragStart[0]));
+}
+function calculateDragForce(){
+  return dragEnd[1] - dragStart[1];
+}
+
+function throwBall(){
+
 }
 
 function blinkBall(){
