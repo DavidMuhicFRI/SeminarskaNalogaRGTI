@@ -383,7 +383,7 @@ async function initializeTheScene(intro){
   }
 }
 
-function initializeTheCamera(){
+function initializeTheCamera(intro){
   camera = new Node();
   camera.name = 'Camera';
   camera.addComponent(new Camera({
@@ -392,11 +392,18 @@ function initializeTheCamera(){
     near: 0.1,
     far: 100,
   }));
-  camera.addComponent(new Transform({
-    translation: [0, 2, 5],
-    rotation: [-0.15, 0, 0, 1],
-  }));
-  camera.isDynamic = true;
+  if(intro){
+    camera.addComponent(new Transform({
+      translation: [0, 2, 5],
+      rotation: [-0.15, 0, 0, 1],
+    }));
+  }else{
+    camera.addComponent(new Transform({
+      translation: [15.3, 14.5, 0],
+      rotation: [-0.20, 0.7, 0.2, 0.7],
+    }));
+  }
+  camera.isStatic = true;
   camera.aabb = {
     min: [-0.5, -0.5, -0.5],
     max: [0.5, 0.5, 0.5],
@@ -404,24 +411,44 @@ function initializeTheCamera(){
   scene.addChild(camera);
 }
 
-async function initializeTheLight(){
+async function initializeTheLight(intro){
   light = new Node();
-  light.addComponent(new Transform({
-    translation: [0.2, 3, 0],
-    rotation: [-0.3, 0.1, 0, 1],
+  light.name = 'Light';
+  if(intro){
+    light.addComponent(new Transform({
+      translation: [0.2, 3, 0],
+      rotation: [-0.3, 0.1, 0, 1],
+    }));
+    light.addComponent(new Light({
+      color: [250, 245, 220],
+      intensity: 5,
+      attenuation: [0.001, 0.1, 0.3],
+      ambientOff: 0.01,
+      ambientOn: 0.04,
+      fi: 0.6,
+      fovy: Math.PI / 1.2,
+      aspect: 1,
+      near: 0.1,
+      far: 100,
+    }));
+  }else{
+    light.addComponent(new Transform({
+      translation: [0, 5, 0],
+      rotation: [0, 0.5, 0, 1],
   }));
-  light.addComponent(new Light({
-    color: [240, 240, 200],
-    intensity: 5,
-    attenuation: [0.001, 0.1, 0.3],
-    ambientOff: 0.01,
-    ambientOn: 0.04,
-    fi: 0.6,
-    fovy: Math.PI / 2,
-    aspect: 1,
-    near: 0.1,
-    far: 100,
-  }));
+    light.addComponent(new Light({
+      color: [250, 245, 220],
+      intensity: 500,
+      attenuation: [0.001, 0.01, 0.03],
+      ambientOff: 0.01,
+      ambientOn: 0.04,
+      fi: 0.8,
+      fovy: Math.PI / 1.2,
+      aspect: 1,
+      near: 0.1,
+      far: 100,
+    }));
+  }
   camera.addChild(light);
 }
 
@@ -461,8 +488,8 @@ async function init(intro){
   await initializeTheRenderer(renderer, canvas);
   await initializeTheLoader();
   await initializeTheScene(intro);
-  await initializeTheCamera();
-  await initializeTheLight();
+  await initializeTheCamera(intro);
+  await initializeTheLight(intro);
   await initPhysics();
   await initializeSystems();
   startSystems();
