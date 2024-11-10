@@ -9,6 +9,7 @@ import {
 import { Physics } from './Physics.js';
 import { Renderer } from "./renderers/Renderer.js";
 import { Light } from "./core/Light.js";
+import {FirstPersonController} from "./controllers/FirstPersonController.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
@@ -398,6 +399,7 @@ function initializeTheCamera(intro){
       rotation: [-0.15, 0, 0, 1],
     }));
   }else{
+    camera.addComponent(new FirstPersonController(camera, canvas));
     camera.addComponent(new Transform({
       translation: [15.3, 14.5, 0],
       rotation: [-0.20, 0.7, 0.2, 0.7],
@@ -416,12 +418,12 @@ async function initializeTheLight(intro){
   light.name = 'Light';
   if(intro){
     light.addComponent(new Transform({
-      translation: [0.2, 3, 0],
+      translation: [0.2, 4, 5],
       rotation: [-0.3, 0.1, 0, 1],
     }));
     light.addComponent(new Light({
       color: [250, 245, 220],
-      intensity: 5,
+      intensity: 3,
       attenuation: [0.001, 0.1, 0.3],
       ambientOff: 0.01,
       ambientOn: 0.04,
@@ -433,23 +435,23 @@ async function initializeTheLight(intro){
     }));
   }else{
     light.addComponent(new Transform({
-      translation: [0, 5, 0],
-      rotation: [0, 0.5, 0, 1],
+      translation: [0, 16, 0],
+      rotation: [-0.71, 0, 0, 1],
   }));
     light.addComponent(new Light({
       color: [250, 245, 220],
-      intensity: 500,
-      attenuation: [0.001, 0.01, 0.03],
+      intensity: 1,
+      attenuation: [0, 0.1, 0.03],
       ambientOff: 0.01,
       ambientOn: 0.04,
-      fi: 0.8,
-      fovy: Math.PI / 1.2,
+      fi: 3,
+      fovy: Math.PI / 1.1,
       aspect: 1,
-      near: 0.1,
-      far: 100,
+      near: 1,
+      far: 200,
     }));
   }
-  camera.addChild(light);
+  scene.addChild(light);
 }
 
 async function initPhysics(){
