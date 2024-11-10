@@ -417,7 +417,7 @@ async function initGame(){
   document.body.style.cursor = "default";
   document.getElementById("gameBackButton").style.visibility = "visible";
   initGameObjects();
-  //setAABBs();
+  setAABBs();
 }
 
 function calculateDragDistance(){
@@ -438,6 +438,7 @@ function throwBall(){
   ballObject.acceleration = calculateDragForce();
   ballObject.moving = true;
   ballObject.setStartVelocity();
+  clearInterval(ballSelectInterval);
 }
 
 function blinkBall(){
@@ -470,6 +471,7 @@ function setBall(){
 
 function initGameObjects(){
   ball = getObject("Ball", "dynamic");
+  ball.isStatic = false;
   ball.addComponent(new Ball(ball, canvas));
   setBall();
 }
@@ -586,7 +588,7 @@ function update(time, dt) {
     }
   });
   //console.log(camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation, camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).rotation);
-  //physics.update(time, dt);
+  physics.update(time, dt);
 }
 
 function render() {
@@ -647,7 +649,9 @@ function setAABBs(){
         if (!model) {
             return;
         }
+        console.log(node.name);
         const boxes = model.primitives.map(primitive => calculateAxisAlignedBoundingBox(primitive.mesh));
+        console.log(boxes);
         node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
     });
 }

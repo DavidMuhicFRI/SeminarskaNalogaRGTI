@@ -9,7 +9,7 @@ export class Ball {
     this.velocity = [0, 0, 0];
     this.acceleration = 0;
     this.maxSpeed = 1000;
-    this.deceleration = 0.99999;
+    this.deceleration = 0.9995;
     this.bounces = 0;
     this.bounciness = 0.8;
     this.radius = 0.18;
@@ -19,8 +19,8 @@ export class Ball {
 
   setStartVelocity(){
     let constant = 0.01;
-    console.log("transform", this.transform.translation);
-    console.log("start:", this.startPosition);
+    //console.log("transform", this.transform.translation);
+    //console.log("start:", this.startPosition);
     let diffX = this.transform.translation[0] - this.startPosition[0];
     let diffY = this.transform.translation[1] - this.startPosition[1];
     let diffZ = this.transform.translation[2] - this.startPosition[2];
@@ -36,7 +36,7 @@ export class Ball {
     if(!this.moving){
       return;
     }
-    console.log(this.transform.translation);
+    //console.log(this.transform.translation);
     //add gravity to velocity vector
     this.velocity[1] -= 9.8 * dt;
     //decrease velocity by deceleration
