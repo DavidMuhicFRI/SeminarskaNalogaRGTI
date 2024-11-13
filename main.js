@@ -327,7 +327,7 @@ async function initCharacterPage() {
   await init(true);
 
 //load the objects for character page
-  player1 = loadObject("PlayerBody", "static");
+  player1 = loadObject("AtlasObject", "static");
   let transform1 = player1.getComponentOfType(Transform);
   transform1.translation = [0, 0.5, 0];
   transform1.scale = [0.35, 0.7, 0.6];
@@ -337,7 +337,7 @@ async function initCharacterPage() {
   transform2.translation = [0, -2.3, 0];
   transform2.scale = [10, 0.1, 10];
 
-  let wall1 = loadObject("Wall1", "static");
+  let wall1 = loadObject("WallBlue", "static");
   let transform3 = wall1.getComponentOfType(Transform);
   transform3.translation = [0, 0, -5];
   transform3.scale = [10, 10, 0.1];
@@ -459,9 +459,9 @@ function blinkBall(){
 function setBall(){
   let transform = ball.getComponentOfType(Transform);
   if(playerTurn === 1){
-    transform.translation = [0, 6.5, -5];
+    transform.translation = [0, 6.5, -7];
   }else{
-    transform.translation = [0, 6.5, 5];
+    transform.translation = [0, 6.5, 7];
   }
   ball.getComponentOfType(Ball).startPosition = transform.translation;
   if(!ballSelectInterval){
@@ -488,7 +488,7 @@ function initializeTheLoader(){
 }
 
 async function initializeTheScene(intro){
-  await loader.load('scene/mainScene.gltf'); // Load the scene
+  await loader.load('scene/scene2.gltf'); // Load the scene
   if(intro){
     scene = new Node();
   }else{
@@ -629,6 +629,7 @@ function getObject(name, type){
 
 function loadObject(name, type){
   let object = loader.loadNode(name);
+  console.log("object:", object);
   object.name = name;
   if(type){
     if(type === "static"){
