@@ -28,20 +28,20 @@ intro.addEventListener("click", async() => {
   skipIntro = true;
 });
 
-//functions for the intro
+//sets the visibility of an element to hidden
 function showElement(element){
   document.getElementById(element).style.visibility = "visible";
 }
+//sets the opacity of an element to 1
 function elementAppear(element){
   document.getElementById(element).style.opacity = '1';
 }
+//sets the opacity of an element to 0
 function elementDisappear(element){
   document.getElementById(element).style.opacity = '0';
 }
 
 //Intro animation
-
-//show characters
 elementAppear("introCharacters");
 
 //show names
@@ -106,7 +106,7 @@ setTimeout(function(){
 
 const canvas = document.querySelector('canvas');
 
-//init the variables
+//system variables
 let renderer;
 let loader;
 let scene;
@@ -124,6 +124,7 @@ let player1Ready = false;
 let player2Ready = false;
 let pageOrientation = "left"; //set to left if canvas is in canvasContainerLeft, right if in canvasContainerRight
 let characterSelected = [0, 1]
+let interacted = false;
 
 //DOMs for the character page
 let leftPage = document.getElementById("CPLeft");
@@ -145,6 +146,9 @@ let charPreviousButtonRed = document.getElementById("CPRightPreviousCharacter");
 
 //functions for the character page
 function movePage(page) {
+  if(!interacted){
+    interacted = true;
+  }
   const checkPositionInterval = setInterval(() => {
     const pageRect = page.getBoundingClientRect();
     const pageMiddle = pageRect.left + pageRect.width / 2;
@@ -161,6 +165,9 @@ function movePage(page) {
         characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [0, 0, 0];
         rotatingCharacter = characterObjects[characterSelected[0]];
         characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [20, 0, 0];
+      }
+      if(characterSelected[0] === characterSelected[1]){
+        nextCharacter();
       }
       clearInterval(checkPositionInterval);
     }
@@ -257,55 +264,67 @@ async function loadCharacters(){
 
 function nextCharacter(){
   if(pageOrientation === "left"){
-    let previous = characterSelected[0];
+    let previousTransform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
     characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [20, 0, 0];
     characterSelected[0]++;
-    if(characterSelected[1] === characterSelected[0]){
-      characterSelected[0]++;
-    }
     characterSelected[0] %= characterObjects.length;
-    characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [0, 0, 0];
-    characterObjects[characterSelected[0]].getComponentOfType(Transform).rotation = characterObjects[previous].getComponentOfType(Transform).rotation;
+    if(!interacted || (characterSelected[0] === characterSelected[1] && interacted)){
+      characterSelected[0]++;
+      characterSelected[0] %= characterObjects.length;
+    }
+    let transform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
+    transform.translation = [0, 0, 0];
+    transform.rotation = previousTransform.rotation;
     rotatingCharacter = characterObjects[characterSelected[0]];
   }else{
-    let previous = characterSelected[1];
+    let previousTransform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
     characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [-20, 0, 0];
     characterSelected[1]++;
-    if(characterSelected[0] === characterSelected[1]){
-      characterSelected[1]++;
-    }
     characterSelected[1] %= characterObjects.length;
-    characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [0, 0, 0];
-    characterObjects[characterSelected[1]].getComponentOfType(Transform).rotation = characterObjects[previous].getComponentOfType(Transform).rotation;
+    if(characterSelected[1] === characterSelected[0]){
+      characterSelected[1]++;
+      characterSelected[1] %= characterObjects.length;
+    }
+    let transform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
+    transform.translation = [0, 0, 0];
+    transform.rotation = previousTransform.rotation;
     rotatingCharacter = characterObjects[characterSelected[1]];
   }
 }
 function previousCharacter(){
   if(pageOrientation === "left"){
-    let previous = characterSelected[0];
+    let previousTransform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
     characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [20, 0, 0];
     characterSelected[0]--;
-    if(characterSelected[1] === characterSelected[0]){
-      characterSelected[0]--;
-    }
     if(characterSelected[0] < 0){
       characterSelected[0] = characterObjects.length - 1;
     }
-    characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [0, 0, 0];
-    characterObjects[characterSelected[0]].getComponentOfType(Transform).rotation = characterObjects[previous].getComponentOfType(Transform).rotation;
+    if(interacted && characterSelected[0] === characterSelected[1]){
+      characterSelected[0]--;
+      if(characterSelected[0] < 0){
+        characterSelected[0] = characterObjects.length - 1;
+      }
+    }
+    let transform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
+    transform.translation = [0, 0, 0];
+    transform.rotation = previousTransform.rotation;
     rotatingCharacter = characterObjects[characterSelected[0]];
-  }else{
-    let previous = characterSelected[1];
+  } else {
+    let previousTransform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
     characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [-20, 0, 0];
     characterSelected[1]--;
-    if(characterSelected[0] === characterSelected[1]){
-      characterSelected[1]--;
-    }
     if(characterSelected[1] < 0){
       characterSelected[1] = characterObjects.length - 1;
     }
-    characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [0, 0, 0];
-    characterObjects[characterSelected[1]].getComponentOfType(Transform).rotation = characterObjects[previous].getComponentOfType(Transform).rotation
+    if(characterSelected[1] === characterSelected[0]){
+      characterSelected[1]--;
+      if(characterSelected[1] < 0){
+        characterSelected[1] = characterObjects.length - 1;
+      }
+    }
+    let transform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
+    transform.translation = [0, 0, 0];
+    transform.rotation = previousTransform.rotation;
     rotatingCharacter = characterObjects[characterSelected[1]];
   }
 }
