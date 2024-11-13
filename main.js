@@ -498,7 +498,6 @@ document.getElementById("ballDiv").addEventListener("mousedown", function(event)
 canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game"){
     ballGrabbed = false;
-    ballSelectInterval = setInterval(blinkBall, 30);
     if(calculateDragDistance() < 85 || calculateDragForce() < 0){
       setBall();
     }else{
@@ -567,12 +566,38 @@ function blinkBall(){
   }
 }
 
+function setPlayerObjects(){
+  //camera.addComponent(new FirstPersonController(camera, canvas));
+  characterObjects = [];
+  let objectNames = ["AtlasObject", "ChronoObject", "NeroObject", "CurveObject", "TrippObject", "SpringObject", "EVOObject"];
+  for(let i = 0; i < objectNames.length; i++) {
+    let object = getObject(objectNames[i], "static");
+    object.addComponent(new Character(object));
+    characterObjects.push(object);
+  }
+  for(let i = 0; i < characterObjects.length; i++){
+    let object = characterObjects[i];
+    if(i === characterSelected[0]){
+      player1Object = object;
+      player1Object.getComponentOfType(Transform).translation = [0, 0, -16];
+      player1Object.getComponentOfType(Transform).rotation = [0, 0.707, 0, -0.707];
+    }else if(i === characterSelected[1]){
+      player2Object = object;
+      player2Object.getComponentOfType(Transform).translation = [0, 0, 16];
+    }else{
+      object.getComponentOfType(Transform).translation = [30, 0, 0];
+    }
+  }
+  console.log("player1:", player1Object, "player2:", player2Object);
+}
+
+
 function setBall(){
   let transform = ball.getComponentOfType(Transform);
   if(playerTurn === 1){
-    transform.translation = [0, 6.5, -7];
+    transform.translation = [0, 6.5, -8.9];
   }else{
-    transform.translation = [0, 6.5, 7];
+    transform.translation = [0, 6.5, 8.9];
   }
   ball.getComponentOfType(Ball).startPosition = transform.translation;
   if(!ballSelectInterval){
@@ -585,6 +610,7 @@ function initGameObjects(){
   ball.isStatic = false;
   ball.addComponent(new Ball(ball, canvas));
   setBall();
+  setPlayerObjects();
 }
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
@@ -624,7 +650,7 @@ function initializeTheCamera(intro){
   }else{
     //camera.addComponent(new FirstPersonController(camera, canvas));
     camera.addComponent(new Transform({
-      translation: [0, 9, -10.5],
+      translation: [0, 9, -14.4],
       rotation: [0, 1, 0.13, 0],
     }));
   }

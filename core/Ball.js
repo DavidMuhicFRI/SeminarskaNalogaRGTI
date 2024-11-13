@@ -18,7 +18,7 @@ export class Ball {
   }
 
   setStartVelocity(){
-    let constant = 0.01;
+    let constant = 0.008;
     //console.log("transform", this.transform.translation);
     //console.log("start:", this.startPosition);
     let diffX = this.transform.translation[0] - this.startPosition[0];
