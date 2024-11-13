@@ -10,7 +10,7 @@ cons: turn time reduced by 10 seconds
 ability: (REWIND) can revert the enemy's last move or his own throw
 
 3. Spring
-pros: can manually set the bounciness of her balls
+pros: can manually set the bounciness of her and opponent's balls (throwing balls)
 cons: only gets energy with ball bounces
 ability: (BOUNCER) throws a super bouncy ball that speeds up with each bounce
 
@@ -27,20 +27,18 @@ ability: (EVOLVE) can evolve into a stronger form
 2. no longer receives debuffs
 3. aimbot
 
-6. Vision
-pros: sees well in the dark, debuffs are weaker in darkness
-cons: sees bad in the light, debuffs are stronger in light
-ability: (DARKNESS) turns the lights down a bit
 
-7. Curve
+6. Curve
 pros: can manually set his gravity
-cons: less accurate throws
-ability: (CURVE) can curve his throw
+cons: gets energy only while the ball is in the air and hasn't bounced yet
+ability: (CURVE) can curve his throw by pressing "space", which drains his energy depending on usage
 
-8. Red
+7. Nero
 pros: can steal the enemy's energy with hitting cups and health with body hits
 cons: has less health
-ability: (TRANSFUSION) can transfer his health to energy and vice versa
+ability: (TRANSFUSION) can transfer her health to energy and vice versa
+
+
 
 
 
