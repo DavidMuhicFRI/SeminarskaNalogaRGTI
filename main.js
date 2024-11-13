@@ -327,7 +327,7 @@ async function initCharacterPage() {
   await init(true);
 
 //load the objects for character page
-  player1 = loadObject("PlayerBody", "static");
+  let atlasCharacter = loadObject("PlayerBody", "static");
   let transform1 = player1.getComponentOfType(Transform);
   transform1.translation = [0, 0.5, 0];
   transform1.scale = [0.35, 0.7, 0.6];
@@ -459,9 +459,9 @@ function blinkBall(){
 function setBall(){
   let transform = ball.getComponentOfType(Transform);
   if(playerTurn === 1){
-    transform.translation = [0, 6.5, -5];
+    transform.translation = [0, 6.5, -7];
   }else{
-    transform.translation = [0, 6.5, 5];
+    transform.translation = [0, 6.5, 7];
   }
   ball.getComponentOfType(Ball).startPosition = transform.translation;
   if(!ballSelectInterval){
@@ -488,7 +488,7 @@ function initializeTheLoader(){
 }
 
 async function initializeTheScene(intro){
-  await loader.load('scene/mainScene.gltf'); // Load the scene
+  await loader.load('scene/scene2.gltf'); // Load the scene
   if(intro){
     scene = new Node();
   }else{
