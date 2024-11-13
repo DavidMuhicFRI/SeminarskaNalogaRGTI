@@ -1,7 +1,7 @@
 import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
-import { Camera, Model, Transform, Node, Ball } from './core.js';
+import { Camera, Model, Transform, Node, Ball, Character } from './core.js';
 import {
     calculateAxisAlignedBoundingBox,
     mergeAxisAlignedBoundingBoxes,
@@ -213,6 +213,24 @@ function rotatePlayer(player, angle){
   transform.rotation = multiplyQuaternions(transform.rotation, rotationQuat);
 }
 
+//character loading
+let characterObjects = [];
+async function loadCharacters(){
+  let objects = ["AtlasObject", "ChronoObject", "NeroObject", "CurveObject", "TrippObject", "SpringObject", "EVOObject"];
+  let charIntroHeights = [1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2];
+  let charIntroScales = [[0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [0.35, 0.42, 0.35]];
+  for(let i = 0; i < objects.length; i++){
+    let name = objects[i];
+    let object = loadObject(name, "static");
+    object.addComponent(new Character(object));
+    let char = object.getComponentOfType(Character);
+    char.transform.translation = [0, charIntroHeights[i], 0];
+    char.transform.scale = charIntroScales[i];
+    char.setParameters(true, name);
+    characterObjects.push(object);
+  }
+}
+
 //starting and exiting the game
 async function startGame(){
   await initGame();
@@ -327,10 +345,11 @@ async function initCharacterPage() {
   await init(true);
 
 //load the objects for character page
+  //await loadCharacters();
   player1 = loadObject("AtlasObject", "static");
   let transform1 = player1.getComponentOfType(Transform);
-  transform1.translation = [0, 0.5, 0];
-  transform1.scale = [0.35, 0.7, 0.6];
+  transform1.translation = [0, 1.2, 0];
+  transform1.scale = [0.35, 0.42, 0.35];
 
   let floor = loadObject("Floor", "static");
   let transform2 = floor.getComponentOfType(Transform);
@@ -488,7 +507,7 @@ function initializeTheLoader(){
 }
 
 async function initializeTheScene(intro){
-  await loader.load('scene/scene2.gltf'); // Load the scene
+  await loader.load('scene/scene.gltf'); // Load the scene
   if(intro){
     scene = new Node();
   }else{
