@@ -1,7 +1,7 @@
 import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
-import { Camera, Model, Transform, Node, Ball } from './core.js';
+import { Character, Camera, Model, Transform, Node, Ball } from './core.js';
 import {
     calculateAxisAlignedBoundingBox,
     mergeAxisAlignedBoundingBoxes,
@@ -10,6 +10,9 @@ import { Physics } from './Physics.js';
 import { Renderer } from "./renderers/Renderer.js";
 import { Light } from "./core/Light.js";
 import {FirstPersonController} from "./controllers/FirstPersonController.js";
+
+let character123 = new Character('Atlas');
+console.log(character123)
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
@@ -327,7 +330,7 @@ async function initCharacterPage() {
   await init(true);
 
 //load the objects for character page
-  player1 = loadObject("AtlasObject", "static");
+  player1 = loadObject("ChronoObject", "static");
   let transform1 = player1.getComponentOfType(Transform);
   transform1.translation = [0, 0.5, 0];
   transform1.scale = [0.35, 0.7, 0.6];

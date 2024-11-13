@@ -1,6 +1,6 @@
 import { vec3, mat4 } from './glm.js';
 import { getGlobalModelMatrix } from './core/SceneUtils.js';
-import { Transform } from './core.js';
+import { Transform, Ball } from './core.js';
 import { FirstPersonController } from './controllers/FirstPersonController.js';
 
 export class Physics {
@@ -16,6 +16,7 @@ export class Physics {
                 this.scene.traverse(other => {
                     if (node !== other && other.isStatic) {
                         this.resolveCollision(node, other);
+                        this.getDistanceToWall(node, other);
                     }
                 });
             }
@@ -151,7 +152,6 @@ export class Physics {
         if (!isColliding) {
             return;
         }
-        console.log("Collision detected!");
         // Move node A minimally to avoid collision.
         const diffa = vec3.sub(vec3.create(), bBox.max, aBox.min);
         const diffb = vec3.sub(vec3.create(), aBox.max, bBox.min);
@@ -187,6 +187,48 @@ export class Physics {
         if (!transform) {
             return;
         }
+        if(a.name === 'Ball'){
+          console.log(b.name);
+          let ball = a.getComponentOfType(Ball);
+          if (minDirection[0] !== 0) {
+            if(b.name.includes('Wall')){
+              console.log("Wall from side")
+              //ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
+            } else {
+              console.log("from side")
+              ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
+            }
+          }
+          if (minDirection[1] !== 0) {
+            ball.velocity[1] = -ball.velocity[1] * ball.bounciness; // Reverse Y direction if needed
+            console.log("from upDown")
+          }
+          if (minDirection[2] !== 0) {
+            ball.velocity[2] = -ball.velocity[2] * ball.bounciness; // Reverse Z direction if needed
+            console.log("from straight")
+          }
+        }
+
         vec3.add(transform.translation, transform.translation, minDirection);
     }
+
+  getDistanceToWall(ball, wall) {
+    // Get the global AABBs for the ball and wall.
+    if(wall.name.includes('Wall')){
+      const ballBox = this.getTransformedAABB(ball);
+      const wallBox = this.getTransformedAABB(wall);
+
+      // Calculate distances on each axis, assuming no overlap.
+      const distX = Math.max(0, wallBox.min[0] - ballBox.max[0], ballBox.min[0] - wallBox.max[0]);
+      const distY = Math.max(0, wallBox.min[1] - ballBox.max[1], ballBox.min[1] - wallBox.max[1]);
+      const distZ = Math.max(0, wallBox.min[2] - ballBox.max[2], ballBox.min[2] - wallBox.max[2]);
+
+      // Log the distances for each axis.
+      console.log(`${wall.name} distance from ball:`);
+      console.log(`  X-axis distance: ${distX}`);
+      console.log(`  Y-axis distance: ${distY}`);
+      console.log(`  Z-axis distance: ${distZ}`);
+    }
+  }
+
 }

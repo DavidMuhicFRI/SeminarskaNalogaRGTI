@@ -11,3 +11,4 @@ export * from './core/Transform.js';
 export * from './core/Vertex.js';
 export * from './core/Ball.js';
 export * from './core/Player.js';
+export * from './core/Character.js';
