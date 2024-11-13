@@ -117,12 +117,13 @@ let camera;
 let light;
 
 //variables for the character page
-let player1; //the player object for character page purposes
+let rotatingCharacter; //the player object for character page purposes
 let constantRotation; //interval for the rotation
 let rotate = false; //if the model is rotating
 let player1Ready = false;
 let player2Ready = false;
 let pageOrientation = "left"; //set to left if canvas is in canvasContainerLeft, right if in canvasContainerRight
+let characterSelected = [0, 1]
 
 //DOMs for the character page
 let leftPage = document.getElementById("CPLeft");
@@ -136,6 +137,11 @@ let forwardToP2 = document.getElementById("forwardToP2");
 let readyButton1 = document.getElementById("p1ReadyButton");
 let readyButton2 = document.getElementById("p2ReadyButton");
 let gameBackButton = document.getElementById("gameBackButton");
+let charNextButtonBlue = document.getElementById("CPLeftNextCharacter");
+let charPreviousButtonBlue = document.getElementById("CPLeftPreviousCharacter");
+let charNextButtonRed = document.getElementById("CPRightNextCharacter");
+let charPreviousButtonRed = document.getElementById("CPRightPreviousCharacter");
+
 
 //functions for the character page
 function movePage(page) {
@@ -146,9 +152,15 @@ function movePage(page) {
       if(page === leftPage){
         canvasContainerRight.appendChild(canvas);
         canvas.style.borderColor = "rgba(255, 90, 90, 1)";
+        characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [0, 0, 0];
+        rotatingCharacter = characterObjects[characterSelected[1]];
+        characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [-20, 0, 0];
       } else {
         canvasContainerLeft.appendChild(canvas);
         canvas.style.borderColor = "rgba(90, 90, 255, 1)";
+        characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [0, 0, 0];
+        rotatingCharacter = characterObjects[characterSelected[0]];
+        characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [20, 0, 0];
       }
       clearInterval(checkPositionInterval);
     }
@@ -185,7 +197,7 @@ function turnButtonToReady(button){
 //rotation functions
 function constantlyRotate(){
   if(pageStatus === "main" && !rotate){
-    rotatePlayer(player1, 0.002);
+    rotatePlayer(rotatingCharacter, 0.002);
   }
 }
 function createQuaternionFromAxisAngle(axis, angle) {
@@ -217,18 +229,70 @@ function rotatePlayer(player, angle){
 let characterObjects = [];
 async function loadCharacters(){
   let objects = ["AtlasObject", "ChronoObject", "NeroObject", "CurveObject", "TrippObject", "SpringObject", "EVOObject"];
-  let charIntroHeights = [1.2, 1, 0, 0, 0, 0, 0];
-  let charIntroScales = [[0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1]];
+  let charIntroScales = [[0.8, 0.9, 0.8], [1, 1, 1], [1.2, 1.2, 1.2], [1.1, 1.1, 1.1], [1.1, 1.1, 1.1], [1.2, 1.2, 1.2], [1.2, 1.2, 1.2]];
   for(let i = 0; i < objects.length; i++){
     let name = objects[i];
-    let object = loadObject(name, "static");
+    let object = await loadObject(name, "static");
     object.addComponent(new Character(object));
     let char = object.getComponentOfType(Character);
-    char.introHeight = charIntroHeights[i];
     char.introScale = charIntroScales[i];
-    char.setParameters(true);
+    char.transform.scale = charIntroScales[i];
+    if(pageOrientation === "left" && i === characterSelected[0]){
+      char.transform.translation = [0, 0, 0];
+    }else if(pageOrientation === "right" && i === characterSelected[1]){
+      char.transform.translation = [0, 0, 0];
+    }else{
+      char.transform.translation = [20, 0, 0];
+    }
     characterObjects.push(object);
-    console.log("loaded: ", object.name);
+  }
+}
+
+
+function nextCharacter(){
+  if(pageOrientation === "left"){
+    characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [20, 0, 0];
+    characterSelected[0]++;
+    if(characterSelected[1] === characterSelected[0]){
+      characterSelected[0]++;
+    }
+    characterSelected[0] %= characterObjects.length;
+    characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [0, 0, 0];
+    rotatingCharacter = characterObjects[characterSelected[0]];
+  }else{
+    characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [-20, 0, 0];
+    characterSelected[1]++;
+    if(characterSelected[0] === characterSelected[1]){
+      characterSelected[1]++;
+    }
+    characterSelected[1] %= characterObjects.length;
+    characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [0, 0, 0];
+    rotatingCharacter = characterObjects[characterSelected[1]];
+  }
+}
+function previousCharacter(){
+  if(pageOrientation === "left"){
+    characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [20, 0, 0];
+    characterSelected[0]--;
+    if(characterSelected[1] === characterSelected[0]){
+      characterSelected[0]--;
+    }
+    if(characterSelected[0] < 0){
+      characterSelected[0] = characterObjects.length - 1;
+    }
+    characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [0, 0, 0];
+    rotatingCharacter = characterObjects[characterSelected[0]];
+  }else{
+    characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [-20, 0, 0];
+    characterSelected[1]--;
+    if(characterSelected[0] === characterSelected[1]){
+      characterSelected[1]--;
+    }
+    if(characterSelected[1] < 0){
+      characterSelected[1] = characterObjects.length - 1;
+    }
+    characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [0, 0, 0];
+    rotatingCharacter = characterObjects[characterSelected[1]];
   }
 }
 
@@ -295,6 +359,18 @@ forwardToP2.addEventListener('click', function() {
 backToP1.addEventListener('click', function() {
   movePage(rightPage);
 });
+charNextButtonBlue.addEventListener('click', function() {
+  nextCharacter();
+});
+charPreviousButtonBlue.addEventListener('click', function() {
+  previousCharacter();
+});
+charNextButtonRed.addEventListener('click', function() {
+  nextCharacter();
+});
+charPreviousButtonRed.addEventListener('click', function() {
+  previousCharacter();
+});
 
 //event listeners for model rotation on drag
 document.addEventListener("pointerlockchange", () => {
@@ -310,7 +386,7 @@ canvas.addEventListener("mousedown", () => {
 });
 canvas.addEventListener("mousemove", (event) => {
   if (rotate && pageStatus === "main") {
-    rotatePlayer(player1, event.movementX * 0.01); // Rotate player based on mouse movement
+    rotatePlayer(rotatingCharacter, event.movementX * 0.01); // Rotate player based on mouse movement
   }else if(pageStatus === "game" && ballGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
     ballDrag(event);
@@ -347,18 +423,20 @@ async function initCharacterPage() {
 
 //load the objects for character page
   await loadCharacters();
-  player1 = characterObjects[0];
-
   let floor = loadObject("Floor", "static");
   let transform2 = floor.getComponentOfType(Transform);
-  transform2.translation = [0, -2.3, 0];
+  transform2.translation = [0, 0.1, 0];
   transform2.scale = [10, 0.1, 10];
 
   let wall1 = loadObject("WallBlue", "static");
   let transform3 = wall1.getComponentOfType(Transform);
   transform3.translation = [0, 0, -5];
-  transform3.scale = [10, 10, 0.1];
-
+  transform3.scale = [10, 20, 0.1];
+  if(pageOrientation === "left"){
+    rotatingCharacter = characterObjects[characterSelected[0]];
+  }else{
+    rotatingCharacter = characterObjects[characterSelected[1]];
+  }
   //rotate the player
   constantRotation = setInterval(constantlyRotate, 5);
 }
@@ -524,8 +602,8 @@ function initializeTheCamera(intro){
   }));
   if(intro){
     camera.addComponent(new Transform({
-      translation: [0, 4, 10],
-      rotation: [-0.3, 0, 0, 1],
+      translation: [0, 10, 10],
+      rotation: [-0.2, 0, 0, 1],
     }));
   }else{
     //camera.addComponent(new FirstPersonController(camera, canvas));
@@ -547,20 +625,20 @@ async function initializeTheLight(intro){
   light.name = 'Light';
   if(intro){
     light.addComponent(new Transform({
-      translation: [0.2, 4, 5],
-      rotation: [-0.3, 0.1, 0, 1],
+      translation: [0.2, 11, 7],
+      rotation: [-0.5, 0.1, 0, 1],
     }));
     light.addComponent(new Light({
       color: [250, 245, 220],
-      intensity: 3,
-      attenuation: [0.001, 0.1, 0.3],
+      intensity: 1,
+      attenuation: [0, 0.1, 0.03],
       ambientOff: 0.01,
       ambientOn: 0.04,
-      fi: 0.6,
+      fi: 3,
       fovy: Math.PI / 1.2,
       aspect: 1,
-      near: 0.1,
-      far: 100,
+      near: 1,
+      far: 200,
     }));
   }else{
     light.addComponent(new Transform({
@@ -646,7 +724,6 @@ function getObject(name, type){
 
 function loadObject(name, type){
   let object = loader.loadNode(name);
-  console.log("object:", object);
   object.name = name;
   if(type){
     if(type === "static"){
@@ -667,9 +744,7 @@ function setAABBs(){
         if (!model) {
             return;
         }
-        console.log(node.name);
         const boxes = model.primitives.map(primitive => calculateAxisAlignedBoundingBox(primitive.mesh));
-        console.log(boxes);
         node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
     });
 }
