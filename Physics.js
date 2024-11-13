@@ -102,7 +102,7 @@ export class Physics {
         if (tzmin > tzmax) [tzmin, tzmax] = [tzmax, tzmin];
 
         if ((txmin > tzmax) || (tzmin > txmax)) return null;
-        console.log("ray hit! final caluclated distance:", txmin);
+        console.log("ray hit! final calculated distance:", txmin);
         return { distance: txmin }; // Return the distance to the intersection
     }
 
@@ -151,12 +151,13 @@ export class Physics {
         if (!isColliding) {
             return;
         }
-        console.log("Collision detected!");
+        console.log("Collision detected!" + a.name + " and " + b.name + " are colliding");
         // Move node A minimally to avoid collision.
         const diffa = vec3.sub(vec3.create(), bBox.max, aBox.min);
         const diffb = vec3.sub(vec3.create(), aBox.max, bBox.min);
 
         let minDiff = Infinity;
+        let bounce = 0.1;
         let minDirection = [0, 0, 0];
         if (diffa[0] >= 0 && diffa[0] < minDiff) {
             minDiff = diffa[0];
