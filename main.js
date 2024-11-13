@@ -1,7 +1,7 @@
 import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
-import { Character, Camera, Model, Transform, Node, Ball } from './core.js';
+import { Camera, Model, Transform, Node, Ball, Character } from './core.js';
 import {
     calculateAxisAlignedBoundingBox,
     mergeAxisAlignedBoundingBoxes,
@@ -10,9 +10,6 @@ import { Physics } from './Physics.js';
 import { Renderer } from "./renderers/Renderer.js";
 import { Light } from "./core/Light.js";
 import {FirstPersonController} from "./controllers/FirstPersonController.js";
-
-let character123 = new Character('Atlas');
-console.log(character123)
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
@@ -31,20 +28,20 @@ intro.addEventListener("click", async() => {
   skipIntro = true;
 });
 
-//functions for the intro
+//sets the visibility of an element to hidden
 function showElement(element){
   document.getElementById(element).style.visibility = "visible";
 }
+//sets the opacity of an element to 1
 function elementAppear(element){
   document.getElementById(element).style.opacity = '1';
 }
+//sets the opacity of an element to 0
 function elementDisappear(element){
   document.getElementById(element).style.opacity = '0';
 }
 
 //Intro animation
-
-//show characters
 elementAppear("introCharacters");
 
 //show names
@@ -109,7 +106,7 @@ setTimeout(function(){
 
 const canvas = document.querySelector('canvas');
 
-//init the variables
+//system variables
 let renderer;
 let loader;
 let scene;
@@ -120,12 +117,14 @@ let camera;
 let light;
 
 //variables for the character page
-let player1; //the player object for character page purposes
+let rotatingCharacter; //the player object for character page purposes
 let constantRotation; //interval for the rotation
 let rotate = false; //if the model is rotating
 let player1Ready = false;
 let player2Ready = false;
 let pageOrientation = "left"; //set to left if canvas is in canvasContainerLeft, right if in canvasContainerRight
+let characterSelected = [0, 1]
+let interacted = false;
 
 //DOMs for the character page
 let leftPage = document.getElementById("CPLeft");
@@ -139,19 +138,38 @@ let forwardToP2 = document.getElementById("forwardToP2");
 let readyButton1 = document.getElementById("p1ReadyButton");
 let readyButton2 = document.getElementById("p2ReadyButton");
 let gameBackButton = document.getElementById("gameBackButton");
+let charNextButtonBlue = document.getElementById("CPLeftNextCharacter");
+let charPreviousButtonBlue = document.getElementById("CPLeftPreviousCharacter");
+let charNextButtonRed = document.getElementById("CPRightNextCharacter");
+let charPreviousButtonRed = document.getElementById("CPRightPreviousCharacter");
+
 
 //functions for the character page
 function movePage(page) {
+  if(!interacted){
+    interacted = true;
+  }
   const checkPositionInterval = setInterval(() => {
     const pageRect = page.getBoundingClientRect();
     const pageMiddle = pageRect.left + pageRect.width / 2;
     if (pageMiddle < 0 || pageMiddle > window.innerWidth) {
+      const char1 = characterObjects[characterSelected[0]].getComponentOfType(Transform);
+      const char2 = characterObjects[characterSelected[1]].getComponentOfType(Transform);
       if(page === leftPage){
         canvasContainerRight.appendChild(canvas);
         canvas.style.borderColor = "rgba(255, 90, 90, 1)";
+        char2.translation = [0, 0, 0];
+        rotatingCharacter = characterObjects[characterSelected[1]];
+        char1.translation = [-20, 0, 0];
       } else {
         canvasContainerLeft.appendChild(canvas);
         canvas.style.borderColor = "rgba(90, 90, 255, 1)";
+        char1.translation = [0, 0, 0];
+        rotatingCharacter = characterObjects[characterSelected[0]];
+        char2.translation = [20, 0, 0];
+      }
+      if(characterSelected[0] === characterSelected[1]){
+        nextCharacter();
       }
       clearInterval(checkPositionInterval);
     }
@@ -188,7 +206,7 @@ function turnButtonToReady(button){
 //rotation functions
 function constantlyRotate(){
   if(pageStatus === "main" && !rotate){
-    rotatePlayer(player1, 0.002);
+    rotatePlayer(rotatingCharacter, 0.002);
   }
 }
 function createQuaternionFromAxisAngle(axis, angle) {
@@ -216,6 +234,101 @@ function rotatePlayer(player, angle){
   transform.rotation = multiplyQuaternions(transform.rotation, rotationQuat);
 }
 
+//character loading and character functions
+let characterObjects = [];
+async function loadCharacters(){
+  characterObjects = [];
+  let objects = ["AtlasObject", "ChronoObject", "NeroObject", "CurveObject", "TrippObject", "SpringObject", "EVOObject"];
+  let charIntroScales = [[0.8, 0.9, 0.8], [1, 1, 1], [1.2, 1.2, 1.2], [1.1, 1.1, 1.1], [1.1, 1.1, 1.1], [1.2, 1.2, 1.2], [1.2, 1.2, 1.2]];
+  for(let i = 0; i < objects.length; i++){
+    let name = objects[i];
+    let object = await loadObject(name, "static");
+    object.addComponent(new Character(object));
+    let char = object.getComponentOfType(Character);
+    char.transform.scale = charIntroScales[i];
+    if(pageOrientation ==="left"){
+      if(i === characterSelected[0]){
+        char.transform.translation = [0, 0, 0];
+      }else{
+        char.transform.translation = [-20, 0, 0];
+      }
+    }else{
+      if(i === characterSelected[1]){
+        char.transform.translation = [0, 0, 0];
+      }else{
+        char.transform.translation = [20, 0, 0];
+      }
+    }
+    characterObjects.push(object);
+  }
+}
+function nextCharacter(){
+  if(pageOrientation === "left"){
+    let previousTransform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
+    characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [20, 0, 0];
+    characterSelected[0]++;
+    characterSelected[0] %= characterObjects.length;
+    if(!interacted || (characterSelected[0] === characterSelected[1] && interacted)){
+      characterSelected[0]++;
+      characterSelected[0] %= characterObjects.length;
+    }
+    let transform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
+    transform.translation = [0, 0, 0];
+    transform.rotation = previousTransform.rotation;
+    rotatingCharacter = characterObjects[characterSelected[0]];
+  }else{
+    let previousTransform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
+    characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [-20, 0, 0];
+    characterSelected[1]++;
+    characterSelected[1] %= characterObjects.length;
+    if(characterSelected[1] === characterSelected[0]){
+      characterSelected[1]++;
+      characterSelected[1] %= characterObjects.length;
+    }
+    let transform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
+    transform.translation = [0, 0, 0];
+    transform.rotation = previousTransform.rotation;
+    rotatingCharacter = characterObjects[characterSelected[1]];
+  }
+}
+function previousCharacter(){
+  if(pageOrientation === "left"){
+    let previousTransform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
+    characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [20, 0, 0];
+    characterSelected[0]--;
+    if(characterSelected[0] < 0){
+      characterSelected[0] = characterObjects.length - 1;
+    }
+    if(interacted && characterSelected[0] === characterSelected[1]){
+      characterSelected[0]--;
+      if(characterSelected[0] < 0){
+        characterSelected[0] = characterObjects.length - 1;
+      }
+    }
+    let transform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
+    transform.translation = [0, 0, 0];
+    transform.rotation = previousTransform.rotation;
+    rotatingCharacter = characterObjects[characterSelected[0]];
+  } else {
+    let previousTransform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
+    characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [-20, 0, 0];
+    characterSelected[1]--;
+    if(characterSelected[1] < 0){
+      characterSelected[1] = characterObjects.length - 1;
+    }
+    if(characterSelected[1] === characterSelected[0]){
+      characterSelected[1]--;
+      if(characterSelected[1] < 0){
+        characterSelected[1] = characterObjects.length - 1;
+      }
+    }
+    let transform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
+    transform.translation = [0, 0, 0];
+    transform.rotation = previousTransform.rotation;
+    rotatingCharacter = characterObjects[characterSelected[1]];
+  }
+}
+
 //starting and exiting the game
 async function startGame(){
   await initGame();
@@ -224,7 +337,6 @@ async function startGame(){
   showElement("game");
   $("#game").show(); //for 2nd and later showings
 }
-
 //exit game
 async function cancelGame(){
   await initCharacterPage();
@@ -279,6 +391,18 @@ forwardToP2.addEventListener('click', function() {
 backToP1.addEventListener('click', function() {
   movePage(rightPage);
 });
+charNextButtonBlue.addEventListener('click', function() {
+  nextCharacter();
+});
+charPreviousButtonBlue.addEventListener('click', function() {
+  previousCharacter();
+});
+charNextButtonRed.addEventListener('click', function() {
+  nextCharacter();
+});
+charPreviousButtonRed.addEventListener('click', function() {
+  previousCharacter();
+});
 
 //event listeners for model rotation on drag
 document.addEventListener("pointerlockchange", () => {
@@ -286,19 +410,15 @@ document.addEventListener("pointerlockchange", () => {
 });
 canvas.addEventListener("mousedown", () => {
   if (pageStatus === "main") {
-    // Request pointer lock on mouse down
     canvas.requestPointerLock();
-  }else if(pageStatus === "game" && ballGrabbed){
-
   }
 });
 canvas.addEventListener("mousemove", (event) => {
   if (rotate && pageStatus === "main") {
-    rotatePlayer(player1, event.movementX * 0.01); // Rotate player based on mouse movement
+    rotatePlayer(rotatingCharacter, event.movementX * 0.01); // Rotate player based on mouse movement
   }else if(pageStatus === "game" && ballGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
     ballDrag(event);
-    arrowDrag(event);
   }
 });
 canvas.addEventListener("mouseover", () => {
@@ -330,21 +450,21 @@ async function initCharacterPage() {
   await init(true);
 
 //load the objects for character page
-  player1 = loadObject("ChronoObject", "static");
-  let transform1 = player1.getComponentOfType(Transform);
-  transform1.translation = [0, 0.5, 0];
-  transform1.scale = [0.35, 0.7, 0.6];
-
+  await loadCharacters();
   let floor = loadObject("Floor", "static");
   let transform2 = floor.getComponentOfType(Transform);
-  transform2.translation = [0, -2.3, 0];
+  transform2.translation = [0, 0.1, 0];
   transform2.scale = [10, 0.1, 10];
 
   let wall1 = loadObject("WallBlue", "static");
   let transform3 = wall1.getComponentOfType(Transform);
   transform3.translation = [0, 0, -5];
-  transform3.scale = [10, 10, 0.1];
-
+  transform3.scale = [10, 20, 0.1];
+  if(pageOrientation === "left"){
+    rotatingCharacter = characterObjects[characterSelected[0]];
+  }else{
+    rotatingCharacter = characterObjects[characterSelected[1]];
+  }
   //rotate the player
   constantRotation = setInterval(constantlyRotate, 5);
 }
@@ -355,14 +475,11 @@ let playerTurn = 1;
 let player1Object;
 let player2Object;
 let ball;
-let ballBlink = 0;
-let ballSelectInterval;
+let ballBlink = 0; //0 for increasing, 1 for decreasing
+let ballSelectInterval; //interval for blinking the ball
 let ballGrabbed = false;
 let dragStart = [0, 0];
 let dragEnd = [0, 0];
-
-
-const arrow = document.getElementById('arrow');
 
 
 //event listeners for the game
@@ -381,7 +498,6 @@ document.getElementById("ballDiv").addEventListener("mousedown", function(event)
 canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game"){
     ballGrabbed = false;
-    ballSelectInterval = setInterval(blinkBall, 30);
     if(calculateDragDistance() < 85 || calculateDragForce() < 0){
       setBall();
     }else{
@@ -392,9 +508,6 @@ canvas.addEventListener("mouseup", () => {
   document.exitPointerLock();
 });
 
-function arrowDrag(event){
-}
-
 //game functions
 function ballDrag(event){
   let transform = ball.getComponentOfType(Transform);
@@ -402,7 +515,7 @@ function ballDrag(event){
   let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
   dragToughness = Math.min(dragToughness, 0.01);
   transform.translation[0] -= event.movementX * 0.01;
-  transform.translation[1] -= event.movementY * dragToughness;
+  transform.translation[1] -= 1.5 * event.movementY * dragToughness;
   if(playerTurn === 1) {
     transform.translation[2] -= event.movementY * dragToughness;
   }else{
@@ -426,14 +539,8 @@ async function initGame(){
 function calculateDragDistance(){
   return Math.sqrt(Math.pow(dragEnd[0] - dragStart[0], 2) + Math.pow(dragEnd[1] - dragStart[1], 2));
 }
-function calculateDragAngle(){
-  return Math.atan((dragEnd[1] - dragStart[1]) / (dragEnd[0] - dragStart[0]));
-}
 function calculateDragForce(){
   return dragEnd[1] - dragStart[1];
-}
-function calculateDragSideForce(){
-  return dragEnd[0] - dragStart[0];
 }
 
 function throwBall(){
@@ -459,12 +566,38 @@ function blinkBall(){
   }
 }
 
+function setPlayerObjects(){
+  //camera.addComponent(new FirstPersonController(camera, canvas));
+  characterObjects = [];
+  let objectNames = ["AtlasObject", "ChronoObject", "NeroObject", "CurveObject", "TrippObject", "SpringObject", "EVOObject"];
+  for(let i = 0; i < objectNames.length; i++) {
+    let object = getObject(objectNames[i], "static");
+    object.addComponent(new Character(object));
+    characterObjects.push(object);
+  }
+  for(let i = 0; i < characterObjects.length; i++){
+    let object = characterObjects[i];
+    if(i === characterSelected[1]){
+      player1Object = object;
+      player1Object.getComponentOfType(Transform).translation = [0, 0, -16];
+      player1Object.getComponentOfType(Transform).rotation = [0, 0.707, 0, -0.707];
+    }else if(i === characterSelected[0]){
+      player2Object = object;
+      player2Object.getComponentOfType(Transform).translation = [0, 0, 16];
+    }else{
+      object.getComponentOfType(Transform).translation = [30, 0, 0];
+    }
+  }
+  console.log("player1:", player1Object, "player2:", player2Object);
+}
+
+
 function setBall(){
   let transform = ball.getComponentOfType(Transform);
   if(playerTurn === 1){
-    transform.translation = [0, 6.5, -7];
+    transform.translation = [0, 7.5, -7.1];
   }else{
-    transform.translation = [0, 6.5, 7];
+    transform.translation = [0, 7.5, 7.1];
   }
   ball.getComponentOfType(Ball).startPosition = transform.translation;
   if(!ballSelectInterval){
@@ -477,6 +610,7 @@ function initGameObjects(){
   ball.isStatic = false;
   ball.addComponent(new Ball(ball, canvas));
   setBall();
+  setPlayerObjects();
 }
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
@@ -491,7 +625,7 @@ function initializeTheLoader(){
 }
 
 async function initializeTheScene(intro){
-  await loader.load('scene/scene2.gltf'); // Load the scene
+  await loader.load('scene/scene.gltf'); // Load the scene
   if(intro){
     scene = new Node();
   }else{
@@ -510,13 +644,13 @@ function initializeTheCamera(intro){
   }));
   if(intro){
     camera.addComponent(new Transform({
-      translation: [0, 2, 5],
-      rotation: [-0.15, 0, 0, 1],
+      translation: [0, 10, 10],
+      rotation: [-0.2, 0, 0, 1],
     }));
   }else{
     //camera.addComponent(new FirstPersonController(camera, canvas));
     camera.addComponent(new Transform({
-      translation: [0, 9, -10.5],
+      translation: [0, 9, -12.6],
       rotation: [0, 1, 0.13, 0],
     }));
   }
@@ -533,20 +667,20 @@ async function initializeTheLight(intro){
   light.name = 'Light';
   if(intro){
     light.addComponent(new Transform({
-      translation: [0.2, 4, 5],
-      rotation: [-0.3, 0.1, 0, 1],
+      translation: [0.2, 11, 7],
+      rotation: [-0.5, 0.1, 0, 1],
     }));
     light.addComponent(new Light({
       color: [250, 245, 220],
-      intensity: 3,
-      attenuation: [0.001, 0.1, 0.3],
+      intensity: 1,
+      attenuation: [0, 0.1, 0.03],
       ambientOff: 0.01,
       ambientOn: 0.04,
-      fi: 0.6,
+      fi: 3,
       fovy: Math.PI / 1.2,
       aspect: 1,
-      near: 0.1,
-      far: 100,
+      near: 1,
+      far: 200,
     }));
   }else{
     light.addComponent(new Transform({
@@ -632,7 +766,6 @@ function getObject(name, type){
 
 function loadObject(name, type){
   let object = loader.loadNode(name);
-  console.log("object:", object);
   object.name = name;
   if(type){
     if(type === "static"){
@@ -653,9 +786,7 @@ function setAABBs(){
         if (!model) {
             return;
         }
-        console.log(node.name);
         const boxes = model.primitives.map(primitive => calculateAxisAlignedBoundingBox(primitive.mesh));
-        console.log(boxes);
         node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
     });
 }

@@ -384,7 +384,6 @@ export class Renderer extends BaseRenderer {
     renderNode(node, modelMatrix = mat4.create()) {
         const localMatrix = getLocalModelMatrix(node);
         modelMatrix = mat4.multiply(mat4.create(), modelMatrix, localMatrix);
-
         const { modelUniformBuffer, modelBindGroup } = this.prepareNode(node);
         const normalMatrix = this.mat3tomat4(mat3.normalFromMat4(mat3.create(), modelMatrix));
         this.device.queue.writeBuffer(modelUniformBuffer, 0, modelMatrix);
@@ -403,7 +402,6 @@ export class Renderer extends BaseRenderer {
     renderNode_shadow(node, modelMatrix = mat4.create()) {
         const localMatrix = getLocalModelMatrix(node);
         modelMatrix = mat4.multiply(mat4.create(), modelMatrix, localMatrix);
-
         const { modelUniformBuffer, modelBindGroup } = this.prepareNode(node);
         const normalMatrix = this.mat3tomat4(mat3.normalFromMat4(mat3.create(), modelMatrix));
         this.device.queue.writeBuffer(modelUniformBuffer, 0, modelMatrix);

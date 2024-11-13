@@ -16,7 +16,6 @@ export class Physics {
                 this.scene.traverse(other => {
                     if (node !== other && other.isStatic) {
                         this.resolveCollision(node, other);
-                        this.getDistanceToWall(node, other);
                     }
                 });
             }
@@ -103,7 +102,7 @@ export class Physics {
         if (tzmin > tzmax) [tzmin, tzmax] = [tzmax, tzmin];
 
         if ((txmin > tzmax) || (tzmin > txmax)) return null;
-        console.log("ray hit! final caluclated distance:", txmin);
+        console.log("ray hit! final calculated distance:", txmin);
         return { distance: txmin }; // Return the distance to the intersection
     }
 
@@ -157,6 +156,7 @@ export class Physics {
         const diffb = vec3.sub(vec3.create(), aBox.max, bBox.min);
 
         let minDiff = Infinity;
+        let bounce = 0.1;
         let minDirection = [0, 0, 0];
         if (diffa[0] >= 0 && diffa[0] < minDiff) {
             minDiff = diffa[0];
@@ -211,24 +211,4 @@ export class Physics {
 
         vec3.add(transform.translation, transform.translation, minDirection);
     }
-
-  getDistanceToWall(ball, wall) {
-    // Get the global AABBs for the ball and wall.
-    if(wall.name.includes('Wall')){
-      const ballBox = this.getTransformedAABB(ball);
-      const wallBox = this.getTransformedAABB(wall);
-
-      // Calculate distances on each axis, assuming no overlap.
-      const distX = Math.max(0, wallBox.min[0] - ballBox.max[0], ballBox.min[0] - wallBox.max[0]);
-      const distY = Math.max(0, wallBox.min[1] - ballBox.max[1], ballBox.min[1] - wallBox.max[1]);
-      const distZ = Math.max(0, wallBox.min[2] - ballBox.max[2], ballBox.min[2] - wallBox.max[2]);
-
-      // Log the distances for each axis.
-      console.log(`${wall.name} distance from ball:`);
-      console.log(`  X-axis distance: ${distX}`);
-      console.log(`  Y-axis distance: ${distY}`);
-      console.log(`  Z-axis distance: ${distZ}`);
-    }
-  }
-
 }
