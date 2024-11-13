@@ -17,7 +17,7 @@ export class Character {
       this.transform.translation[2] = this.introHeight;
       this.transform.scale = this.introScale;
     }else{
-      this.transform.translation[2] = this.gameHeight;
+      this.transform.translation[1] = this.gameHeight;
       this.transform.scale = this.gameScale;
     }
   }

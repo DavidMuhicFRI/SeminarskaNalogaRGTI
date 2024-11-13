@@ -217,17 +217,18 @@ function rotatePlayer(player, angle){
 let characterObjects = [];
 async function loadCharacters(){
   let objects = ["AtlasObject", "ChronoObject", "NeroObject", "CurveObject", "TrippObject", "SpringObject", "EVOObject"];
-  let charIntroHeights = [1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2];
-  let charIntroScales = [[0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [0.35, 0.42, 0.35]];
+  let charIntroHeights = [1.2, 1, 0, 0, 0, 0, 0];
+  let charIntroScales = [[0.35, 0.42, 0.35], [0.35, 0.42, 0.35], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1]];
   for(let i = 0; i < objects.length; i++){
     let name = objects[i];
     let object = loadObject(name, "static");
     object.addComponent(new Character(object));
     let char = object.getComponentOfType(Character);
-    char.transform.translation = [0, charIntroHeights[i], 0];
-    char.transform.scale = charIntroScales[i];
-    char.setParameters(true, name);
+    char.introHeight = charIntroHeights[i];
+    char.introScale = charIntroScales[i];
+    char.setParameters(true);
     characterObjects.push(object);
+    console.log("loaded: ", object.name);
   }
 }
 
@@ -345,11 +346,8 @@ async function initCharacterPage() {
   await init(true);
 
 //load the objects for character page
-  //await loadCharacters();
-  player1 = loadObject("AtlasObject", "static");
-  let transform1 = player1.getComponentOfType(Transform);
-  transform1.translation = [0, 1.2, 0];
-  transform1.scale = [0.35, 0.42, 0.35];
+  await loadCharacters();
+  player1 = characterObjects[0];
 
   let floor = loadObject("Floor", "static");
   let transform2 = floor.getComponentOfType(Transform);
@@ -526,8 +524,8 @@ function initializeTheCamera(intro){
   }));
   if(intro){
     camera.addComponent(new Transform({
-      translation: [0, 2, 5],
-      rotation: [-0.15, 0, 0, 1],
+      translation: [0, 4, 10],
+      rotation: [-0.3, 0, 0, 1],
     }));
   }else{
     //camera.addComponent(new FirstPersonController(camera, canvas));
