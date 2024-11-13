@@ -667,7 +667,7 @@ async function initializeTheLight(intro){
   light.name = 'Light';
   if(intro){
     light.addComponent(new Transform({
-      translation: [0.2, 11, 7],
+      translation: [0.2, 13, 9],
       rotation: [-0.5, 0.1, 0, 1],
     }));
     light.addComponent(new Light({
