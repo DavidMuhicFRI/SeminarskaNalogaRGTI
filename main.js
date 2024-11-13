@@ -153,18 +153,20 @@ function movePage(page) {
     const pageRect = page.getBoundingClientRect();
     const pageMiddle = pageRect.left + pageRect.width / 2;
     if (pageMiddle < 0 || pageMiddle > window.innerWidth) {
+      const char1 = characterObjects[characterSelected[0]].getComponentOfType(Transform);
+      const char2 = characterObjects[characterSelected[1]].getComponentOfType(Transform);
       if(page === leftPage){
         canvasContainerRight.appendChild(canvas);
         canvas.style.borderColor = "rgba(255, 90, 90, 1)";
-        characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [0, 0, 0];
+        char2.translation = [0, 0, 0];
         rotatingCharacter = characterObjects[characterSelected[1]];
-        characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [-20, 0, 0];
+        char1.translation = [-20, 0, 0];
       } else {
         canvasContainerLeft.appendChild(canvas);
         canvas.style.borderColor = "rgba(90, 90, 255, 1)";
-        characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [0, 0, 0];
+        char1.translation = [0, 0, 0];
         rotatingCharacter = characterObjects[characterSelected[0]];
-        characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [20, 0, 0];
+        char2.translation = [20, 0, 0];
       }
       if(characterSelected[0] === characterSelected[1]){
         nextCharacter();
@@ -232,7 +234,7 @@ function rotatePlayer(player, angle){
   transform.rotation = multiplyQuaternions(transform.rotation, rotationQuat);
 }
 
-//character loading
+//character loading and character functions
 let characterObjects = [];
 async function loadCharacters(){
   characterObjects = [];
@@ -260,8 +262,6 @@ async function loadCharacters(){
     characterObjects.push(object);
   }
 }
-
-
 function nextCharacter(){
   if(pageOrientation === "left"){
     let previousTransform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
@@ -337,7 +337,6 @@ async function startGame(){
   showElement("game");
   $("#game").show(); //for 2nd and later showings
 }
-
 //exit game
 async function cancelGame(){
   await initCharacterPage();
@@ -411,10 +410,7 @@ document.addEventListener("pointerlockchange", () => {
 });
 canvas.addEventListener("mousedown", () => {
   if (pageStatus === "main") {
-    // Request pointer lock on mouse down
     canvas.requestPointerLock();
-  }else if(pageStatus === "game" && ballGrabbed){
-
   }
 });
 canvas.addEventListener("mousemove", (event) => {
@@ -423,7 +419,6 @@ canvas.addEventListener("mousemove", (event) => {
   }else if(pageStatus === "game" && ballGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
     ballDrag(event);
-    arrowDrag(event);
   }
 });
 canvas.addEventListener("mouseover", () => {
@@ -480,8 +475,8 @@ let playerTurn = 1;
 let player1Object;
 let player2Object;
 let ball;
-let ballBlink = 0;
-let ballSelectInterval;
+let ballBlink = 0; //0 for increasing, 1 for decreasing
+let ballSelectInterval; //interval for blinking the ball
 let ballGrabbed = false;
 let dragStart = [0, 0];
 let dragEnd = [0, 0];
@@ -514,9 +509,6 @@ canvas.addEventListener("mouseup", () => {
   document.exitPointerLock();
 });
 
-function arrowDrag(event){
-}
-
 //game functions
 function ballDrag(event){
   let transform = ball.getComponentOfType(Transform);
@@ -548,14 +540,8 @@ async function initGame(){
 function calculateDragDistance(){
   return Math.sqrt(Math.pow(dragEnd[0] - dragStart[0], 2) + Math.pow(dragEnd[1] - dragStart[1], 2));
 }
-function calculateDragAngle(){
-  return Math.atan((dragEnd[1] - dragStart[1]) / (dragEnd[0] - dragStart[0]));
-}
 function calculateDragForce(){
   return dragEnd[1] - dragStart[1];
-}
-function calculateDragSideForce(){
-  return dragEnd[0] - dragStart[0];
 }
 
 function throwBall(){
