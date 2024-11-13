@@ -579,11 +579,11 @@ function setPlayerObjects(){
     let object = characterObjects[i];
     if(i === characterSelected[1]){
       player1Object = object;
-      player1Object.getComponentOfType(Transform).translation = [0, 0, -16];
+      player1Object.getComponentOfType(Transform).translation = [0, 0, -14.2];
       player1Object.getComponentOfType(Transform).rotation = [0, 0.707, 0, -0.707];
     }else if(i === characterSelected[0]){
       player2Object = object;
-      player2Object.getComponentOfType(Transform).translation = [0, 0, 16];
+      player2Object.getComponentOfType(Transform).translation = [0, 0, 14.2];
     }else{
       object.getComponentOfType(Transform).translation = [30, 0, 0];
     }
