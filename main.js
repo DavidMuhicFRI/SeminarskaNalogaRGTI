@@ -515,7 +515,7 @@ function ballDrag(event){
   let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
   dragToughness = Math.min(dragToughness, 0.01);
   transform.translation[0] -= event.movementX * 0.01;
-  transform.translation[1] -= event.movementY * dragToughness;
+  transform.translation[1] -= 1.5 * event.movementY * dragToughness;
   if(playerTurn === 1) {
     transform.translation[2] -= event.movementY * dragToughness;
   }else{
@@ -577,11 +577,11 @@ function setPlayerObjects(){
   }
   for(let i = 0; i < characterObjects.length; i++){
     let object = characterObjects[i];
-    if(i === characterSelected[0]){
+    if(i === characterSelected[1]){
       player1Object = object;
       player1Object.getComponentOfType(Transform).translation = [0, 0, -16];
       player1Object.getComponentOfType(Transform).rotation = [0, 0.707, 0, -0.707];
-    }else if(i === characterSelected[1]){
+    }else if(i === characterSelected[0]){
       player2Object = object;
       player2Object.getComponentOfType(Transform).translation = [0, 0, 16];
     }else{
@@ -595,9 +595,9 @@ function setPlayerObjects(){
 function setBall(){
   let transform = ball.getComponentOfType(Transform);
   if(playerTurn === 1){
-    transform.translation = [0, 6.5, -8.9];
+    transform.translation = [0, 7.5, -7.1];
   }else{
-    transform.translation = [0, 6.5, 8.9];
+    transform.translation = [0, 7.5, 7.1];
   }
   ball.getComponentOfType(Ball).startPosition = transform.translation;
   if(!ballSelectInterval){
@@ -650,7 +650,7 @@ function initializeTheCamera(intro){
   }else{
     //camera.addComponent(new FirstPersonController(camera, canvas));
     camera.addComponent(new Transform({
-      translation: [0, 9, -14.4],
+      translation: [0, 9, -12.6],
       rotation: [0, 1, 0.13, 0],
     }));
   }
