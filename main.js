@@ -228,6 +228,7 @@ function rotatePlayer(player, angle){
 //character loading
 let characterObjects = [];
 async function loadCharacters(){
+  characterObjects = [];
   let objects = ["AtlasObject", "ChronoObject", "NeroObject", "CurveObject", "TrippObject", "SpringObject", "EVOObject"];
   let charIntroScales = [[0.8, 0.9, 0.8], [1, 1, 1], [1.2, 1.2, 1.2], [1.1, 1.1, 1.1], [1.1, 1.1, 1.1], [1.2, 1.2, 1.2], [1.2, 1.2, 1.2]];
   for(let i = 0; i < objects.length; i++){
@@ -235,14 +236,19 @@ async function loadCharacters(){
     let object = await loadObject(name, "static");
     object.addComponent(new Character(object));
     let char = object.getComponentOfType(Character);
-    char.introScale = charIntroScales[i];
     char.transform.scale = charIntroScales[i];
-    if(pageOrientation === "left" && i === characterSelected[0]){
-      char.transform.translation = [0, 0, 0];
-    }else if(pageOrientation === "right" && i === characterSelected[1]){
-      char.transform.translation = [0, 0, 0];
+    if(pageOrientation ==="left"){
+      if(i === characterSelected[0]){
+        char.transform.translation = [0, 0, 0];
+      }else{
+        char.transform.translation = [-20, 0, 0];
+      }
     }else{
-      char.transform.translation = [20, 0, 0];
+      if(i === characterSelected[1]){
+        char.transform.translation = [0, 0, 0];
+      }else{
+        char.transform.translation = [20, 0, 0];
+      }
     }
     characterObjects.push(object);
   }
