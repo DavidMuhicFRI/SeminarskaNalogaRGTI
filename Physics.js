@@ -208,7 +208,6 @@ export class Physics {
             //console.log("from straight")
           }
         }
-
-        vec3.add(transform.translation, transform.translation, minDirection);
+        transform.translation = vec3.add(vec3.create(), transform.translation, minDirection);
     }
 }

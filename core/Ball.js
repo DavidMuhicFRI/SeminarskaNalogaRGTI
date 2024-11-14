@@ -55,14 +55,8 @@ export class Ball {
     this.velocity[1] -= 9.8 * dt;
     //decrease velocity by deceleration
     vec3.scale(this.velocity, this.velocity, this.deceleration);
-    //limit speed to maxSpeed
-    const speed = vec3.length(this.velocity);
-    if (speed > this.maxSpeed) {
-      vec3.scale(this.velocity, this.velocity, this.maxSpeed / speed);
-    }
-    //update position
-    if (this.transform) {
-      vec3.scaleAndAdd(this.transform.translation, this.transform.translation, this.velocity, dt);
-    }
+    this.transform.translation[0] += this.velocity[0] * dt;
+    this.transform.translation[1] += this.velocity[1] * dt;
+    this.transform.translation[2] += this.velocity[2] * dt;
   }
 }
