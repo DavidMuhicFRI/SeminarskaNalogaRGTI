@@ -458,8 +458,7 @@ document.getElementById("ballDiv").addEventListener("mousedown", function(event)
   clearInterval(ballSelectInterval);
   //cursor lock
   canvas.requestPointerLock();
-  let transform = ball.getComponentOfType(Transform);
-  transform.scale = [0.18, 0.18, 0.18];
+  ball.transform.scale = [0.18, 0.18, 0.18];
 });
 canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game"){
@@ -497,20 +496,18 @@ function calculateDragForce(){
 
 //ball functions
 function throwBall(){
-  const ballObject = ball.getComponentOfType(Ball);
-  ballObject.acceleration = calculateDragForce();
-  ballObject.moving = true;
-  ballObject.setStartVelocity();
+  ball.acceleration = calculateDragForce();
+  ball.moving = true;
+  ball.setStartVelocity();
   clearInterval(ballSelectInterval);
 }
 function blinkBall(){
-  let ballTransform = ball.getComponentOfType(Transform);
   if(!ballGrabbed){
-    if(ballTransform.scale[0] < 0.22 && ballBlink === 0){
-      ballTransform.scale = ballTransform.scale.map(x => x + 0.002);
-    }else if(ballTransform.scale[0] > 0.15 && ballBlink === 1){
-      ballTransform.scale = ballTransform.scale.map(x => x - 0.002);
-    }else if(ballTransform.scale[0] >= 0.22){
+    if(ball.transform.scale[0] < 0.22 && ballBlink === 0){
+      ball.transform.scale = ball.transform.scale.map(x => x + 0.002);
+    }else if(ball.transform.scale[0] > 0.15 && ballBlink === 1){
+      ball.transform.scale = ball.transform.scale.map(x => x - 0.002);
+    }else if(ball.transform.scale[0] >= 0.22){
       ballBlink = 1;
     }else{
       ballBlink = 0;
@@ -519,25 +516,24 @@ function blinkBall(){
 }
 function resetBall(){
   if(playerTurn === 1){
-    ball.getComponentOfType(Ball).resetPlayer1();
+    ball.resetPlayer1();
   }else{
-    ball.getComponentOfType(Ball).resetPlayer2();
+    ball.resetPlayer2();
   }
   if(!ballSelectInterval){
     ballSelectInterval = setInterval(blinkBall, 20);
   }
 }
 function ballDrag(event){
-  let transform = ball.getComponentOfType(Transform);
   let force = calculateDragForce();
   let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
   dragToughness = Math.min(dragToughness, 0.01);
-  transform.translation[0] -= event.movementX * 0.01;
-  transform.translation[1] -= 1.5 * event.movementY * dragToughness;
+  ball.transform.translation[0] -= event.movementX * 0.01;
+  ball.transform.translation[1] -= 1.5 * event.movementY * dragToughness;
   if(playerTurn === 1) {
-    transform.translation[2] -= event.movementY * dragToughness;
+    ball.transform.translation[2] -= event.movementY * dragToughness;
   }else{
-    transform.translation[2] += event.movementY * dragToughness;
+    ball.transform.translation[2] += event.movementY * dragToughness;
   }
 }
 
@@ -562,6 +558,7 @@ function initGameObjects(){
   ball = findObject("Ball", "dynamic");
   ball.isStatic = false;
   ball.addComponent(new Ball(ball, canvas));
+  ball = ball.getComponentOfType(Ball);
   resetBall();
   setPlayerObjects();
 }
