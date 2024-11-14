@@ -520,13 +520,11 @@ function calculateDragDistance(){
 }
 function calculateDragForce(){
   return dragEnd[1] - dragStart[1];
-  //hell naw
 }
 
 //ball functions
 function throwBall(){
   let ballObject = ball.getComponentOfType(Ball);
-  ballObject.acceleration = calculateDragForce();
   ballObject.moving = true;
   ballObject.setStartVelocity();
   clearInterval(ballSelectInterval);
@@ -624,7 +622,9 @@ function initOtherObjects(){
   loadObject("Wall4", "static");
   loadObject("Floor", "static");
   loadObject("Table", "static");
-  loadObject("Ceiling", "static");
+  let ceiling = loadObject("Ceiling", "static");
+  let transform = ceiling.getComponentOfType(Transform);
+  transform.translation = [0, 15, 0];
   loadObject("Barricade1", "static");
   loadObject("Barricade2", "static");
   loadObject("Barricade3", "static");

@@ -5,11 +5,11 @@ export class Ball {
   constructor(node) {
     this.node = node;
     this.velocity = [0, 0, 0];
-    this.acceleration = 0;
-    this.maxSpeed = 1000;
+    this.acceleration = 10;
+    this.maxSpeed = 30;
     this.deceleration = 0.995;
     this.bounces = 0;
-    this.bounciness = 0.8;
+    this.bounciness = 1.5;
     this.radius = 0.18;
     this.startPosition = null;
     this.moving = false;
@@ -17,15 +17,14 @@ export class Ball {
 
   setStartVelocity(){
     this.velocity = [0, 0, 0];
-    let constant = 0.01;
     let diffX = this.node.getComponentOfType(Transform).translation[0] - this.startPosition[0];
     let diffY = this.node.getComponentOfType(Transform).translation[1] - this.startPosition[1];
     let diffZ = this.node.getComponentOfType(Transform).translation[2] - this.startPosition[2];
-    this.velocity[0] = -diffX * constant * this.acceleration;
+    this.velocity[0] = -diffX * this.acceleration;
     console.log(this.velocity[0]);
-    this.velocity[1] = -diffY * constant * this.acceleration;
+    this.velocity[1] = -diffY * this.acceleration;
     console.log(this.velocity[1]);
-    this.velocity[2] = -diffZ * constant * this.acceleration;
+    this.velocity[2] = -diffZ * this.acceleration;
     console.log(this.velocity[2]);
   }
 
@@ -53,6 +52,13 @@ export class Ball {
     this.velocity[1] -= 9.8 * dt;
     //decrease velocity by deceleration
     vec3.scale(this.velocity, this.velocity, this.deceleration);
+
+    //clamp velocity to max speed
+    if (vec3.length(this.velocity) > this.maxSpeed) {
+      vec3.normalize(this.velocity, this.velocity);
+      vec3.scale(this.velocity, this.velocity, this.maxSpeed);
+    }
+
     this.node.getComponentOfType(Transform).translation[0] += this.velocity[0] * dt;
     this.node.getComponentOfType(Transform).translation[1] += this.velocity[1] * dt;
     this.node.getComponentOfType(Transform).translation[2] += this.velocity[2] * dt;
