@@ -4,6 +4,7 @@ export class Character {
   constructor(node, name) {
     this.node = node;
     this.transform = node.getComponentOfType(Transform);
+    this.transform.rotation = [0, 0.707, 0, -0.707]; //fixing rotation
     switch(name) {
       case 'Atlas':
         this.stats = {
