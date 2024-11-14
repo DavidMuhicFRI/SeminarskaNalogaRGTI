@@ -1,7 +1,7 @@
 import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
-import { Camera, Model, Transform, Node, Ball, Character } from './core.js';
+import {Camera, Model, Transform, Node, Ball, Character, Player} from './core.js';
 import {
     calculateAxisAlignedBoundingBox,
     mergeAxisAlignedBoundingBoxes,
@@ -117,11 +117,12 @@ let camera;
 let light;
 
 //variables for the character page
+let player1 = new Player('Atlas');
+let player2 = new Player('Chrono');
+
 let rotatingCharacter; //the player object for character page purposes
 let constantRotation; //interval for the rotation
 let rotate = false; //if the model is rotating
-let player1Ready = false;
-let player2Ready = false;
 let pageOrientation = "left"; //set to left if canvas is in canvasContainerLeft, right if in canvasContainerRight
 let characterSelected = [0, 1]
 let interacted = false;
@@ -236,32 +237,30 @@ function rotatePlayer(player, angle){
 
 //character loading and character functions
 let characterObjects = [];
+
 async function loadCharacters(){
   characterObjects = [];
-  let objects = ["AtlasObject", "ChronoObject", "NeroObject", "CurveObject", "TrippObject", "SpringObject", "EVOObject"];
-  let charIntroScales = [[0.8, 0.9, 0.8], [1, 1, 1], [1.2, 1.2, 1.2], [1.1, 1.1, 1.1], [1.1, 1.1, 1.1], [1.2, 1.2, 1.2], [1.2, 1.2, 1.2]];
-  for(let i = 0; i < objects.length; i++){
-    let name = objects[i];
-    let object = await loadObject(name, "static");
-    object.addComponent(new Character(object));
-    let char = object.getComponentOfType(Character);
-    char.transform.scale = charIntroScales[i];
-    if(pageOrientation ==="left"){
-      if(i === characterSelected[0]){
-        char.transform.translation = [0, 0, 0];
+  let characterNames = ["Atlas", "Chrono", "Curve", "Nero", "Spring", "Tripp"];
+  characterNames.forEach((name, index) => {
+    characterObjects[index] = loadObject(name + "Object", "static");
+    let character = new Character(characterObjects[index], name);
+
+    if(pageOrientation === "left"){
+      if(index === characterSelected[0]){
+        character.transform.translation = [0, 0, 0];
       }else{
-        char.transform.translation = [-20, 0, 0];
+        character.transform.translation = [-20, 0, 0];
       }
     }else{
-      if(i === characterSelected[1]){
-        char.transform.translation = [0, 0, 0];
+      if(index === characterSelected[1]){
+        character.transform.translation = [0, 0, 0];
       }else{
-        char.transform.translation = [20, 0, 0];
+        character.transform.translation = [20, 0, 0];
       }
     }
-    characterObjects.push(object);
-  }
+  });
 }
+
 function nextCharacter(){
   if(pageOrientation === "left"){
     let previousTransform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
@@ -351,36 +350,36 @@ gameBackButton.addEventListener('click', function() {
   });
 });
 readyButton1.addEventListener('click', function() {
-  if(player1Ready){
+  if(player1.ready){
     //button is cancel, set it to ready and unready the player
     turnButtonToReady(readyButton1);
-    player1Ready = false;
+    player1.ready = false;
   } else {
-    if(player2Ready){
+    if(player2.ready){
       //both players are ready, start the game
       startGame().then(() => {
         console.log("Game started");
       });
     }else{
       //set player to ready, set the button to cancel and move the page
-      player1Ready = true;
-      turnButtonToCancel(readyButton1, player1Ready);
+      player1.ready = true;
+      turnButtonToCancel(readyButton1, player1.ready);
       movePage(leftPage);
     }
   }
 });
 readyButton2.addEventListener('click', function() {
-  if(player2Ready){
+  if(player2.ready){
     turnButtonToReady(readyButton2);
-    player2Ready = false;
+    player2.ready = false;
   } else {
-    if(player1Ready){
+    if(player1.ready){
       startGame().then(() => {
         console.log("Game started");
       });
     }else{
-      player2Ready = true;
-      turnButtonToCancel(readyButton2, player2Ready);
+      player2.ready = true;
+      turnButtonToCancel(readyButton2, player2.ready);
       movePage(rightPage);
     }
   }
@@ -440,8 +439,8 @@ async function initCharacterPage() {
   }
   container.appendChild(canvas);
   document.body.style.cursor = "default";
-  player1Ready = false;
-  player2Ready = false;
+  player1.ready = false;
+  player2.ready = false;
   turnButtonToReady(readyButton1);
   turnButtonToReady(readyButton2);
   document.getElementById("gameBackButton").style.visibility = "hidden";
