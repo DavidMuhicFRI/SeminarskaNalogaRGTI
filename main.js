@@ -159,27 +159,32 @@ function movePage() {
   const page = pageOrientation === "left" ? leftPage : rightPage;
   let left;
   let right;
+  if(pageOrientation === "left"){
+    left = "-100vw";
+    right = "0";
+    pageOrientation = "right";
+  }else{
+    left = "0";
+    right = "100vw";
+    pageOrientation = "left";
+  }
+  document.getElementById('CPLeft').style.left = left;
+  document.getElementById('CPRight').style.left = right;
   const checkPositionInterval = setInterval(() => {
     const pageRect = page.getBoundingClientRect();
     const pageMiddle = pageRect.left + pageRect.width / 2;
     if (pageMiddle < 0 || pageMiddle > window.innerWidth) {
+      console.log("pageOrientation:", pageOrientation);
       if(pageOrientation === "left"){
-        pageOrientation = "right";
-        left = "-100vw";
-        right = "0";
-        displayCharacters();
-        canvasContainerRight.appendChild(canvas);
+        canvasContainerLeft.appendChild(canvas);
+        console.log("canvasContainerRight:", canvasContainerLeft);
         canvas.style.borderColor = "rgba(255, 90, 90, 1)";
       } else {
-        pageOrientation = "left";
-        left = "0";
-        right = "100vw";
-        displayCharacters();
-        canvasContainerLeft.appendChild(canvas);
+        canvasContainerRight.appendChild(canvas);
+        console.log("canvasContainerLeft:", canvasContainerRight);
         canvas.style.borderColor = "rgba(90, 90, 255, 1)";
       }
-      document.getElementById('CPLeft').style.left = left;
-      document.getElementById('CPRight').style.left = right;
+      displayCharacters();
       clearInterval(checkPositionInterval);
     }
   }, 10);
@@ -224,9 +229,9 @@ function multiplyQuaternions(q1, q2) {
     q1[3] * q2[3] - q1[0] * q2[0] - q1[1] * q2[1] - q1[2] * q2[2]  // W component
   ];
 }
-function rotatePlayer(player, angle){
+function rotatePlayer(rotatingCharacter, angle){
   const rotationQuat = createQuaternionFromAxisAngle([0, 1, 0], angle);
-  const transform = player.getComponentOfType(Transform);
+  const transform = rotatingCharacter.getComponentOfType(Transform);
   transform.rotation = multiplyQuaternions(transform.rotation, rotationQuat);
 }
 
@@ -242,7 +247,9 @@ async function loadCharacters(){
     characterObjects[index].addComponent(character);
     character.applyScale();
   });
-  characterSelected = [characterObjects[0], null];
+  if(characterSelected.length === 0){
+    characterSelected = [characterObjects[0], null];
+  }
   displayCharacters();
 }
 
@@ -253,78 +260,33 @@ function displayCharacters(){
     if(characterObjects[i] === characterSelected[side]){
       transform.translation = [0, 0, 0];
       rotatingCharacter = characterObjects[i];
+      console.log("rotatingCharacter:", rotatingCharacter);
     }else{
       transform.translation = [20, 0, 0];
     }
   }
 }
 
-function nextCharacter(){
-  if(pageOrientation === "left"){
-    let previousTransform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
-    characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [20, 0, 0];
-    characterSelected[0]++;
-    characterSelected[0] %= characterObjects.length;
-    if(!interacted || (characterSelected[0] === characterSelected[1] && interacted)){
-      characterSelected[0]++;
-      characterSelected[0] %= characterObjects.length;
+//assigns next or previous character to the selected character
+function assignCharacter(direction){
+  let side = pageOrientation === "left" ? 0 : 1;
+  let otherSide = side === 0 ? 1 : 0;
+  let index = characterObjects.indexOf(characterSelected[side]);
+  if(direction === "next"){
+    characterSelected[side] = index === characterObjects.length - 1 ? characterObjects[0] : characterObjects[index + 1];
+    index = characterObjects.indexOf(characterSelected[side]);
+    if(characterSelected[side] === characterSelected[otherSide]){
+      characterSelected[side] = index === characterObjects.length - 1 ? characterObjects[0] : characterObjects[index + 1];
     }
-    let transform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
-    transform.translation = [0, 0, 0];
-    transform.rotation = previousTransform.rotation;
-    rotatingCharacter = characterObjects[characterSelected[0]];
   }else{
-    let previousTransform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
-    characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [-20, 0, 0];
-    characterSelected[1]++;
-    characterSelected[1] %= characterObjects.length;
-    if(characterSelected[1] === characterSelected[0]){
-      characterSelected[1]++;
-      characterSelected[1] %= characterObjects.length;
+    characterSelected[side] = index === 0 ? characterObjects[characterObjects.length - 1] : characterObjects[index - 1];
+    index = characterObjects.indexOf(characterSelected[side]);
+    if(characterSelected[side] === characterSelected[otherSide]){
+      characterSelected[side] = index === 0 ? characterObjects[characterObjects.length - 1] : characterObjects[index - 1];
     }
-    let transform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
-    transform.translation = [0, 0, 0];
-    transform.rotation = previousTransform.rotation;
-    rotatingCharacter = characterObjects[characterSelected[1]];
   }
 }
-function previousCharacter(){
-  if(pageOrientation === "left"){
-    let previousTransform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
-    characterObjects[characterSelected[0]].getComponentOfType(Transform).translation = [20, 0, 0];
-    characterSelected[0]--;
-    if(characterSelected[0] < 0){
-      characterSelected[0] = characterObjects.length - 1;
-    }
-    if(interacted && characterSelected[0] === characterSelected[1]){
-      characterSelected[0]--;
-      if(characterSelected[0] < 0){
-        characterSelected[0] = characterObjects.length - 1;
-      }
-    }
-    let transform = characterObjects[characterSelected[0]].getComponentOfType(Transform);
-    transform.translation = [0, 0, 0];
-    transform.rotation = previousTransform.rotation;
-    rotatingCharacter = characterObjects[characterSelected[0]];
-  } else {
-    let previousTransform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
-    characterObjects[characterSelected[1]].getComponentOfType(Transform).translation = [-20, 0, 0];
-    characterSelected[1]--;
-    if(characterSelected[1] < 0){
-      characterSelected[1] = characterObjects.length - 1;
-    }
-    if(characterSelected[1] === characterSelected[0]){
-      characterSelected[1]--;
-      if(characterSelected[1] < 0){
-        characterSelected[1] = characterObjects.length - 1;
-      }
-    }
-    let transform = characterObjects[characterSelected[1]].getComponentOfType(Transform);
-    transform.translation = [0, 0, 0];
-    transform.rotation = previousTransform.rotation;
-    rotatingCharacter = characterObjects[characterSelected[1]];
-  }
-}
+
 
 //starting and exiting the game
 async function startGame(){
@@ -389,16 +351,20 @@ backToP1.addEventListener('click', function() {
   movePage();
 });
 charNextButtonBlue.addEventListener('click', function() {
-  nextCharacter();
+  assignCharacter("next");
+  displayCharacters();
 });
 charPreviousButtonBlue.addEventListener('click', function() {
-  previousCharacter();
+  assignCharacter("previous");
+  displayCharacters();
 });
 charNextButtonRed.addEventListener('click', function() {
-  nextCharacter();
+  assignCharacter("next");
+  displayCharacters();
 });
 charPreviousButtonRed.addEventListener('click', function() {
-  previousCharacter();
+  assignCharacter("previous");
+  displayCharacters();
 });
 
 //event listeners for model rotation on drag
@@ -457,11 +423,6 @@ async function initCharacterPage() {
   let transform3 = wall1.getComponentOfType(Transform);
   transform3.translation = [0, 0, -5];
   transform3.scale = [10, 20, 0.1];
-  if(pageOrientation === "left"){
-    rotatingCharacter = characterObjects[characterSelected[0]];
-  }else{
-    rotatingCharacter = characterObjects[characterSelected[1]];
-  }
   //rotate the player
   constantRotation = setInterval(constantlyRotate, 5);
 }
