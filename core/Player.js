@@ -1,8 +1,8 @@
 
 export class Player {
-  constructor(character) {
+  constructor() {
     this.ready = false;
-    this.character = character;
+    this.character = null;
     this.currentHP = 0;
     this.effects = [];
 

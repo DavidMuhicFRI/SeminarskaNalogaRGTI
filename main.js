@@ -117,8 +117,8 @@ let camera;
 let light;
 
 //variables for the character page
-let player1 = new Player('Atlas');
-let player2 = new Player('Chrono');
+let player1 = new Player();
+let player2 = new Player();
 
 let rotatingCharacter; //the player object for character page purposes
 let constantRotation; //interval for the rotation
@@ -174,15 +174,14 @@ function movePage() {
     const pageRect = page.getBoundingClientRect();
     const pageMiddle = pageRect.left + pageRect.width / 2;
     if (pageMiddle < 0 || pageMiddle > window.innerWidth) {
-      console.log("pageOrientation:", pageOrientation);
       if(pageOrientation === "left"){
         canvasContainerLeft.appendChild(canvas);
-        console.log("canvasContainerRight:", canvasContainerLeft);
-        canvas.style.borderColor = "rgba(255, 90, 90, 1)";
+        canvas.style.borderColor = "rgba(90, 90, 255, 1)";
+        characterSelected[0].getComponentOfType(Transform).rotation = rotatingCharacter.getComponentOfType(Transform).rotation;
       } else {
         canvasContainerRight.appendChild(canvas);
-        console.log("canvasContainerLeft:", canvasContainerRight);
-        canvas.style.borderColor = "rgba(90, 90, 255, 1)";
+        canvas.style.borderColor = "rgba(255, 90, 90, 1)";
+        characterSelected[1].getComponentOfType(Transform).rotation = rotatingCharacter.getComponentOfType(Transform).rotation;
       }
       displayCharacters();
       clearInterval(checkPositionInterval);
@@ -260,7 +259,6 @@ function displayCharacters(){
     if(characterObjects[i] === characterSelected[side]){
       transform.translation = [0, 0, 0];
       rotatingCharacter = characterObjects[i];
-      console.log("rotatingCharacter:", rotatingCharacter);
     }else{
       transform.translation = [20, 0, 0];
     }
@@ -272,6 +270,7 @@ function assignCharacter(direction){
   let side = pageOrientation === "left" ? 0 : 1;
   let otherSide = side === 0 ? 1 : 0;
   let index = characterObjects.indexOf(characterSelected[side]);
+  let rotation = characterSelected[side].getComponentOfType(Transform).rotation;
   if(direction === "next"){
     characterSelected[side] = index === characterObjects.length - 1 ? characterObjects[0] : characterObjects[index + 1];
     index = characterObjects.indexOf(characterSelected[side]);
@@ -285,6 +284,7 @@ function assignCharacter(direction){
       characterSelected[side] = index === 0 ? characterObjects[characterObjects.length - 1] : characterObjects[index - 1];
     }
   }
+  characterSelected[side].getComponentOfType(Transform).rotation = rotation;
 }
 
 
@@ -486,8 +486,8 @@ async function initGame(){
   rotate = false;
   canvas.id = "gameCanvas";
   document.getElementById("game").appendChild(canvas);
-  await init(false);
   clearInterval(constantRotation);
+  await init(false);
   document.body.style.cursor = "default";
   document.getElementById("gameBackButton").style.visibility = "visible";
   initGameObjects();
@@ -525,28 +525,18 @@ function blinkBall(){
 }
 
 function setPlayerObjects(){
-  //camera.addComponent(new FirstPersonController(camera, canvas));
-  characterObjects = [];
-  let objectNames = ["AtlasObject", "ChronoObject", "NeroObject", "CurveObject", "TrippObject", "SpringObject", "EVOObject"];
-  for(let i = 0; i < objectNames.length; i++) {
-    let object = getObject(objectNames[i], "static");
-    object.addComponent(new Character(object));
-    characterObjects.push(object);
-  }
+  console.log("characterObjects:", characterObjects);
   for(let i = 0; i < characterObjects.length; i++){
-    let object = characterObjects[i];
-    if(i === characterSelected[1]){
-      player1Object = object;
-      player1Object.getComponentOfType(Transform).translation = [0, 0, -14.2];
-      player1Object.getComponentOfType(Transform).rotation = [0, 0.707, 0, -0.707];
-    }else if(i === characterSelected[0]){
-      player2Object = object;
-      player2Object.getComponentOfType(Transform).translation = [0, 0, 14.2];
-    }else{
-      object.getComponentOfType(Transform).translation = [30, 0, 0];
-    }
+    console.log(characterObjects[i].getComponentOfType(Character).stats.reference);
+    let object = getObject(characterObjects[i].getComponentOfType(Character).stats.reference, "static");
+    console.log("object:", object);
+    object.getComponentOfType(Transform).translation = [30, 0, 0];
   }
-  console.log("player1:", player1Object, "player2:", player2Object);
+  player1.character = getObject(characterSelected[0].getComponentOfType(Character).stats.reference, "static");
+  player2.character = getObject(characterSelected[1].getComponentOfType(Character).stats.reference, "static");
+  player1.character.getComponentOfType(Transform).translation = [0, 0, -14.2];
+  player1.character.getComponentOfType(Transform).rotation = [0, 0.707, 0, -0.707];
+  player2.character.getComponentOfType(Transform).translation = [0, 0, 14.2];
 }
 
 
