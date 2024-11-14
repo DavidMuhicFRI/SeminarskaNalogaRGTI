@@ -119,7 +119,7 @@ let light;
 //variables for the character page
 let player1 = new Player();
 let player2 = new Player();
-
+let characterObjects = []; //array of character objects
 let rotatingCharacter; //the player object for character page purposes
 let constantRotation; //interval for the rotation
 let rotate = false; //if we are  rotating the model
@@ -235,8 +235,6 @@ function rotatePlayer(rotatingCharacter, angle){
 }
 
 //character loading and character functions
-let characterObjects = [];
-
 async function loadCharacters(){
   characterObjects = [];
   let characterNames = ["Atlas", "Chrono", "Curve", "Nero", "Spring", "Tripp"];
@@ -247,8 +245,10 @@ async function loadCharacters(){
     character.applyScale();
   });
   if(characterSelected.length === 0) {
+    //first time loading
     characterSelected = [characterObjects[0], null];
   }else{
+    //set the selected characters to the new objects
     for(let i = 0; i < characterObjects.length; i++){
       if(characterSelected[0].getComponentOfType(Character).stats.name === characterObjects[i].getComponentOfType(Character).stats.name){
         characterSelected[0] = characterObjects[i];
@@ -260,6 +260,7 @@ async function loadCharacters(){
   displayCharacters();
 }
 
+//display the characters depending on pageOrientation
 function displayCharacters(){
   let side = pageOrientation === "left" ? 0 : 1;
   for(let i = 0; i < characterObjects.length; i++){
@@ -294,7 +295,6 @@ function assignCharacter(direction){
   }
   characterSelected[side].getComponentOfType(Transform).rotation = rotation;
 }
-
 
 //starting and exiting the game
 async function startGame(){
@@ -400,7 +400,6 @@ canvas.addEventListener("mouseover", () => {
 
 //init the systems
 async function initCharacterPage() {
-  //correct the page variables and buttons
   pageStatus = "main";
   canvas.id = "introCanvas";
   let container;
@@ -438,8 +437,6 @@ async function initCharacterPage() {
 /////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
 
 let playerTurn = 1;
-let player1Object;
-let player2Object;
 let ball;
 let ballBlink = 0; //0 for increasing, 1 for decreasing
 let ballSelectInterval; //interval for blinking the ball
@@ -451,12 +448,9 @@ let dragEnd = [0, 0];
 //event listeners for the game
 document.getElementById("ballDiv").addEventListener("mousedown", function(event){
   ballGrabbed = true;
-
   dragStart = [event.clientX, event.clientY];
   dragEnd = [event.clientX, event.clientY];
-
   clearInterval(ballSelectInterval);
-  //cursor lock
   canvas.requestPointerLock();
   ball.transform.scale = [0.18, 0.18, 0.18];
 });
