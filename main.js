@@ -246,8 +246,16 @@ async function loadCharacters(){
     characterObjects[index].addComponent(character);
     character.applyScale();
   });
-  if(characterSelected.length === 0){
+  if(characterSelected.length === 0) {
     characterSelected = [characterObjects[0], null];
+  }else{
+    for(let i = 0; i < characterObjects.length; i++){
+      if(characterSelected[0].getComponentOfType(Character).stats.name === characterObjects[i].getComponentOfType(Character).stats.name){
+        characterSelected[0] = characterObjects[i];
+      }else if(characterSelected[1] && characterSelected[1].getComponentOfType(Character).stats.name === characterObjects[i].getComponentOfType(Character).stats.name){
+        characterSelected[1] = characterObjects[i];
+      }
+    }
   }
   displayCharacters();
 }
@@ -298,16 +306,16 @@ async function startGame(){
 }
 //exit game
 async function cancelGame(){
+  console.log("pageOrientation:", pageOrientation);
+  console.log(characterSelected);
   await initCharacterPage();
   $("#characterPage").show();
   $("#game").hide();
 }
 
 //button event listeners
-gameBackButton.addEventListener('click', function() {
-  cancelGame().then(() => {
-    console.log("Game cancelled");
-  });
+gameBackButton.addEventListener('click', async function() {
+  await cancelGame();
 });
 readyButton1.addEventListener('click', function() {
   if(player1.ready){
@@ -457,9 +465,8 @@ canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game"){
     ballGrabbed = false;
     if(calculateDragDistance() < 85 || calculateDragForce() < 0){
-      setBall();
+      resetBall();
     }else{
-      ball.getComponentOfType(Ball).startPosition = [0, 6.5, -5];
       throwBall();
     }
   }
@@ -467,20 +474,6 @@ canvas.addEventListener("mouseup", () => {
 });
 
 //game functions
-function ballDrag(event){
-  let transform = ball.getComponentOfType(Transform);
-  let force = calculateDragForce();
-  let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
-  dragToughness = Math.min(dragToughness, 0.01);
-  transform.translation[0] -= event.movementX * 0.01;
-  transform.translation[1] -= 1.5 * event.movementY * dragToughness;
-  if(playerTurn === 1) {
-    transform.translation[2] -= event.movementY * dragToughness;
-  }else{
-    transform.translation[2] += event.movementY * dragToughness;
-  }
-}
-
 async function initGame(){
   pageStatus = "game";
   rotate = false;
@@ -494,6 +487,7 @@ async function initGame(){
   setAABBs();
 }
 
+//drag functions
 function calculateDragDistance(){
   return Math.sqrt(Math.pow(dragEnd[0] - dragStart[0], 2) + Math.pow(dragEnd[1] - dragStart[1], 2));
 }
@@ -501,6 +495,7 @@ function calculateDragForce(){
   return dragEnd[1] - dragStart[1];
 }
 
+//ball functions
 function throwBall(){
   const ballObject = ball.getComponentOfType(Ball);
   ballObject.acceleration = calculateDragForce();
@@ -508,7 +503,6 @@ function throwBall(){
   ballObject.setStartVelocity();
   clearInterval(ballSelectInterval);
 }
-
 function blinkBall(){
   let ballTransform = ball.getComponentOfType(Transform);
   if(!ballGrabbed){
@@ -523,41 +517,52 @@ function blinkBall(){
     }
   }
 }
+function resetBall(){
+  if(playerTurn === 1){
+    ball.getComponentOfType(Ball).resetPlayer1();
+  }else{
+    ball.getComponentOfType(Ball).resetPlayer2();
+  }
+  if(!ballSelectInterval){
+    ballSelectInterval = setInterval(blinkBall, 20);
+  }
+}
+function ballDrag(event){
+  let transform = ball.getComponentOfType(Transform);
+  let force = calculateDragForce();
+  let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
+  dragToughness = Math.min(dragToughness, 0.01);
+  transform.translation[0] -= event.movementX * 0.01;
+  transform.translation[1] -= 1.5 * event.movementY * dragToughness;
+  if(playerTurn === 1) {
+    transform.translation[2] -= event.movementY * dragToughness;
+  }else{
+    transform.translation[2] += event.movementY * dragToughness;
+  }
+}
 
+//setting player objects
 function setPlayerObjects(){
   console.log("characterObjects:", characterObjects);
   for(let i = 0; i < characterObjects.length; i++){
     console.log(characterObjects[i].getComponentOfType(Character).stats.reference);
-    let object = getObject(characterObjects[i].getComponentOfType(Character).stats.reference, "static");
+    let object = findObject(characterObjects[i].getComponentOfType(Character).stats.reference, "static");
     console.log("object:", object);
     object.getComponentOfType(Transform).translation = [30, 0, 0];
   }
-  player1.character = getObject(characterSelected[0].getComponentOfType(Character).stats.reference, "static");
-  player2.character = getObject(characterSelected[1].getComponentOfType(Character).stats.reference, "static");
+  player1.character = findObject(characterSelected[0].getComponentOfType(Character).stats.reference, "static");
+  player2.character = findObject(characterSelected[1].getComponentOfType(Character).stats.reference, "static");
   player1.character.getComponentOfType(Transform).translation = [0, 0, -14.2];
   player1.character.getComponentOfType(Transform).rotation = [0, 0.707, 0, -0.707];
   player2.character.getComponentOfType(Transform).translation = [0, 0, 14.2];
 }
 
-
-function setBall(){
-  let transform = ball.getComponentOfType(Transform);
-  if(playerTurn === 1){
-    transform.translation = [0, 7.5, -7.1];
-  }else{
-    transform.translation = [0, 7.5, 7.1];
-  }
-  ball.getComponentOfType(Ball).startPosition = transform.translation;
-  if(!ballSelectInterval){
-    ballSelectInterval = setInterval(blinkBall, 20);
-  }
-}
-
+//game object initialization
 function initGameObjects(){
-  ball = getObject("Ball", "dynamic");
+  ball = findObject("Ball", "dynamic");
   ball.isStatic = false;
   ball.addComponent(new Ball(ball, canvas));
-  setBall();
+  resetBall();
   setPlayerObjects();
 }
 
@@ -697,7 +702,7 @@ async function init(intro){
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
 
-function getObject(name, type){
+function findObject(name, type){
   let object = scene.find(node => node.name === name);
   if(!object){
     object = loadObject(name, type);

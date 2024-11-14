@@ -13,23 +13,33 @@ export class Ball {
     this.bounces = 0;
     this.bounciness = 0.8;
     this.radius = 0.18;
-    this.startPosition = [0, 6.5, -5];
+    this.startPosition = null;
     this.moving = false;
   }
 
   setStartVelocity(){
-    let constant = 0.008;
-    //console.log("transform", this.transform.translation);
-    //console.log("start:", this.startPosition);
+    let constant = 0.01;
+    console.log("transform", this.transform.translation);
+    console.log("start:", this.startPosition);
     let diffX = this.transform.translation[0] - this.startPosition[0];
     let diffY = this.transform.translation[1] - this.startPosition[1];
     let diffZ = this.transform.translation[2] - this.startPosition[2];
     this.velocity[0] = -diffX * constant * this.acceleration;
     console.log(this.velocity[0]);
-    this.velocity[1] = -diffY * constant * this.acceleration * 5;
+    this.velocity[1] = -diffY * constant * this.acceleration;
     console.log(this.velocity[1]);
-    this.velocity[2] = -diffZ * constant * this.acceleration * 0.6;
+    this.velocity[2] = -diffZ * constant * this.acceleration;
     console.log(this.velocity[2]);
+  }
+
+  resetPlayer1(){
+    this.transform.translation = [0, 7.5, -7.1];
+    this.startPosition = [0, 7.5, -7.1];
+  }
+
+  resetPlayer2(){
+    this.transform.translation = [0, 7.5, 7.1];
+    this.startPosition = [0, 7.5, 7.1];
   }
 
   update(t, dt) {
