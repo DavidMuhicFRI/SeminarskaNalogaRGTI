@@ -122,9 +122,9 @@ let player2 = new Player('Chrono');
 
 let rotatingCharacter; //the player object for character page purposes
 let constantRotation; //interval for the rotation
-let rotate = false; //if the model is rotating
+let rotate = false; //if we are  rotating the model
 let pageOrientation = "left"; //set to left if canvas is in canvasContainerLeft, right if in canvasContainerRight
-let characterSelected = [0, 1]
+let characterSelected = [] //character selected by each player
 let interacted = false;
 
 //DOMs for the character page
@@ -146,48 +146,43 @@ let charPreviousButtonRed = document.getElementById("CPRightPreviousCharacter");
 
 
 //functions for the character page
-function movePage(page) {
+function movePage() {
   if(!interacted){
+    for(let i = 0; i < characterObjects.length; i++){
+      if(characterSelected[0] !== characterObjects[i]){
+        characterSelected[1] = characterObjects[i];
+        break;
+      }
+    }
     interacted = true;
   }
+  const page = pageOrientation === "left" ? leftPage : rightPage;
+  let left;
+  let right;
   const checkPositionInterval = setInterval(() => {
     const pageRect = page.getBoundingClientRect();
     const pageMiddle = pageRect.left + pageRect.width / 2;
     if (pageMiddle < 0 || pageMiddle > window.innerWidth) {
-      const char1 = characterObjects[characterSelected[0]].getComponentOfType(Transform);
-      const char2 = characterObjects[characterSelected[1]].getComponentOfType(Transform);
-      if(page === leftPage){
+      if(pageOrientation === "left"){
+        pageOrientation = "right";
+        left = "-100vw";
+        right = "0";
+        displayCharacters();
         canvasContainerRight.appendChild(canvas);
         canvas.style.borderColor = "rgba(255, 90, 90, 1)";
-        char2.translation = [0, 0, 0];
-        rotatingCharacter = characterObjects[characterSelected[1]];
-        char1.translation = [-20, 0, 0];
       } else {
+        pageOrientation = "left";
+        left = "0";
+        right = "100vw";
+        displayCharacters();
         canvasContainerLeft.appendChild(canvas);
         canvas.style.borderColor = "rgba(90, 90, 255, 1)";
-        char1.translation = [0, 0, 0];
-        rotatingCharacter = characterObjects[characterSelected[0]];
-        char2.translation = [20, 0, 0];
       }
-      if(characterSelected[0] === characterSelected[1]){
-        nextCharacter();
-      }
+      document.getElementById('CPLeft').style.left = left;
+      document.getElementById('CPRight').style.left = right;
       clearInterval(checkPositionInterval);
     }
   }, 10);
-  let left;
-  let right;
-  if(page === leftPage){
-    pageOrientation = "right";
-    left = "-100vw";
-    right = "0";
-  }else{
-    pageOrientation = "left";
-    left = "0";
-    right = "100vw";
-  }
-  document.getElementById('CPLeft').style.left = left;
-  document.getElementById('CPRight').style.left = right;
 }
 function turnButtonToCancel(button){
   button.innerText = "CANCEL";
@@ -244,21 +239,24 @@ async function loadCharacters(){
   characterNames.forEach((name, index) => {
     characterObjects[index] = loadObject(name + "Object", "static");
     let character = new Character(characterObjects[index], name);
-
-    if(pageOrientation === "left"){
-      if(index === characterSelected[0]){
-        character.transform.translation = [0, 0, 0];
-      }else{
-        character.transform.translation = [-20, 0, 0];
-      }
-    }else{
-      if(index === characterSelected[1]){
-        character.transform.translation = [0, 0, 0];
-      }else{
-        character.transform.translation = [20, 0, 0];
-      }
-    }
+    characterObjects[index].addComponent(character);
+    character.applyScale();
   });
+  characterSelected = [characterObjects[0], null];
+  displayCharacters();
+}
+
+function displayCharacters(){
+  let side = pageOrientation === "left" ? 0 : 1;
+  for(let i = 0; i < characterObjects.length; i++){
+    let transform = characterObjects[i].getComponentOfType(Transform);
+    if(characterObjects[i] === characterSelected[side]){
+      transform.translation = [0, 0, 0];
+      rotatingCharacter = characterObjects[i];
+    }else{
+      transform.translation = [20, 0, 0];
+    }
+  }
 }
 
 function nextCharacter(){
@@ -364,7 +362,7 @@ readyButton1.addEventListener('click', function() {
       //set player to ready, set the button to cancel and move the page
       player1.ready = true;
       turnButtonToCancel(readyButton1, player1.ready);
-      movePage(leftPage);
+      movePage();
     }
   }
 });
@@ -380,15 +378,15 @@ readyButton2.addEventListener('click', function() {
     }else{
       player2.ready = true;
       turnButtonToCancel(readyButton2, player2.ready);
-      movePage(rightPage);
+      movePage();
     }
   }
 });
 forwardToP2.addEventListener('click', function() {
-  movePage(leftPage);
+  movePage();
 });
 backToP1.addEventListener('click', function() {
-  movePage(rightPage);
+  movePage();
 });
 charNextButtonBlue.addEventListener('click', function() {
   nextCharacter();

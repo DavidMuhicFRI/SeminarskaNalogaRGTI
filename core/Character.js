@@ -4,7 +4,6 @@ export class Character {
   constructor(node, name) {
     this.node = node;
     this.transform = node.getComponentOfType(Transform);
-    this.displayed = false;
     switch(name) {
       case 'Atlas':
         this.stats = {
@@ -97,5 +96,9 @@ export class Character {
         }
         break;
     }
+  }
+
+  applyScale(){
+    this.transform.scale = this.stats.scale;
   }
 }
