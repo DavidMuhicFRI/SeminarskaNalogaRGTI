@@ -368,9 +368,12 @@ export class GLTFLoader {
         if (!gltfSpec) {
             return null;
         }
+        /*
         if (this.cache.has(gltfSpec)) {
             return this.cache.get(gltfSpec);
         }
+
+         */
 
         const primitives = [];
         for (const primitiveSpec of gltfSpec.primitives) {
@@ -391,7 +394,7 @@ export class GLTFLoader {
 
         const model = new Model({ primitives });
 
-        this.cache.set(gltfSpec, model);
+        //this.cache.set(gltfSpec, model);
         return model;
     }
 
@@ -436,9 +439,12 @@ export class GLTFLoader {
         if (!gltfSpec) {
             return null;
         }
+        /*
         if (this.cache.has(gltfSpec)) {
             return this.cache.get(gltfSpec);
         }
+
+         */
 
         const node = new Node();
 
@@ -460,7 +466,7 @@ export class GLTFLoader {
             node.addComponent(this.loadMesh(gltfSpec.mesh));
         }
 
-        this.cache.set(gltfSpec, node);
+        //this.cache.set(gltfSpec, node);
         return node;
     }
 

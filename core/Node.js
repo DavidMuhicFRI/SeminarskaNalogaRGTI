@@ -13,8 +13,17 @@ export class Node {
     }
 
     removeChild(node) {
-        this.children = this.children.filter(child => child !== node);
-        node.parent = null;
+      let children = [];
+        for(let i = 0; i < this.children.length; i++) {
+            if(this.children[i] === node) {
+                node.parent = null;
+                console.log("removed child");
+            }else{
+                children.push(this.children[i]);
+            }
+        }
+        console.log("new children: ", children);
+        this.children = children;
     }
 
     remove() {

@@ -299,15 +299,12 @@ function assignCharacter(direction){
 //starting and exiting the game
 async function startGame(){
   await initGame();
-  console.log("scene:", scene);
   $("#characterPage").hide();
   showElement("game");
   $("#game").show(); //for 2nd and later showings
 }
 //exit game
 async function cancelGame(){
-  console.log("pageOrientation:", pageOrientation);
-  console.log(characterSelected);
   await initCharacterPage();
   $("#characterPage").show();
   $("#game").hide();
@@ -515,9 +512,8 @@ function resetBall(){
     ball.resetPlayer2();
   }
   ball.reset();
-  if(!ballSelectInterval){
-    ballSelectInterval = setInterval(blinkBall, 20);
-  }
+  clearInterval(ballSelectInterval);
+  ballSelectInterval = setInterval(blinkBall, 20);
 }
 function ballDrag(event){
   let force = calculateDragForce();
@@ -534,15 +530,12 @@ function ballDrag(event){
 
 //setting player objects
 function setPlayerObjects(){
-  console.log("characterObjects:", characterObjects);
   for(let i = 0; i < characterObjects.length; i++){
-    console.log(characterObjects[i].getComponentOfType(Character).stats.reference);
-    let object = findObject(characterObjects[i].getComponentOfType(Character).stats.reference, "static");
-    console.log("object:", object);
+    let object = findObject(characterObjects[i].getComponentOfType(Character).stats.reference);
     object.getComponentOfType(Transform).translation = [30, 0, 0];
   }
-  player1.character = findObject(characterSelected[0].getComponentOfType(Character).stats.reference, "static");
-  player2.character = findObject(characterSelected[1].getComponentOfType(Character).stats.reference, "static");
+  player1.character = findObject(characterSelected[0].getComponentOfType(Character).stats.reference);
+  player2.character = findObject(characterSelected[1].getComponentOfType(Character).stats.reference);
   player1.character.getComponentOfType(Transform).translation = [0, 0, -14.2];
   player1.character.getComponentOfType(Transform).rotation = [0, 0.707, 0, -0.707];
   player2.character.getComponentOfType(Transform).translation = [0, 0, 14.2];
@@ -550,12 +543,50 @@ function setPlayerObjects(){
 
 //game object initialization
 function initGameObjects(){
-  ball = findObject("Ball", "dynamic");
+  console.log(scene);
+  ball = loadObject("Ball", "dynamic");
   ball.isStatic = false;
   ball.addComponent(new Ball(ball, canvas));
   ball = ball.getComponentOfType(Ball);
+  initOtherObjects();
   resetBall();
   setPlayerObjects();
+}
+
+function initOtherObjects(){
+  loadObject("AtlasObject", "static");
+  loadObject("ChronoObject", "static");
+  loadObject("CurveObject", "static");
+  loadObject("NeroObject", "static");
+  loadObject("SpringObject", "static");
+  loadObject("TrippObject", "static");
+  loadObject("cupA1", "static");
+  loadObject("cupA2", "static");
+  loadObject("cupA3", "static");
+  loadObject("cupA4", "static");
+  loadObject("cupA5", "static");
+  loadObject("cupA6", "static");
+  loadObject("cupB1", "static");
+  loadObject("cupB2", "static");
+  loadObject("cupB3", "static");
+  loadObject("cupB4", "static");
+  loadObject("cupB5", "static");
+  loadObject("cupB6", "static");
+  loadObject("WallBlue", "static");
+  loadObject("WallRed", "static");
+  loadObject("Wall3", "static");
+  loadObject("Wall4", "static");
+  loadObject("Floor", "static");
+  loadObject("Table", "static");
+  loadObject("Ceiling", "static");
+  loadObject("Barricade1", "static");
+  loadObject("Barricade2", "static");
+  loadObject("Barricade3", "static");
+  loadObject("Barricade4", "static");
+  loadObject("Barricade1Holder", "static");
+  loadObject("Barricade2Holder", "static");
+  loadObject("Barricade3Holder", "static");
+  loadObject("Barricade4Holder", "static");
 }
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
@@ -569,13 +600,10 @@ function initializeTheLoader(){
   loader = new GLTFLoader();
 }
 
-async function initializeTheScene(intro){
+async function initializeTheScene(){
   await loader.load('scene/scene.gltf'); // Load the scene
-  if(intro){
-    scene = new Node();
-  }else{
-    scene = await loader.loadScene(loader.defaultScene); // Load the default scene
-  }
+  scene = new Node();
+  console.log(scene);
 }
 
 function initializeTheCamera(intro){
@@ -684,7 +712,7 @@ function resize({ displaySize: { width, height }}) {
 async function init(intro){
   await initializeTheRenderer(renderer, canvas);
   await initializeTheLoader();
-  await initializeTheScene(intro);
+  await initializeTheScene();
   await initializeTheCamera(intro);
   await initializeTheLight(intro);
   await initPhysics();
@@ -694,18 +722,13 @@ async function init(intro){
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
 
-function findObject(name, type){
-  let object = scene.find(node => node.name === name);
-  if(!object){
-    object = loadObject(name, type);
-  }
-  if(type){
-    if(type === "static"){
-      object.isStatic = true;
-    }else{
-      object.isDynamic = true;
+function findObject(name){
+  let object = 0;
+  scene.traverse(node => {
+    if(node.name === name){
+      object = node;
     }
-  }
+  });
   return object;
 }
 
