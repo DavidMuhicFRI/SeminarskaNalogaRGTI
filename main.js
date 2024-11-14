@@ -486,6 +486,7 @@ function calculateDragDistance(){
 }
 function calculateDragForce(){
   return dragEnd[1] - dragStart[1];
+  //hell naw
 }
 
 //ball functions
