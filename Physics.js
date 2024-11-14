@@ -188,24 +188,24 @@ export class Physics {
             return;
         }
         if(a.name === 'Ball'){
-          console.log(b.name);
+          //console.log(b.name);
           let ball = a.getComponentOfType(Ball);
           if (minDirection[0] !== 0) {
             if(b.name.includes('Wall')){
-              console.log("Wall from side")
+              //console.log("Wall from side")
               //ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
             } else {
-              console.log("from side")
+              //console.log("from side")
               ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
             }
           }
           if (minDirection[1] !== 0) {
             ball.velocity[1] = -ball.velocity[1] * ball.bounciness; // Reverse Y direction if needed
-            console.log("from upDown")
+            //console.log("from upDown")
           }
           if (minDirection[2] !== 0) {
             ball.velocity[2] = -ball.velocity[2] * ball.bounciness; // Reverse Z direction if needed
-            console.log("from straight")
+            /console.log("from straight")
           }
         }
 

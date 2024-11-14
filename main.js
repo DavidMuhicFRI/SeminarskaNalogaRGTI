@@ -514,6 +514,7 @@ function resetBall(){
   }else{
     ball.resetPlayer2();
   }
+  ball.reset();
   if(!ballSelectInterval){
     ballSelectInterval = setInterval(blinkBall, 20);
   }
