@@ -1,6 +1,6 @@
 1. Chad/Tren-t
 title: The Titan
-pros: maximum power increased by 20%, body hits apply bleeding vision
+pros: maximum power increased by 50%, body hits apply bleeding vision
 cons: is bald
 ability: (MEGA BALL) throws a mega ball that knocks out the enemy for a round
 theme design:

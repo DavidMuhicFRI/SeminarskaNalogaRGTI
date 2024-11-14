@@ -188,6 +188,7 @@ function movePage() {
         characterSelected[1].getComponentOfType(Transform).rotation = rotatingCharacter.getComponentOfType(Transform).rotation;
       }
       displayCharacters();
+      changeStats();
       clearInterval(checkPositionInterval);
     }
   }, 10);
@@ -300,6 +301,34 @@ function assignCharacter(direction){
   characterSelected[side].getComponentOfType(Transform).rotation = rotation;
 }
 
+function changeStats(){
+  document.getElementById("characterNameLeft").innerText = (characterSelected[0].getComponentOfType(Character).stats.name).toUpperCase();
+  document.getElementById("characterTitleLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.title;
+  document.getElementById("difficultyBarLeft").style.width = characterSelected[0].getComponentOfType(Character).stats.difficulty * 10 + "%";
+  document.getElementById("offenseBarLeft").style.width = characterSelected[0].getComponentOfType(Character).stats.offense * 10 + "%";
+  document.getElementById("defenseBarLeft").style.width = characterSelected[0].getComponentOfType(Character).stats.defense * 10 + "%";
+  document.getElementById("playstyleLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.playstyle;
+  document.getElementById("strengthLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.plusPassive;
+  document.getElementById("weaknessLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.minusPassive;
+  document.getElementById("abilityImgLeft").src = characterSelected[0].getComponentOfType(Character).stats.abilityImage;
+  document.getElementById("abilityLeft").src = characterSelected[0].getComponentOfType(Character).stats.abilityImage;
+  document.getElementById("abilityTextLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.abilityText;
+  document.getElementById("funFactLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.funFact;
+
+  document.getElementById("characterNameRight").innerText = (characterSelected[1].getComponentOfType(Character).stats.name).toUpperCase();
+  document.getElementById("characterTitleRight").innerText = characterSelected[1].getComponentOfType(Character).stats.title;
+  document.getElementById("difficultyBarRight").style.width = characterSelected[1].getComponentOfType(Character).stats.difficulty * 10 + "%";
+  document.getElementById("offenseBarRight").style.width = characterSelected[1].getComponentOfType(Character).stats.offense * 10 + "%";
+  document.getElementById("defenseBarRight").style.width = characterSelected[1].getComponentOfType(Character).stats.defense * 10 + "%";
+  document.getElementById("playstyleRight").innerText = characterSelected[1].getComponentOfType(Character).stats.playstyle;
+  document.getElementById("strengthRight").innerText = characterSelected[1].getComponentOfType(Character).stats.plusPassive;
+  document.getElementById("weaknessRight").innerText = characterSelected[1].getComponentOfType(Character).stats.minusPassive;
+  document.getElementById("abilityImgRight").src = characterSelected[1].getComponentOfType(Character).stats.abilityImage;
+  document.getElementById("abilityRight").src = characterSelected[1].getComponentOfType(Character).stats.abilityImage;
+  document.getElementById("abilityTextRight").innerText = characterSelected[1].getComponentOfType(Character).stats.abilityText;
+  document.getElementById("funFactRight").innerText = characterSelected[1].getComponentOfType(Character).stats.funFact;
+}
+
 //starting and exiting the game
 async function startGame(){
   await initGame();
@@ -362,18 +391,22 @@ backToP1.addEventListener('click', function() {
 charNextButtonBlue.addEventListener('click', function() {
   assignCharacter("next");
   displayCharacters();
+  changeStats();
 });
 charPreviousButtonBlue.addEventListener('click', function() {
   assignCharacter("previous");
   displayCharacters();
+  changeStats();
 });
 charNextButtonRed.addEventListener('click', function() {
   assignCharacter("next");
   displayCharacters();
+  changeStats();
 });
 charPreviousButtonRed.addEventListener('click', function() {
   assignCharacter("previous");
   displayCharacters();
+  changeStats();
 });
 
 //event listeners for model rotation on drag
@@ -422,6 +455,7 @@ async function initCharacterPage() {
 
 //load the objects for character page
   await loadCharacters();
+
   let floor = loadObject("Floor", "static");
   let transform2 = floor.getComponentOfType(Transform);
   transform2.translation = [0, 0.1, 0];
