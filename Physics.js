@@ -193,7 +193,7 @@ export class Physics {
           if (minDirection[0] !== 0) {
             if(b.name.includes('Wall')){
               //console.log("Wall from side")
-              //ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
+              ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
             } else {
               //console.log("from side")
               ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
@@ -205,7 +205,7 @@ export class Physics {
           }
           if (minDirection[2] !== 0) {
             ball.velocity[2] = -ball.velocity[2] * ball.bounciness; // Reverse Z direction if needed
-            /console.log("from straight")
+            //console.log("from straight")
           }
         }
 
