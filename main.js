@@ -13,6 +13,10 @@ import {FirstPersonController} from "./controllers/FirstPersonController.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
+let loadedData;
+let introScene;
+let gameScene;
+
 let skipIntro = false;
 let pageStatus = "intro";
 const intro = document.getElementById('intro');
@@ -438,18 +442,17 @@ let ball;
 let ballBlink = 0; //0 for increasing, 1 for decreasing
 let ballSelectInterval; //interval for blinking the ball
 let ballGrabbed = false;
-let dragStart = [0, 0];
-let dragEnd = [0, 0];
+let dragStart = [960, 470];
+let dragEnd = [960, 470];
 
 
 //event listeners for the game
 document.getElementById("ballDiv").addEventListener("mousedown", function(event){
   ballGrabbed = true;
-  dragStart = [event.clientX, event.clientY];
-  dragEnd = [event.clientX, event.clientY];
+  dragEnd = dragStart;
   clearInterval(ballSelectInterval);
   canvas.requestPointerLock();
-  ball.transform.scale = [0.18, 0.18, 0.18];
+  ball.getComponentOfType(Transform).scale = [0.18, 0.18, 0.18];
 });
 canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game"){
@@ -487,18 +490,19 @@ function calculateDragForce(){
 
 //ball functions
 function throwBall(){
-  ball.acceleration = calculateDragForce();
-  ball.moving = true;
-  ball.setStartVelocity();
+  let ballObject = ball.getComponentOfType(Ball);
+  ballObject.acceleration = calculateDragForce();
+  ballObject.moving = true;
+  ballObject.setStartVelocity();
   clearInterval(ballSelectInterval);
 }
 function blinkBall(){
   if(!ballGrabbed){
-    if(ball.transform.scale[0] < 0.22 && ballBlink === 0){
-      ball.transform.scale = ball.transform.scale.map(x => x + 0.002);
-    }else if(ball.transform.scale[0] > 0.15 && ballBlink === 1){
-      ball.transform.scale = ball.transform.scale.map(x => x - 0.002);
-    }else if(ball.transform.scale[0] >= 0.22){
+    if(ball.getComponentOfType(Transform).scale[0] < 0.22 && ballBlink === 0){
+      ball.getComponentOfType(Transform).scale = ball.getComponentOfType(Transform).scale.map(x => x + 0.002);
+    }else if(ball.getComponentOfType(Transform).scale[0] > 0.15 && ballBlink === 1){
+      ball.getComponentOfType(Transform).scale = ball.getComponentOfType(Transform).scale.map(x => x - 0.002);
+    }else if(ball.getComponentOfType(Transform).scale[0] >= 0.22){
       ballBlink = 1;
     }else{
       ballBlink = 0;
@@ -507,11 +511,11 @@ function blinkBall(){
 }
 function resetBall(){
   if(playerTurn === 1){
-    ball.resetPlayer1();
+    ball.getComponentOfType(Ball).resetPlayer1();
   }else{
-    ball.resetPlayer2();
+    ball.getComponentOfType(Ball).resetPlayer2();
   }
-  ball.reset();
+  ball.getComponentOfType(Ball).reset();
   clearInterval(ballSelectInterval);
   ballSelectInterval = setInterval(blinkBall, 20);
 }
@@ -519,14 +523,20 @@ function ballDrag(event){
   let force = calculateDragForce();
   let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
   dragToughness = Math.min(dragToughness, 0.01);
-  ball.transform.translation[0] -= event.movementX * 0.01;
-  ball.transform.translation[1] -= 1.5 * event.movementY * dragToughness;
+  ball.getComponentOfType(Transform).translation[0] -= event.movementX * 0.01;
+  ball.getComponentOfType(Transform).translation[1] -= 1.5 * event.movementY * dragToughness;
   if(playerTurn === 1) {
-    ball.transform.translation[2] -= event.movementY * dragToughness;
+    ball.getComponentOfType(Transform).translation[2] -= event.movementY * dragToughness;
   }else{
-    ball.transform.translation[2] += event.movementY * dragToughness;
+    ball.getComponentOfType(Transform).translation[2] += event.movementY * dragToughness;
   }
 }
+
+document.addEventListener("keydown", function(event){
+  if(event.key === "r"){
+    resetBall();
+  }
+});
 
 //setting player objects
 function setPlayerObjects(){
@@ -546,8 +556,9 @@ function initGameObjects(){
   console.log(scene);
   ball = loadObject("Ball", "dynamic");
   ball.isStatic = false;
+  ball.removeComponent(ball.getComponentOfType(Ball));
   ball.addComponent(new Ball(ball, canvas));
-  ball = ball.getComponentOfType(Ball);
+  ball.getComponentOfType(Transform).translation = [0, 7.5, -7.1];
   initOtherObjects();
   resetBall();
   setPlayerObjects();
@@ -592,16 +603,20 @@ function initOtherObjects(){
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
 
 async function initializeTheRenderer(){
+  if(!renderer){
     renderer = new Renderer(canvas);
     await renderer.initialize();
+  }
 }
 
 function initializeTheLoader(){
-  loader = new GLTFLoader();
+  if(!loader){
+    loader = new GLTFLoader();
+  }
 }
 
-async function initializeTheScene(){
-  await loader.load('scene/scene.gltf'); // Load the scene
+async function initializeTheScene(intro){
+  loadedData = await loader.load('scene/scene.gltf'); // Load the scene
   scene = new Node();
   console.log(scene);
 }
@@ -677,28 +692,40 @@ async function initializeTheLight(intro){
 }
 
 async function initPhysics(){
-  physics = await new Physics();
+  if(!physics){
+    physics = new Physics();
+  }
   physics.scene = scene;
 }
 
 function initializeSystems(){
-  resizeSystem = new ResizeSystem({ canvas, resize });
-  updateSystem = new UpdateSystem({ update, render });
+  if(!resizeSystem || !updateSystem){
+    resizeSystem = new ResizeSystem({ canvas, resize });
+    updateSystem = new UpdateSystem({ update, render });
+  }
 }
 
-function startSystems(){
+function startSystems() {
   resizeSystem.start();
   updateSystem.start();
 }
-
+let previousTime = 0;
+let accumulatedDt = 0;
 function update(time, dt) {
-  scene.traverse(node => {
-    for (const component of node.components) {
-      component.update?.(time, dt);
-    }
-  });
-  //console.log(camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation, camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).rotation);
-  physics.update(time, dt);
+  accumulatedDt += dt;
+  if(time - previousTime > 0.008) {
+    dt = accumulatedDt * 2;
+    //console.log("difference", time - previousTime, "and dt is ", dt);
+    previousTime = time;
+    scene.traverse(node => {
+      for (const component of node.components) {
+        component.update?.(time, dt);
+      }
+    });
+    //console.log(camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation, camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).rotation);
+    physics.update(time, dt);
+    accumulatedDt = 0;
+  }
 }
 
 function render() {
@@ -712,7 +739,7 @@ function resize({ displaySize: { width, height }}) {
 async function init(intro){
   await initializeTheRenderer(renderer, canvas);
   await initializeTheLoader();
-  await initializeTheScene();
+  await initializeTheScene(intro);
   await initializeTheCamera(intro);
   await initializeTheLight(intro);
   await initPhysics();
