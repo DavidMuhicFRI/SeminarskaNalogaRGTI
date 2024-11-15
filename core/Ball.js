@@ -9,7 +9,8 @@ export class Ball {
     this.maxSpeed = 30;
     this.deceleration = 0.995;
     this.bounces = 0;
-    this.bounciness = 1.5;
+    this.bounciness = 0.95;
+    this.gravity = 9.81;
     this.radius = 0.18;
     this.startPosition = null;
     this.moving = false;
@@ -49,7 +50,7 @@ export class Ball {
       return;
     }
     //add gravity to velocity vector
-    this.velocity[1] -= 9.8 * dt;
+    this.velocity[1] -= this.gravity * dt;
     //decrease velocity by deceleration
     vec3.scale(this.velocity, this.velocity, this.deceleration);
 
