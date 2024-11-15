@@ -106,10 +106,10 @@ export class Physics {
         let ball = a.getComponentOfType(Ball);
         switch(this.getNodeBName(b)){
           case "cup":
-            this.cupBounce(minDirection, ball);
+            this.cupBounce(minDirection, ball, b, bBox, aBox);
             break;
           case "object":
-            this.objectBounce(minDirection, ball);
+            this.objectBounce(minDirection, ball, b);
             break;
           default:
             this.normalBounce(minDirection, ball);
@@ -130,8 +130,72 @@ export class Physics {
       }
     }
 
-    cupBounce(minDirection, ball){
+    getCupWidthAtBallHeight(cupBox, ball){
+      let transform = ball.node.getComponentOfType(Transform);
+      let cupHeight = cupBox.max[1] - cupBox.min[1];
+      let cupWidth = cupBox.max[0] - cupBox.min[0];
+      let relativeHeight = transform.translation[1] > cupBox.max[1] ? cupHeight : transform.translation[1] - cupBox.min[1];
+      return ((cupWidth * 0.7) + (cupWidth - (cupWidth * 0.7)) * (relativeHeight / cupHeight)) / 2;
+    }
 
+    getBallWidth(ballBox){
+      let ballWidth = ballBox.max[0] - ballBox.min[0];
+      return ballWidth / 2;
+    }
+
+
+    //returns the ball center distance from the center of the top of the cup
+    calculateRealDistance(ball, cup, cupBox){
+      let ballCenter = ball.node.getComponentOfType(Transform).translation;
+      let cupCenter = cup.getComponentOfType(Transform).translation;
+      let distance = [0, 0, 0];
+      distance[1] = ballCenter[1] - cupBox.max[1];
+      distance[0] = ballCenter[0] - cupCenter[0];
+      distance[2] = ballCenter[2] - cupCenter[2];
+      return distance;
+    }
+
+    didItReallyHitThough(minDirection, ball, cup, cupBox, ballBox){
+      let distance = this.calculateRealDistance(ball, cup, cupBox);
+      let ballWidth = this.getBallWidth(ballBox);
+      let hitting = false;
+      let distanceFromCenter = Math.sqrt(Math.pow(distance[0], 2) + Math.pow(distance[2], 2));
+      //the cups are round, so we need to check if the ball hit the cup or just the rectangular bounding box
+      if(minDirection[1] === 0){
+        //check if the ball hit the cup from the side
+        if(distanceFromCenter < this.getCupWidthAtBallHeight(cupBox, ball) + ballWidth){
+          hitting = true;
+        }
+      } else {
+        //check if the ball hit the cup edge or can go through the cup
+        if(distanceFromCenter + ballWidth < this.getCupWidthAtBallHeight(cupBox, ball)){
+          hitting = false;
+        }
+      }
+      return hitting;
+    }
+
+
+    cupBounce(minDirection, ball, cup, cupBox, ballBox) {
+      if (!this.didItReallyHitThough(minDirection, ball, cup, cupBox, ballBox)) {
+        return;
+      }
+      let ballTransform = ball.node.getComponentOfType(Transform);
+      if (minDirection[1] !== 0) {
+        if (ballTransform.translation[1] > cupBox.max[1]) {
+
+        } else {
+          ball.velocity[0] = 0;
+          ball.velocity[2] = 0;
+          if (ballTransform.translation[1] > cupBox.min[1] + this.getBallWidth(ballBox)) {
+            ball.velocity[1] = 0.3;
+          }else{
+            ball.velocity[1] = 0;
+          }
+        }
+      }else{
+        //hit from the side or front
+      }
     }
 
     objectBounce(minDirection, ball){
@@ -139,6 +203,7 @@ export class Physics {
     }
 
     normalBounce(minDirection, ball){
+      let transform = ball.node.getComponentOfType(Transform);
       if (minDirection[0] !== 0) {
         //console.log("from side")
         ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
