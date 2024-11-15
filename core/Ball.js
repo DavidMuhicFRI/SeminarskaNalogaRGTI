@@ -6,7 +6,7 @@ export class Ball {
     this.node = node;
     this.velocity = [0, 0, 0];
     this.acceleration = 10;
-    this.maxSpeed = 30;
+    this.maxSpeed = 50;
     this.deceleration = 0.995;
     this.bounces = 0;
     this.bounciness = 1.5;
