@@ -5,10 +5,11 @@ export class Character {
     this.node = node;
     this.transform = node.getComponentOfType(Transform);
     this.transform.rotation = [0, 0.707, 0, -0.707]; //fixing rotation
+    this.turnTime = 30;
     switch(name) {
       case 'Atlas':
         this.stats = {
-          name: name,
+          name: name.toUpperCase(),
           title: 'The titan',
           difficulty: 3,
           offense: 8,
@@ -27,7 +28,7 @@ export class Character {
         break;
       case 'Chrono':
         this.stats = {
-          name: name,
+          name: name.toUpperCase(),
           title: 'The one who conquered time',
           difficulty: 4,
           offense: 5,
@@ -43,10 +44,11 @@ export class Character {
           reference: 'ChronoObject',
           abilityImage: 'chronoAbility.png'
         }
+        this.turnTime = 15;
         break;
       case 'Curve':
         this.stats = {
-          name: name,
+          name: name.toUpperCase(),
           title: 'Legendary space general',
           difficulty: 7,
           offense: 7,
@@ -65,7 +67,7 @@ export class Character {
         break;
       case 'Nero':
         this.stats = {
-          name: name,
+          name: name.toUpperCase(),
           title: 'The demon girl',
           difficulty: 8,
           offense: 7,
@@ -84,7 +86,7 @@ export class Character {
         break;
       case 'Spring':
         this.stats = {
-          name: name,
+          name: name.toUpperCase(),
           title: 'The pink princess',
           difficulty: 5,
           offense: 4,
@@ -103,7 +105,7 @@ export class Character {
         break;
       case 'Tripp':
         this.stats = {
-          name: name,
+          name: name.toUpperCase(),
           title: 'The Eccentric',
           difficulty: 10,
           offense: 7,
