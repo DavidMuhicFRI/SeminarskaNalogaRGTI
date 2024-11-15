@@ -628,7 +628,7 @@ function initOtherObjects(){
   loadObject("Table", "static");
   let ceiling = loadObject("Ceiling", "static");
   let transform = ceiling.getComponentOfType(Transform);
-  transform.translation = [0, 15, 0];
+  transform.translation = [0, 20, 0];
   loadObject("Barricade1", "static");
   loadObject("Barricade2", "static");
   loadObject("Barricade3", "static");
@@ -655,7 +655,7 @@ function initializeTheLoader(){
 }
 
 async function initializeTheScene(intro){
-  loadedData = await loader.load('scene/scene.gltf'); // Load the scene
+  loadedData = await loader.load('scene/table.gltf'); // Load the scene
   scene = new Node();
   console.log(scene);
 }
@@ -711,16 +711,16 @@ async function initializeTheLight(intro){
     }));
   }else{
     light.addComponent(new Transform({
-      translation: [0, 16, 0],
+      translation: [0, 16.5, 0],
       rotation: [-0.71, 0, 0, 1],
   }));
     light.addComponent(new Light({
       color: [250, 245, 220],
-      intensity: 1,
+      intensity: 1.5,
       attenuation: [0, 0.1, 0.03],
       ambientOff: 0.01,
       ambientOn: 0.04,
-      fi: 3,
+      fi: 2.5,
       fovy: Math.PI / 1.1,
       aspect: 1,
       near: 1,
