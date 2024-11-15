@@ -22,90 +22,6 @@ export class Physics {
         });
     }
 
-    //raycastFromCamera metoda vrne (naj bi ;-) (vcasih malo buggy)) objeckt, ki ga kamera gleda (je na sredini zaslona)
-    raycastFromCamera(camera) {
-        // Get the camera direction in world space
-        const forwardDirection = vec3.create();
-
-        const cameraMatrix = getGlobalModelMatrix(camera);
-        forwardDirection[0] = -cameraMatrix[8];  // Extract forward X
-        forwardDirection[1] = -cameraMatrix[9];  // Extract forward Y
-        forwardDirection[2] = -cameraMatrix[10]; // Extract forward Z
-        vec3.normalize(forwardDirection, forwardDirection); // Normalize direction
-        console.log("Forward Direction:", forwardDirection);
-
-
-        //vec3.transformMat4(forwardDirection, forwardDirection, cameraMatrix); // Transform direction to world space
-
-        // Create a ray from the camera's position and direction
-        const FPC = camera.getComponentOfType(FirstPersonController);
-        const rayOrigin = vec3.clone(FPC.node.getComponentOfType(Transform).translation);
-        console.log("Ray Origin:", rayOrigin);
-
-        let closestBox = null;
-        let closestDistance = Infinity;
-
-        // Traverse the scene to find the closest intersecting box
-        this.scene.traverse(node => {
-            if (node.isStatic && node.name && node.name.startsWith('Box')) {// Check if it's a box
-                const aabb = this.getTransformedAABB(node);// Get the AABB of the box
-                console.log("box" + node.name +  "coords: ");
-                console.log(node.getComponentOfType(Transform).translation);
-                const hitInfo = this.rayIntersectAABB(rayOrigin, forwardDirection, aabb);
-                if (hitInfo && hitInfo.distance < closestDistance) {
-                    closestDistance = hitInfo.distance;
-                    closestBox = node;
-                }
-            }
-        });
-        console.log("Closest Box coords:");
-        console.log(closestBox.getComponentOfType(Transform).translation);
-        return closestBox;
-    }
-
-    // Ray-AABB intersection method
-    rayIntersectAABB(rayOrigin, rayDirection, aabb) {
-        let distance = (aabb.min[0] - rayOrigin[0]);
-        let txmin = distance / rayDirection[0];
-        console.log("distance:", distance);
-        console.log("txmin:", txmin);
-        distance = (aabb.max[0] - rayOrigin[0]);
-        let txmax = distance / rayDirection[0];
-        console.log("distance:", distance);
-        console.log("txmax:", txmax);
-
-        if (txmin > txmax) [txmin, txmax] = [txmax, txmin];
-        console.log("current min: " + txmin);
-        distance = (aabb.min[1] - rayOrigin[1]);
-        let tymin = distance / rayDirection[1];
-        console.log("distance:", distance);
-        console.log("tymin:", tymin);
-        distance = (aabb.max[1] - rayOrigin[1]);
-        let tymax = distance / rayDirection[1];
-        console.log("distance:", distance);
-        console.log("tymax:", tymax);
-
-        if ((txmin > tymax) || (tymin > txmax)) return null;
-
-        txmin = Math.max(txmin, tymin);
-        txmax = Math.min(txmax, tymax);
-
-        distance = (aabb.min[2] - rayOrigin[2]);
-        let tzmin = distance / rayDirection[2];
-        console.log("distance:", distance);
-        console.log("tzmin:", tzmin);
-        distance = (aabb.max[2] - rayOrigin[2]);
-        let tzmax = distance / rayDirection[2];
-        console.log("distance:", distance);
-        console.log("tzmax:", tzmax);
-
-        if (tzmin > tzmax) [tzmin, tzmax] = [tzmax, tzmin];
-
-        if ((txmin > tzmax) || (tzmin > txmax)) return null;
-        console.log("ray hit! final calculated distance:", txmin);
-        return { distance: txmin }; // Return the distance to the intersection
-    }
-
     intervalIntersection(min1, max1, min2, max2) {
         return !(min1 > max2 || min2 > max1);
     }
@@ -187,27 +103,54 @@ export class Physics {
         if (!transform) {
             return;
         }
-        if(a.name === 'Ball'){
-          //console.log(b.name);
-          let ball = a.getComponentOfType(Ball);
-          if (minDirection[0] !== 0) {
-            if(b.name.includes('Wall')){
-              //console.log("Wall from side")
-              ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
-            } else {
-              //console.log("from side")
-              ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
-            }
-          }
-          if (minDirection[1] !== 0) {
-            ball.velocity[1] = -ball.velocity[1] * ball.bounciness; // Reverse Y direction if needed
-            //console.log("from upDown")
-          }
-          if (minDirection[2] !== 0) {
-            ball.velocity[2] = -ball.velocity[2] * ball.bounciness; // Reverse Z direction if needed
-            //console.log("from straight")
-          }
+        let ball = a.getComponentOfType(Ball);
+        switch(this.getNodeBName(b)){
+          case "cup":
+            this.cupBounce(minDirection, ball);
+            break;
+          case "object":
+            this.objectBounce(minDirection, ball);
+            break;
+          default:
+            this.normalBounce(minDirection, ball);
+            break;
         }
-        transform.translation = vec3.add(vec3.create(), transform.translation, minDirection);
+    }
+
+    getNodeBName(node) {
+      //return wall, cup, playerObject, table depending on keywork in node.name
+      if (node.name.includes("Wall")) {
+        return "wall";
+      } else if (node.name.includes("cup")) {
+        return "cup";
+      } else if (node.name.includes("Object")) {
+        return "object";
+      } else if (node.name.includes("Table")) {
+        return "table";
+      }
+    }
+
+    cupBounce(minDirection, ball){
+
+    }
+
+    objectBounce(minDirection, ball){
+
+    }
+
+    normalBounce(minDirection, ball){
+      if (minDirection[0] !== 0) {
+        //console.log("from side")
+        ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
+      }
+      if (minDirection[1] !== 0) {
+        ball.velocity[1] = -ball.velocity[1] * ball.bounciness; // Reverse Y direction if needed
+        //console.log("from upDown")
+      }
+      if (minDirection[2] !== 0) {
+        ball.velocity[2] = -ball.velocity[2] * ball.bounciness; // Reverse Z direction if needed
+        //console.log("from straight")
+      }
+      transform.translation = vec3.add(vec3.create(), transform.translation, minDirection);
     }
 }
