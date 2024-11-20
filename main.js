@@ -424,7 +424,7 @@ async function initCharacterPage() {
   transform2.translation = [0, 0.1, 0];
   transform2.scale = [10, 0.1, 10];
 
-  let wall1 = loadObject("WallBlue", "static");
+  let wall1 = loadObject("Wall1", "static");
   let transform3 = wall1.getComponentOfType(Transform);
   transform3.translation = [0, 0, -5];
   transform3.scale = [10, 20, 0.1];
@@ -531,6 +531,22 @@ function ballDrag(event){
 document.addEventListener("keydown", function(event){
   if(event.key === "r"){
     resetBall();
+  }else if(event.key === "t"){
+    throwBall();
+  }
+  //also add controls for moving the ball with the arrow keys and space bar for down
+  else if(event.key === "ArrowUp"){
+    ball.getComponentOfType(Transform).translation[1] += 0.1;
+  }else if(event.key === "ArrowDown") {
+    ball.getComponentOfType(Transform).translation[1] -= 0.1;
+  }else if(event.key === "ArrowLeft"){
+    ball.getComponentOfType(Transform).translation[2] += 0.1;
+  }else if(event.key === "ArrowRight"){
+    ball.getComponentOfType(Transform).translation[2] -= 0.1;
+  }else if(event.key === " "){
+    ball.getComponentOfType(Transform).translation[0] += 0.1;
+  }else if(event.key === "Shift"){
+    ball.getComponentOfType(Transform).translation[0] -= 0.1;
   }
 });
 
@@ -570,20 +586,20 @@ function initOtherObjects(){
   loadObject("NeroObject", "static");
   loadObject("SpringObject", "static");
   loadObject("TrippObject", "static");
-  loadObject("cupA1", "static");
-  loadObject("cupA2", "static");
-  loadObject("cupA3", "static");
-  loadObject("cupA4", "static");
-  loadObject("cupA5", "static");
-  loadObject("cupA6", "static");
-  loadObject("cupB1", "static");
-  loadObject("cupB2", "static");
-  loadObject("cupB3", "static");
-  loadObject("cupB4", "static");
-  loadObject("cupB5", "static");
-  loadObject("cupB6", "static");
-  loadObject("WallBlue", "static");
-  loadObject("WallRed", "static");
+  loadObject("CupR1", "static");
+  loadObject("CupR2", "static");
+  loadObject("CupR3", "static");
+  loadObject("CupR4", "static");
+  loadObject("CupR5", "static");
+  loadObject("CupR6", "static");
+  loadObject("CupB1", "static");
+  loadObject("CupB2", "static");
+  loadObject("CupB3", "static");
+  loadObject("CupB4", "static");
+  loadObject("CupB5", "static");
+  loadObject("CupB6", "static");
+  loadObject("Wall1", "static");
+  loadObject("Wall2", "static");
   loadObject("Wall3", "static");
   loadObject("Wall4", "static");
   loadObject("Floor", "static");
@@ -599,6 +615,7 @@ function initOtherObjects(){
   loadObject("Barricade2Holder", "static");
   loadObject("Barricade3Holder", "static");
   loadObject("Barricade4Holder", "static");
+  //camera.addComponent(new FirstPersonController(camera, canvas));
 }
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
@@ -617,7 +634,7 @@ function initializeTheLoader(){
 }
 
 async function initializeTheScene(intro){
-  loadedData = await loader.load('scene/table.gltf'); // Load the scene
+  loadedData = await loader.load('scene/scene.gltf'); // Load the scene
   scene = new Node();
   console.log(scene);
 }
