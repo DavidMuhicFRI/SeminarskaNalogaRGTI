@@ -72,7 +72,6 @@ export class Physics {
         const diffb = vec3.sub(vec3.create(), aBox.max, bBox.min);
 
         let minDiff = Infinity;
-        let bounce = 0.1;
         let minDirection = [0, 0, 0];
         if (diffa[0] >= 0 && diffa[0] < minDiff) {
             minDiff = diffa[0];
@@ -119,9 +118,10 @@ export class Physics {
 
     getNodeBName(node) {
       //return wall, cup, playerObject, table depending on keywork in node.name
+      console.log(node.name);
       if (node.name.includes("Wall")) {
         return "wall";
-      } else if (node.name.includes("cup")) {
+      } else if (node.name.includes("Cup")) {
         return "cup";
       } else if (node.name.includes("Object")) {
         return "object";
@@ -130,13 +130,6 @@ export class Physics {
       }
     }
 
-    getCupWidthAtBallHeight(cupBox, ball){
-      let transform = ball.node.getComponentOfType(Transform);
-      let cupHeight = cupBox.max[1] - cupBox.min[1];
-      let cupWidth = cupBox.max[0] - cupBox.min[0];
-      let relativeHeight = transform.translation[1] > cupBox.max[1] ? cupHeight : transform.translation[1] - cupBox.min[1];
-      return ((cupWidth * 0.7) + (cupWidth - (cupWidth * 0.7)) * (relativeHeight / cupHeight)) / 2;
-    }
 
     getBallWidth(ballBox){
       let ballWidth = ballBox.max[0] - ballBox.min[0];
@@ -145,56 +138,36 @@ export class Physics {
 
 
     //returns the ball center distance from the center of the top of the cup
-    calculateRealDistance(ball, cup, cupBox){
-      let ballCenter = ball.node.getComponentOfType(Transform).translation;
-      let cupCenter = cup.getComponentOfType(Transform).translation;
+    calculateRealDistance(cupBox, ballTransform, cupTransform){
       let distance = [0, 0, 0];
-      distance[1] = ballCenter[1] - cupBox.max[1];
-      distance[0] = ballCenter[0] - cupCenter[0];
-      distance[2] = ballCenter[2] - cupCenter[2];
+      distance[1] = ballTransform[1] - cupBox.max[1];
+      distance[0] = ballTransform[0] - cupTransform[0];
+      distance[2] = ballTransform[2] - cupTransform[2];
       return distance;
     }
 
-    didItReallyHitThough(minDirection, ball, cup, cupBox, ballBox){
-      let distance = this.calculateRealDistance(ball, cup, cupBox);
-      let ballWidth = this.getBallWidth(ballBox);
-      let hitting = false;
-      let distanceFromCenter = Math.sqrt(Math.pow(distance[0], 2) + Math.pow(distance[2], 2));
-      //the cups are round, so we need to check if the ball hit the cup or just the rectangular bounding box
-      if(minDirection[1] === 0){
-        //check if the ball hit the cup from the side
-        if(distanceFromCenter < this.getCupWidthAtBallHeight(cupBox, ball) + ballWidth){
-          hitting = true;
-        }
-      } else {
-        //check if the ball hit the cup edge or can go through the cup
-        if(distanceFromCenter + ballWidth < this.getCupWidthAtBallHeight(cupBox, ball)){
-          hitting = false;
-        }
-      }
-      return hitting;
+    isBallInCup(ballWidth, holeWidth, distance){
+      return Math.abs(distance[0]) + ballWidth < holeWidth && Math.abs(distance[2]) + ballWidth < holeWidth;
     }
 
 
     cupBounce(minDirection, ball, cup, cupBox, ballBox) {
-      if (!this.didItReallyHitThough(minDirection, ball, cup, cupBox, ballBox)) {
-        return;
-      }
-      let ballTransform = ball.node.getComponentOfType(Transform);
-      if (minDirection[1] !== 0) {
-        if (ballTransform.translation[1] > cupBox.max[1]) {
-
-        } else {
-          ball.velocity[0] = 0;
-          ball.velocity[2] = 0;
-          if (ballTransform.translation[1] > cupBox.min[1] + this.getBallWidth(ballBox)) {
-            ball.velocity[1] = 0.3;
-          }else{
-            ball.velocity[1] = 0;
-          }
+      let ballTransform = ball.node.getComponentOfType(Transform).translation;
+      let cupTransform = cup.getComponentOfType(Transform).translation;
+      let distance = this.calculateRealDistance(cupBox, ballTransform, cupTransform);
+      let ballWidth = this.getBallWidth(ballBox) * 0.8; //adjust for easier hitting
+      let cupWidth = (cupBox.max[0] - cupBox.min[0]) / 2;
+      if (this.isBallInCup(ballWidth, cupWidth, distance)) {
+        if(ballTransform[1] - ballWidth <= cupBox.min[1]) {
+          ball.velocity = [0, 0, 0];
+        }else{
+          ballTransform[0] = cupTransform[0];
+          ballTransform[2] = cupTransform[2];
+          ball.velocity = [0, -0.3, 0];
+          console.log("Ball in the hole");
         }
       }else{
-        //hit from the side or front
+        this.normalBounce(minDirection, ball);
       }
     }
 
