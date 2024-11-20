@@ -1,23 +1,19 @@
+import {Cup} from "./Cup.js";
 
 export class Player {
-  constructor() {
+  constructor(side) {
     this.ready = false;
     this.character = null;
     this.currentHP = 0;
     this.strength = 0;
+    this.turnTime = 0;
     this.energy = 0;
     this.debuffs = [];
     this.score = 0;
     this.cups = [];
+    this.side = side;
   }
-  setCups(number){
-    switch(number){
-      case 1:
-        break;
-      case 2:
-        break;
-    }
-  }
+
   setHearts(number){
     const heartsDiv = number === 1
       ? document.getElementById('heartsLeft')
@@ -32,6 +28,17 @@ export class Player {
     }
   }
 
+  generateCups(number){
+    let side = '';
+    number === 1 ? side = 'left' : side = 'right';
+    let effects = ["darkness", "reverse", "rotate", "energy", "poison", "gravity", "none", "weakness"];
+    for(let i = 0; i < 6; i++){
+      let randomEffect = Math.floor(Math.random() * (effects.length));
+      let randomEffectiveness = 1;
+      this.cups[i] = new Cup(true, side, i + 1, effects[randomEffect], randomEffectiveness);
+    }
+  }
+
   setEnergy(number){
     const abilityBar = number === 1
       ? document.getElementById('abilityBarLeft')
@@ -40,13 +47,10 @@ export class Player {
     abilityBar.style.width = `${this.energy}%`;
   }
 
-  setHeaderBar(number){
-
-  }
-
   setStats(){
-    this.currentHP = this.character.health;
-    this.strength = this.character.strength;
+    this.currentHP = this.character.stats.health;
+    this.strength = this.character.stats.strength;
+    this.turnTime = this.character.turnTime;
   }
 
   setCountdown() {

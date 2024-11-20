@@ -53,10 +53,11 @@ body, html {
   position: absolute;
   height: 60vh;
   width: 36vw;
-  top: -100vh;
+  top: 20vh;
   left: 32vw;
   user-select: none;
   transition: opacity 3s ease-in-out;
+  opacity: 0;
 }
 
 .fullscreen {
@@ -468,7 +469,7 @@ body, html {
   height: 1vh;
   border: 0.5vh solid black;
   overflow: hidden;
-  background-color: rgba(90, 90, 255, 1);
+  background-color: rgba(130, 0, 150);
   width: 47%;
 }
 #abilityContainerLeft {
@@ -566,11 +567,25 @@ body, html {
 }
 .cup {
   height: 5vh;
-  width: 4vh;
-  background-color: white;
+  width: 3vh;
   border-radius: 50%;
   border: 0.5vh solid black;
 }
+.cup:hover {
+  cursor: pointer;
+}
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-1px); }
+  50% { transform: translateX(1px); }
+  75% { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 0.3s ease-in-out;
+}
+
 #ballDiv{
   position: absolute;
   top: 48.9vh;

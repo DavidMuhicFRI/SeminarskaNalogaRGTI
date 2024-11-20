@@ -1,7 +1,7 @@
 import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
-import {Camera, Model, Transform, Node, Ball, Character, Player} from './core.js';
+import {Camera, Model, Transform, Node, Ball, Character, Player, Game, Cup} from './core.js';
 import {
     calculateAxisAlignedBoundingBox,
     mergeAxisAlignedBoundingBoxes,
@@ -45,66 +45,25 @@ function elementDisappear(element){
   document.getElementById(element).style.opacity = '0';
 }
 
-//Intro animation
-elementAppear("introCharacters");
+setTimeout(function () {
+  // First appearance of the logo
+  elementAppear("introLogo");
 
-//show names
-setTimeout(function(){
-  elementAppear("name1");
-  elementAppear("name2");
-}, 600);
+  // After 400ms, make the logo disappear
+  setTimeout(function () {
+    elementDisappear("introLogo");
 
-//hide names
-setTimeout(function(){
-  elementDisappear("name1");
-  elementDisappear("name2");
-}, 1700);
-
-//look at each other
-setTimeout(function(){
-  charactersImg.src = "animationTogether.png";
-},2000);
-
-//look at the camera
-setTimeout(function(){
-  charactersImg.src = "animationNormal.png";
-},3000);
-
-//look up
-setTimeout(function(){
-  charactersImg.src = "animationUp.png";
-}, 3400);
-
-//logo drops and disappears
-let top = -100;
-setTimeout(function(){
-  $("#introLogo").show();
-  let moveLogo = setInterval(function(){
-    introLogo.style.top = top + "vh";
-    top += 0.5 + Math.pow(top + 100, 2) / 4000;
-    if(top > 22.6){
-      introLogo.style.top = 22.6 + "vh";
-      clearInterval(moveLogo);
-      setTimeout(function(){
-        elementDisappear("introLogo");
-      }, 400);
-      setTimeout(async function(){
-        if(!skipIntro) {
-          await initCharacterPage();
-          $("#intro").hide();
-          showElement("characterPage");
-          showElement("introCanvas")
-          pageStatus = "main";
-        }
-      }, 3400);
-    }else if(top > 10){
-      $("#introCharacters").hide();
-      $("#introAnd").hide();
-      $("#name1").hide();
-      $("#name2").hide();
-    }
-  }, 5);
-},3450);
+    setTimeout(async function () {
+      if (!skipIntro) {
+        await initCharacterPage();
+        $("#intro").hide();
+        showElement("characterPage");
+        showElement("introCanvas");
+        pageStatus = "main";
+      }
+    }, 2000);
+  }, 3500);
+}, 0);
 
 /////////////////////////////////////////////////////////////////////////////CHARACTER PAGE/////////////////////////////////////////////////////////////
 
@@ -121,8 +80,8 @@ let camera;
 let light;
 
 //variables for the character page
-let player1 = new Player();
-let player2 = new Player();
+let player1 = new Player('left');
+let player2 = new Player('right');
 let characterObjects = []; //array of character objects
 let rotatingCharacter; //the player object for character page purposes
 let constantRotation; //interval for the rotation
@@ -181,11 +140,11 @@ function movePage() {
       if(pageOrientation === "left"){
         canvasContainerLeft.appendChild(canvas);
         canvas.style.borderColor = "rgba(90, 90, 255, 1)";
-        characterSelected[0].getComponentOfType(Transform).rotation = rotatingCharacter.getComponentOfType(Transform).rotation;
+        characterSelected[0].transform.rotation = rotatingCharacter.transform.rotation;
       } else {
         canvasContainerRight.appendChild(canvas);
         canvas.style.borderColor = "rgba(255, 90, 90, 1)";
-        characterSelected[1].getComponentOfType(Transform).rotation = rotatingCharacter.getComponentOfType(Transform).rotation;
+        characterSelected[1].transform.rotation = rotatingCharacter.transform.rotation;
       }
       displayCharacters();
       changeStats('both');
@@ -235,19 +194,17 @@ function multiplyQuaternions(q1, q2) {
 }
 function rotatePlayer(rotatingCharacter, angle){
   const rotationQuat = createQuaternionFromAxisAngle([0, 1, 0], angle);
-  const transform = rotatingCharacter.getComponentOfType(Transform);
-  transform.rotation = multiplyQuaternions(transform.rotation, rotationQuat);
+  rotatingCharacter.transform.rotation = multiplyQuaternions(rotatingCharacter.transform.rotation, rotationQuat);
 }
 
 //character loading and character functions
+// TODO - correct scene
 async function loadCharacters(){
   characterObjects = [];
   let characterNames = ["Atlas", "Chrono", "Curve", "Nero", "Spring", "Tripp"];
   characterNames.forEach((name, index) => {
-    characterObjects[index] = loadObject(name + "Object", "static");
-    let character = new Character(characterObjects[index], name);
-    characterObjects[index].addComponent(character);
-    character.applyScale();
+    characterObjects[index] = new Character(loadObject(name + "Object", "static"), name);
+    characterObjects[index].applyScale();
   });
   if(characterSelected.length === 0) {
     //first time loading
@@ -255,9 +212,9 @@ async function loadCharacters(){
   }else{
     //set the selected characters to the new objects
     for(let i = 0; i < characterObjects.length; i++){
-      if(characterSelected[0].getComponentOfType(Character).stats.name === characterObjects[i].getComponentOfType(Character).stats.name){
+      if(characterSelected[0].stats.name === characterObjects[i].stats.name){
         characterSelected[0] = characterObjects[i];
-      }else if(characterSelected[1] && characterSelected[1].getComponentOfType(Character).stats.name === characterObjects[i].getComponentOfType(Character).stats.name){
+      }else if(characterSelected[1] && characterSelected[1].stats.name === characterObjects[i].stats.name){
         characterSelected[1] = characterObjects[i];
       }
     }
@@ -270,7 +227,7 @@ async function loadCharacters(){
 function displayCharacters(){
   let side = pageOrientation === "left" ? 0 : 1;
   for(let i = 0; i < characterObjects.length; i++){
-    let transform = characterObjects[i].getComponentOfType(Transform);
+    let transform = characterObjects[i].transform;
     if(characterObjects[i] === characterSelected[side]){
       transform.translation = [0, 0, 0];
       rotatingCharacter = characterObjects[i];
@@ -285,7 +242,7 @@ function assignCharacter(direction){
   let side = pageOrientation === "left" ? 0 : 1;
   let otherSide = side === 0 ? 1 : 0;
   let index = characterObjects.indexOf(characterSelected[side]);
-  let rotation = characterSelected[side].getComponentOfType(Transform).rotation;
+  let rotation = characterSelected[side].transform.rotation;
   if(direction === "next"){
     characterSelected[side] = index === characterObjects.length - 1 ? characterObjects[0] : characterObjects[index + 1];
     index = characterObjects.indexOf(characterSelected[side]);
@@ -299,37 +256,37 @@ function assignCharacter(direction){
       characterSelected[side] = index === 0 ? characterObjects[characterObjects.length - 1] : characterObjects[index - 1];
     }
   }
-  characterSelected[side].getComponentOfType(Transform).rotation = rotation;
+  characterSelected[side].transform.rotation = rotation;
 }
 
 function changeStats(side){
   if(side === 'left' || side === 'both'){
-    document.getElementById("characterNameLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.name;
-    document.getElementById("characterTitleLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.title;
-    document.getElementById("difficultyBarLeft").style.width = characterSelected[0].getComponentOfType(Character).stats.difficulty * 10 + "%";
-    document.getElementById("offenseBarLeft").style.width = characterSelected[0].getComponentOfType(Character).stats.offense * 10 + "%";
-    document.getElementById("defenseBarLeft").style.width = characterSelected[0].getComponentOfType(Character).stats.defense * 10 + "%";
-    document.getElementById("playstyleLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.playstyle;
-    document.getElementById("strengthLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.plusPassive;
-    document.getElementById("weaknessLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.minusPassive;
-    document.getElementById("abilityImgLeft").src = characterSelected[0].getComponentOfType(Character).stats.abilityImage;
-    document.getElementById("abilityLeft").src = characterSelected[0].getComponentOfType(Character).stats.abilityImage;
-    document.getElementById("abilityTextLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.abilityText;
-    document.getElementById("funFactLeft").innerText = characterSelected[0].getComponentOfType(Character).stats.funFact;
+    document.getElementById("characterNameLeft").innerText = characterSelected[0].stats.name;
+    document.getElementById("characterTitleLeft").innerText = characterSelected[0].stats.title;
+    document.getElementById("difficultyBarLeft").style.width = characterSelected[0].stats.difficulty * 10 + "%";
+    document.getElementById("offenseBarLeft").style.width = characterSelected[0].stats.offense * 10 + "%";
+    document.getElementById("defenseBarLeft").style.width = characterSelected[0].stats.defense * 10 + "%";
+    document.getElementById("playstyleLeft").innerText = characterSelected[0].stats.playstyle;
+    document.getElementById("strengthLeft").innerText = characterSelected[0].stats.plusPassive;
+    document.getElementById("weaknessLeft").innerText = characterSelected[0].stats.minusPassive;
+    document.getElementById("abilityImgLeft").src = characterSelected[0].stats.abilityImage;
+    document.getElementById("abilityLeft").src = characterSelected[0].stats.abilityImage;
+    document.getElementById("abilityTextLeft").innerText = characterSelected[0].stats.abilityText;
+    document.getElementById("funFactLeft").innerText = characterSelected[0].stats.funFact;
   }
   if(side === 'right' || side === 'both'){
-    document.getElementById("characterNameRight").innerText = characterSelected[1].getComponentOfType(Character).stats.name;
-    document.getElementById("characterTitleRight").innerText = characterSelected[1].getComponentOfType(Character).stats.title;
-    document.getElementById("difficultyBarRight").style.width = characterSelected[1].getComponentOfType(Character).stats.difficulty * 10 + "%";
-    document.getElementById("offenseBarRight").style.width = characterSelected[1].getComponentOfType(Character).stats.offense * 10 + "%";
-    document.getElementById("defenseBarRight").style.width = characterSelected[1].getComponentOfType(Character).stats.defense * 10 + "%";
-    document.getElementById("playstyleRight").innerText = characterSelected[1].getComponentOfType(Character).stats.playstyle;
-    document.getElementById("strengthRight").innerText = characterSelected[1].getComponentOfType(Character).stats.plusPassive;
-    document.getElementById("weaknessRight").innerText = characterSelected[1].getComponentOfType(Character).stats.minusPassive;
-    document.getElementById("abilityImgRight").src = characterSelected[1].getComponentOfType(Character).stats.abilityImage;
-    document.getElementById("abilityRight").src = characterSelected[1].getComponentOfType(Character).stats.abilityImage;
-    document.getElementById("abilityTextRight").innerText = characterSelected[1].getComponentOfType(Character).stats.abilityText;
-    document.getElementById("funFactRight").innerText = characterSelected[1].getComponentOfType(Character).stats.funFact;
+    document.getElementById("characterNameRight").innerText = characterSelected[1].stats.name;
+    document.getElementById("characterTitleRight").innerText = characterSelected[1].stats.title;
+    document.getElementById("difficultyBarRight").style.width = characterSelected[1].stats.difficulty * 10 + "%";
+    document.getElementById("offenseBarRight").style.width = characterSelected[1].stats.offense * 10 + "%";
+    document.getElementById("defenseBarRight").style.width = characterSelected[1].stats.defense * 10 + "%";
+    document.getElementById("playstyleRight").innerText = characterSelected[1].stats.playstyle;
+    document.getElementById("strengthRight").innerText = characterSelected[1].stats.plusPassive;
+    document.getElementById("weaknessRight").innerText = characterSelected[1].stats.minusPassive;
+    document.getElementById("abilityImgRight").src = characterSelected[1].stats.abilityImage;
+    document.getElementById("abilityRight").src = characterSelected[1].stats.abilityImage;
+    document.getElementById("abilityTextRight").innerText = characterSelected[1].stats.abilityText;
+    document.getElementById("funFactRight").innerText = characterSelected[1].stats.funFact;
   }
 }
 
@@ -339,6 +296,8 @@ async function startGame(){
   $("#characterPage").hide();
   showElement("game");
   $("#game").show(); //for 2nd and later showings
+  let game = new Game(player1, player2, ball);
+  game.setUp();
 }
 //exit game
 async function cancelGame(){
@@ -578,14 +537,17 @@ document.addEventListener("keydown", function(event){
 //setting player objects
 function setPlayerObjects(){
   for(let i = 0; i < characterObjects.length; i++){
-    let object = findObject(characterObjects[i].getComponentOfType(Character).stats.reference);
+    let object = findObject(characterObjects[i].stats.reference);
     object.getComponentOfType(Transform).translation = [30, 0, 0];
   }
-  player1.character = findObject(characterSelected[0].getComponentOfType(Character).stats.reference);
-  player2.character = findObject(characterSelected[1].getComponentOfType(Character).stats.reference);
-  player1.character.getComponentOfType(Transform).translation = [0, 0, -14.2];
-  player1.character.getComponentOfType(Transform).rotation = [0, 0.707, 0, -0.707];
-  player2.character.getComponentOfType(Transform).translation = [0, 0, 14.2];
+
+  player1.character = characterSelected[0];
+  player2.character = characterSelected[1];
+  player1.character.transform.translation = [0, 0, -14.2];
+  player1.character.transform.rotation = [0, 0.707, 0, -0.707];
+  player2.character.transform.translation = [0, 0, 14.2];
+  console.log(player1.character.node);
+  console.log(player2.character.node);
 }
 
 //game object initialization

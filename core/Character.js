@@ -4,8 +4,7 @@ export class Character {
   constructor(node, name) {
     this.node = node;
     this.transform = node.getComponentOfType(Transform);
-    this.transform.rotation = [0, 0.707, 0, -0.707]; //fixing rotation
-    this.turnTime = 30;
+    this.turnTime = 20;
     switch(name) {
       case 'Atlas':
         this.stats = {
@@ -44,7 +43,7 @@ export class Character {
           reference: 'ChronoObject',
           abilityImage: 'chronoAbility.png'
         }
-        this.turnTime = 15;
+        this.turnTime = this.turnTime / 2;
         break;
       case 'Curve':
         this.stats = {
