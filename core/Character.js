@@ -61,7 +61,7 @@ export class Character {
           strength: 1.2,
           scale: [1.1, 1.1, 1.1],
           reference: 'CurveObject',
-          abilityImage: ''
+          abilityImage: 'curveAbility.png'
         }
         break;
       case 'Nero':
@@ -80,7 +80,7 @@ export class Character {
           strength: 1,
           scale: [1.2, 1.2, 1.2],
           reference: 'NeroObject',
-          abilityImage: ''
+          abilityImage: 'neroAbility.png'
         }
         break;
       case 'Spring':
@@ -99,7 +99,7 @@ export class Character {
           strength: 0.8,
           scale: [1.2, 1.2, 1.2],
           reference: 'SpringObject',
-          abilityImage: ''
+          abilityImage: 'springAbility.png'
         }
         break;
       case 'Tripp':
@@ -118,7 +118,7 @@ export class Character {
           strength: 1,
           scale: [1.1, 1.1, 1.1],
           reference: 'TrippObject',
-          abilityImage: ''
+          abilityImage: 'trippAbility.png'
         }
         break;
     }
