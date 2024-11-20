@@ -404,7 +404,7 @@ body, html {
   background-color: red;
   text-align: center;
   border-radius: 5px;
-  border: 2px solid black;
+  border: 0.5vh solid black;
   font-weight: bold;
   cursor: pointer;
 }
@@ -598,11 +598,4 @@ body, html {
 }
 #ballDiv:hover {
   cursor: grab;
-}
-#arrow {
-  position: absolute;
-  width: 0;
-  height: 5vh;
-  transform-origin: bottom;
-  rotate: 180deg;
 }
