@@ -292,6 +292,7 @@ function changeStats(side){
 
 //starting and exiting the game
 async function startGame(){
+  loadingScreen();
   await initGame();
   $("#characterPage").hide();
   showElement("game");
@@ -599,6 +600,31 @@ function initOtherObjects(){
   loadObject("Barricade2Holder", "static");
   loadObject("Barricade3Holder", "static");
   loadObject("Barricade4Holder", "static");
+}
+
+// ================================================================ LOADING SCREEN ==================================================
+
+function loadingScreen(){
+  let loadingScreen = document.getElementById("loadingScreen");
+  loadingScreen.style.display = "block";
+  let loadingCover = document.getElementById("loadingScreenCover");
+  let loadingBar = document.getElementById("loadingScreenBar");
+  let loadingText = document.getElementById("loadingScreenText");
+  let loadingBarWidth = 0;
+  let loadingTextContent = "Loading...";
+  let loadingInterval = setInterval(() => {
+    loadingBarWidth += 1;
+    loadingBar.style.width = loadingBarWidth + "%";
+    loadingCover.style.height = 42 - loadingBarWidth * 0.35 + "%";
+    if(loadingBarWidth === 100){
+      loadingTextContent = "Loading complete!";
+      clearInterval(loadingInterval);
+      setTimeout(() => {
+        loadingScreen.style.display = "none";
+      }, 300);
+    }
+    loadingText.innerText = loadingTextContent;
+  }, 15);
 }
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////
