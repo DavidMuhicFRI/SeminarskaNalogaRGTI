@@ -621,7 +621,7 @@ function loadingScreen(){
       clearInterval(loadingInterval);
       setTimeout(() => {
         loadingScreen.style.display = "none";
-      }, 300);
+      }, 500);
     }
     loadingText.innerText = loadingTextContent;
   }, 15);
