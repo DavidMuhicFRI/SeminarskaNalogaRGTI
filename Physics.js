@@ -155,10 +155,9 @@ export class Physics {
       let ballTransform = ball.node.getComponentOfType(Transform).translation;
       let cupTransform = cup.getComponentOfType(Transform).translation;
       let distance = this.calculateRealDistance(cupBox, ballTransform, cupTransform);
-      let ballWidth = this.getBallWidth(ballBox);
+      let ballWidth = this.getBallWidth(ballBox) * 0.8; //adjust for easier hitting
       let cupWidth = (cupBox.max[0] - cupBox.min[0]) / 2;
-      let holeWidth = cupWidth * 1; //adjust for easier hitting
-      if (this.isBallInCup(ballWidth, holeWidth, distance)) {
+      if (this.isBallInCup(ballWidth, cupWidth, distance)) {
         if(ballTransform[1] - ballWidth <= cupBox.min[1]) {
           ball.velocity = [0, 0, 0];
         }else{
