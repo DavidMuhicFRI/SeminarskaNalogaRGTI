@@ -157,12 +157,13 @@ export class Physics {
       let distance = this.calculateRealDistance(cupBox, ballTransform, cupTransform);
       let ballWidth = this.getBallWidth(ballBox);
       let cupWidth = (cupBox.max[0] - cupBox.min[0]) / 2;
-      let holeWidth = cupWidth * 1.05; //adjust for easier hitting
+      let holeWidth = cupWidth * 1; //adjust for easier hitting
       if (this.isBallInCup(ballWidth, holeWidth, distance)) {
         if(ballTransform[1] - ballWidth <= cupBox.min[1]) {
           ball.velocity = [0, 0, 0];
-          console.log("Ball on the bottom");
         }else{
+          ballTransform[0] = cupTransform[0];
+          ballTransform[2] = cupTransform[2];
           ball.velocity = [0, -0.3, 0];
           console.log("Ball in the hole");
         }
