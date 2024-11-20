@@ -13,15 +13,9 @@ import {FirstPersonController} from "./controllers/FirstPersonController.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
-let loadedData;
-let introScene;
-let gameScene;
-
 let skipIntro = false;
 let pageStatus = "intro";
 const intro = document.getElementById('intro');
-const introLogo = document.getElementById('introLogo');
-const charactersImg = document.getElementById('introCharacters');
 
 intro.addEventListener("click", async() => {
   await initCharacterPage();
@@ -198,28 +192,28 @@ function rotatePlayer(rotatingCharacter, angle){
 }
 
 //character loading and character functions
-// TODO - correct scene
 async function loadCharacters(){
   characterObjects = [];
   let characterNames = ["Atlas", "Chrono", "Curve", "Nero", "Spring", "Tripp"];
   characterNames.forEach((name, index) => {
-    characterObjects[index] = new Character(loadObject(name + "Object", "static"), name);
+    characterObjects[index] = new Character(findObject(name + "Object"), name);
     characterObjects[index].applyScale();
   });
-  if(characterSelected.length === 0) {
-    //first time loading
+  if(characterSelected.length === 0){
     characterSelected = [characterObjects[0], null];
   }else{
-    //set the selected characters to the new objects
-    for(let i = 0; i < characterObjects.length; i++){
-      if(characterSelected[0].stats.name === characterObjects[i].stats.name){
-        characterSelected[0] = characterObjects[i];
-      }else if(characterSelected[1] && characterSelected[1].stats.name === characterObjects[i].stats.name){
-        characterSelected[1] = characterObjects[i];
-      }
-    }
+    characterSelected[0] = characterObjects.find(character => character.stats.name === characterSelected[0].stats.name);
+    characterSelected[1] = characterObjects.find(character => character.stats.name === characterSelected[1].stats.name);
   }
-  changeStats('left');
+  let floor = findObject("Floor");
+  let transform2 = floor.getComponentOfType(Transform);
+  transform2.translation = [0, 0.1, 0];
+  transform2.scale = [10, 0.1, 10];
+
+  let wall1 = findObject("Wall1");
+  let transform3 = wall1.getComponentOfType(Transform);
+  transform3.translation = [0, 0, -5];
+  transform3.scale = [10, 20, 0.1];
   displayCharacters();
 }
 
@@ -227,12 +221,13 @@ async function loadCharacters(){
 function displayCharacters(){
   let side = pageOrientation === "left" ? 0 : 1;
   for(let i = 0; i < characterObjects.length; i++){
-    let transform = characterObjects[i].transform;
+    let transform = characterObjects[i].node.getComponentOfType(Transform);
     if(characterObjects[i] === characterSelected[side]){
+      console.log("Selected character: " + characterObjects[i].stats.name, "found");
       transform.translation = [0, 0, 0];
       rotatingCharacter = characterObjects[i];
     }else{
-      transform.translation = [20, 0, 0];
+      transform.translation = [30, 0, 0];
     }
   }
 }
@@ -257,6 +252,7 @@ function assignCharacter(direction){
     }
   }
   characterSelected[side].transform.rotation = rotation;
+  displayCharacters();
 }
 
 function changeStats(side){
@@ -353,22 +349,18 @@ backToP1.addEventListener('click', function() {
 });
 charNextButtonBlue.addEventListener('click', function() {
   assignCharacter("next");
-  displayCharacters();
   changeStats('left');
 });
 charPreviousButtonBlue.addEventListener('click', function() {
   assignCharacter("previous");
-  displayCharacters();
   changeStats('left');
 });
 charNextButtonRed.addEventListener('click', function() {
   assignCharacter("next");
-  displayCharacters();
   changeStats('right');
 });
 charPreviousButtonRed.addEventListener('click', function() {
   assignCharacter("previous");
-  displayCharacters();
   changeStats('right');
 });
 
@@ -413,22 +405,17 @@ async function initCharacterPage() {
   turnButtonToReady(readyButton2);
   document.getElementById("gameBackButton").style.visibility = "hidden";
 
-  //initialize the intro systems
   await init(true);
-
-//load the objects for character page
+  await initObjects(true);
   await loadCharacters();
+  if(pageOrientation === "left"){
+    changeStats('left');
+  }else{
+    changeStats('right');
+  }
 
-  let floor = loadObject("Floor", "static");
-  let transform2 = floor.getComponentOfType(Transform);
-  transform2.translation = [0, 0.1, 0];
-  transform2.scale = [10, 0.1, 10];
+  console.log(scene);
 
-  let wall1 = loadObject("Wall1", "static");
-  let transform3 = wall1.getComponentOfType(Transform);
-  transform3.translation = [0, 0, -5];
-  transform3.scale = [10, 20, 0.1];
-  //rotate the player
   constantRotation = setInterval(constantlyRotate, 5);
 }
 
@@ -515,27 +502,26 @@ function resetBall(){
   clearInterval(ballSelectInterval);
   ballSelectInterval = setInterval(blinkBall, 20);
 }
+
 function ballDrag(event){
   let force = calculateDragForce();
   let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
   dragToughness = Math.min(dragToughness, 0.01);
-  ball.getComponentOfType(Transform).translation[0] -= event.movementX * 0.01;
-  ball.getComponentOfType(Transform).translation[1] -= 1.5 * event.movementY * dragToughness;
-  if(playerTurn === 1) {
-    ball.getComponentOfType(Transform).translation[2] -= event.movementY * dragToughness;
+  let ballTranslation = ball.getComponentOfType(Transform).translation;
+  if(playerTurn === 1){
+    ballTranslation[2] -= event.movementY * dragToughness;
+    ballTranslation[0] -= event.movementX * 0.01;
   }else{
-    ball.getComponentOfType(Transform).translation[2] += event.movementY * dragToughness;
+    ballTranslation[2] += event.movementY * dragToughness;
+    ballTranslation[0] += event.movementX * 0.01;
   }
+  ballTranslation[1] -= 1.5 * event.movementY * dragToughness;
 }
 
 document.addEventListener("keydown", function(event){
   if(event.key === "r"){
     resetBall();
-  }else if(event.key === "t"){
-    throwBall();
-  }
-  //also add controls for moving the ball with the arrow keys and space bar for down
-  else if(event.key === "ArrowUp"){
+  } else if(event.key === "ArrowUp"){
     ball.getComponentOfType(Transform).translation[1] += 0.1;
   }else if(event.key === "ArrowDown") {
     ball.getComponentOfType(Transform).translation[1] -= 0.1;
@@ -543,10 +529,6 @@ document.addEventListener("keydown", function(event){
     ball.getComponentOfType(Transform).translation[2] += 0.1;
   }else if(event.key === "ArrowRight"){
     ball.getComponentOfType(Transform).translation[2] -= 0.1;
-  }else if(event.key === " "){
-    ball.getComponentOfType(Transform).translation[0] += 0.1;
-  }else if(event.key === "Shift"){
-    ball.getComponentOfType(Transform).translation[0] -= 0.1;
   }
 });
 
@@ -556,65 +538,79 @@ function setPlayerObjects(){
     let object = findObject(characterObjects[i].stats.reference);
     object.getComponentOfType(Transform).translation = [30, 0, 0];
   }
-
   player1.character = characterSelected[0];
   player2.character = characterSelected[1];
   player1.character.transform.translation = [0, 0, -14.2];
   player1.character.transform.rotation = [0, 0.707, 0, -0.707];
   player2.character.transform.translation = [0, 0, 14.2];
-  console.log(player1.character.node);
-  console.log(player2.character.node);
 }
 
 //game object initialization
 function initGameObjects(){
-  console.log(scene);
-  ball = loadObject("Ball", "dynamic");
-  ball.isStatic = false;
-  ball.removeComponent(ball.getComponentOfType(Ball));
-  ball.addComponent(new Ball(ball, canvas));
-  ball.getComponentOfType(Transform).translation = [0, 7.5, -7.1];
-  initOtherObjects();
+  initObjects();
   resetBall();
   setPlayerObjects();
 }
 
-function initOtherObjects(){
-  loadObject("AtlasObject", "static");
-  loadObject("ChronoObject", "static");
-  loadObject("CurveObject", "static");
-  loadObject("NeroObject", "static");
-  loadObject("SpringObject", "static");
-  loadObject("TrippObject", "static");
-  loadObject("CupR1", "static");
-  loadObject("CupR2", "static");
-  loadObject("CupR3", "static");
-  loadObject("CupR4", "static");
-  loadObject("CupR5", "static");
-  loadObject("CupR6", "static");
-  loadObject("CupB1", "static");
-  loadObject("CupB2", "static");
-  loadObject("CupB3", "static");
-  loadObject("CupB4", "static");
-  loadObject("CupB5", "static");
-  loadObject("CupB6", "static");
-  loadObject("Wall1", "static");
-  loadObject("Wall2", "static");
-  loadObject("Wall3", "static");
-  loadObject("Wall4", "static");
-  loadObject("Floor", "static");
-  loadObject("Table", "static");
-  let ceiling = loadObject("Ceiling", "static");
-  let transform = ceiling.getComponentOfType(Transform);
-  transform.translation = [0, 20, 0];
-  loadObject("Barricade1", "static");
-  loadObject("Barricade2", "static");
-  loadObject("Barricade3", "static");
-  loadObject("Barricade4", "static");
-  loadObject("Barricade1Holder", "static");
-  loadObject("Barricade2Holder", "static");
-  loadObject("Barricade3Holder", "static");
-  loadObject("Barricade4Holder", "static");
+let originalTransforms = [];
+function initObjects(intro){
+  if(intro){
+    ball = loadObject("Ball", "dynamic");
+    ball.isStatic = false;
+    ball.addComponent(new Ball(ball));
+    loadObject("AtlasObject", "static");
+    loadObject("ChronoObject", "static");
+    loadObject("CurveObject", "static");
+    loadObject("NeroObject", "static");
+    loadObject("SpringObject", "static");
+    loadObject("TrippObject", "static");
+    loadObject("CupR1", "static");
+    loadObject("CupR2", "static");
+    loadObject("CupR3", "static");
+    loadObject("CupR4", "static");
+    loadObject("CupR5", "static");
+    loadObject("CupR6", "static");
+    loadObject("CupB1", "static");
+    loadObject("CupB2", "static");
+    loadObject("CupB3", "static");
+    loadObject("CupB4", "static");
+    loadObject("CupB5", "static");
+    loadObject("CupB6", "static");
+    loadObject("Wall1", "static");
+    loadObject("Wall2", "static");
+    loadObject("Wall3", "static");
+    loadObject("Wall4", "static");
+    loadObject("Floor", "static");
+    loadObject("Table", "static");
+    loadObject("Barricade1", "static");
+    loadObject("Barricade2", "static");
+    loadObject("Barricade3", "static");
+    loadObject("Barricade4", "static");
+    loadObject("Barricade1Holder", "static");
+    loadObject("Barricade2Holder", "static");
+    loadObject("Barricade3Holder", "static");
+    loadObject("Barricade4Holder", "static");
+    for(let i = 0; i < scene.children.length; i++){
+      originalTransforms[i] = new Node();
+      originalTransforms[i].name = scene.children[i].name;
+      originalTransforms[i].addComponent(new Transform());
+      let transform = originalTransforms[i].getComponentOfType(Transform);
+      transform.translation = scene.children[i].getComponentOfType(Transform).translation;
+      transform.rotation = scene.children[i].getComponentOfType(Transform).rotation;
+      transform.scale = scene.children[i].getComponentOfType(Transform).scale;
+      if(scene.children[i].name !== "Camera" && scene.children[i].name !== "Light") {
+        scene.children[i].getComponentOfType(Transform).translation = [30, 0, 0];
+      }
+    }
+  }else{
+    for(let i = 0; i < scene.children.length; i++){
+      if(scene.children[i].name !== "Camera" && scene.children[i].name !== "Light") {
+        scene.children[i].getComponentOfType(Transform).translation = originalTransforms[i].getComponentOfType(Transform).translation;
+        scene.children[i].getComponentOfType(Transform).rotation = originalTransforms[i].getComponentOfType(Transform).rotation;
+        scene.children[i].getComponentOfType(Transform).scale = originalTransforms[i].getComponentOfType(Transform).scale;
+      }
+    }
+  }
   //camera.addComponent(new FirstPersonController(camera, canvas));
 }
 
@@ -633,80 +629,98 @@ function initializeTheLoader(){
   }
 }
 
-async function initializeTheScene(intro){
-  loadedData = await loader.load('scene/scene.gltf'); // Load the scene
+async function initializeTheScene(){
+  await loader.load('scene/scene.gltf'); // Load the scene
   scene = new Node();
-  console.log(scene);
 }
 
 function initializeTheCamera(intro){
-  camera = new Node();
-  camera.name = 'Camera';
-  camera.addComponent(new Camera({
-    aspect: canvas.width / canvas.height,
-    fovy: Math.PI / 3,
-    near: 0.1,
-    far: 100,
-  }));
   if(intro){
-    camera.addComponent(new Transform({
-      translation: [0, 10, 10],
-      rotation: [-0.2, 0, 0, 1],
-    }));
+    if(!camera){
+      camera = new Node();
+      camera.name = 'Camera';
+      camera.addComponent(new Camera({
+        aspect: canvas.width / canvas.height,
+        fovy: Math.PI / 3,
+        near: 0.1,
+        far: 100,
+      }));
+      camera.addComponent(new Transform({
+        translation: [0, 10, 10],
+        rotation: [-0.2, 0, 0, 1],
+      }));
+      scene.addChild(camera);
+    }else{
+      let cameraTransform = camera.getComponentOfType(Transform);
+      cameraTransform.translation = [0, 10, 10];
+      cameraTransform.rotation = [-0.2, 0, 0, 1];
+    }
   }else{
-    //camera.addComponent(new FirstPersonController(camera, canvas));
-    camera.addComponent(new Transform({
-      translation: [0, 9, -12.6],
-      rotation: [0, 1, 0.13, 0],
-    }));
+    let cameraTransform = camera.getComponentOfType(Transform);
+    cameraTransform.translation = [0, 9, -12.6];
+    cameraTransform.rotation = [0, 1, 0.13, 0];
+    camera.isStatic = true;
+    camera.aabb = {
+      min: [-0.5, -0.5, -0.5],
+      max: [0.5, 0.5, 0.5],
+    };
   }
-  camera.isStatic = true;
-  camera.aabb = {
-    min: [-0.5, -0.5, -0.5],
-    max: [0.5, 0.5, 0.5],
-  };
-  scene.addChild(camera);
 }
 
 async function initializeTheLight(intro){
-  light = new Node();
-  light.name = 'Light';
   if(intro){
-    light.addComponent(new Transform({
-      translation: [0.2, 13, 9],
-      rotation: [-0.5, 0.1, 0, 1],
-    }));
-    light.addComponent(new Light({
-      color: [250, 245, 220],
-      intensity: 1,
-      attenuation: [0, 0.1, 0.03],
-      ambientOff: 0.01,
-      ambientOn: 0.04,
-      fi: 3,
-      fovy: Math.PI / 1.2,
-      aspect: 1,
-      near: 1,
-      far: 200,
-    }));
+    if(!light){
+      light = new Node();
+      light.name = 'Light';
+      light.addComponent(new Transform({
+        translation: [0.2, 13, 9],
+        rotation: [-0.5, 0.1, 0, 1],
+      }));
+      light.addComponent(new Light({
+        color: [250, 245, 220],
+        intensity: 1,
+        attenuation: [0, 0.1, 0.03],
+        ambientOff: 0.01,
+        ambientOn: 0.04,
+        fi: 3,
+        fovy: Math.PI / 1.2,
+        aspect: 1,
+        near: 1,
+        far: 200,
+      }));
+      scene.addChild(light);
+    }else{
+      let lightTransform = light.getComponentOfType(Transform);
+      lightTransform.translation = [0.2, 13, 9];
+      lightTransform.rotation = [-0.5, 0.1, 0, 1];
+      let lightComponent = light.getComponentOfType(Light);
+      lightComponent.color = [250, 245, 220];
+      lightComponent.intensity = 1;
+      lightComponent.attenuation = [0, 0.1, 0.03];
+      lightComponent.ambientOff = 0.01;
+      lightComponent.ambientOn = 0.04;
+      lightComponent.fi = 3;
+      lightComponent.fovy = Math.PI / 1.2;
+      lightComponent.aspect = 1;
+      lightComponent.near = 1;
+      lightComponent.far = 200;
+    }
   }else{
-    light.addComponent(new Transform({
-      translation: [0, 16.5, 0],
-      rotation: [-0.71, 0, 0, 1],
-  }));
-    light.addComponent(new Light({
-      color: [250, 245, 220],
-      intensity: 1.5,
-      attenuation: [0, 0.1, 0.03],
-      ambientOff: 0.01,
-      ambientOn: 0.04,
-      fi: 2.5,
-      fovy: Math.PI / 1.1,
-      aspect: 1,
-      near: 1,
-      far: 200,
-    }));
+    let lightTransform = light.getComponentOfType(Transform);
+    lightTransform.translation = [0, 16.5, 0];
+    lightTransform.rotation = [-0.71, 0, 0, 1];
+    let lightComponent = light.getComponentOfType(Light);
+    lightComponent.color = [250, 245, 220];
+    lightComponent.intensity = 1.5;
+    lightComponent.attenuation = [0, 0.1, 0.03];
+    lightComponent.ambientOff = 0.01;
+    lightComponent.ambientOn = 0.04;
+    lightComponent.fi = 2.5;
+    lightComponent.fovy = Math.PI / 1.1;
+    lightComponent.aspect = 1;
+    lightComponent.near = 1;
+    lightComponent.far = 200;
   }
-  scene.addChild(light);
 }
 
 async function initPhysics(){
@@ -720,13 +734,11 @@ function initializeSystems(){
   if(!resizeSystem || !updateSystem){
     resizeSystem = new ResizeSystem({ canvas, resize });
     updateSystem = new UpdateSystem({ update, render });
+    resizeSystem.start();
+    updateSystem.start();
   }
 }
 
-function startSystems() {
-  resizeSystem.start();
-  updateSystem.start();
-}
 let previousTime = 0;
 let accumulatedDt = 0;
 function update(time, dt) {
@@ -741,7 +753,9 @@ function update(time, dt) {
       }
     });
     //console.log(camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation, camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).rotation);
-    physics.update(time, dt);
+    if(physics){
+      physics.update(time, dt);
+    }
     accumulatedDt = 0;
   }
 }
@@ -755,20 +769,27 @@ function resize({ displaySize: { width, height }}) {
 }
 
 async function init(intro){
-  await initializeTheRenderer(renderer, canvas);
-  await initializeTheLoader();
-  await initializeTheScene(intro);
-  await initializeTheCamera(intro);
-  await initializeTheLight(intro);
-  await initPhysics();
-  await initializeSystems();
-  startSystems();
+  if(intro){
+    if(physics){
+      physics = null;
+    }
+    await initializeTheRenderer();
+    await initializeTheLoader();
+    await initializeTheScene();
+    await initializeTheCamera(intro);
+    await initializeTheLight(intro);
+    await initializeSystems();
+  }else{
+    await initializeTheCamera(intro);
+    await initializeTheLight(intro);
+    await initPhysics();
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
 
 function findObject(name){
-  let object = 0;
+  let object = null;
   scene.traverse(node => {
     if(node.name === name){
       object = node;
