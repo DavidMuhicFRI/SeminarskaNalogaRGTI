@@ -296,7 +296,7 @@ async function startGame(){
   $("#characterPage").hide();
   showElement("game");
   $("#game").show(); //for 2nd and later showings
-  let game = new Game(player1, player2, ball);
+  let game = new Game(player1, player2, ball, camera);
   game.setUp();
 }
 //exit game

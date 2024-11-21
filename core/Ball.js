@@ -59,7 +59,6 @@ export class Ball {
       vec3.normalize(this.velocity, this.velocity);
       vec3.scale(this.velocity, this.velocity, this.maxSpeed);
     }
-
     this.node.getComponentOfType(Transform).translation[0] += this.velocity[0] * dt;
     this.node.getComponentOfType(Transform).translation[1] += this.velocity[1] * dt;
     this.node.getComponentOfType(Transform).translation[2] += this.velocity[2] * dt;

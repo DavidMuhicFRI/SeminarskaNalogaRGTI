@@ -1,8 +1,11 @@
+import { Transform } from "./Transform.js";
+
 export class Game {
-  constructor(player1, player2, ball){
+  constructor(player1, player2, ball, camera){
     this.player1 = player1;
     this.player2 = player2;
     this.ball = ball;
+    this.camera = camera;
 
     this.currentPlayer = player1;
     this.turn = 1;
@@ -53,7 +56,7 @@ export class Game {
     this.turn++;
     this.currentPlayer = this.currentPlayer === this.player1 ? this.player2 : this.player1;
     this.displayCups(this.player1.cups, this.player2.cups);
-    // TODO turnCamera();
+    this.turnCamera();
   }
 
   startTurn(){
@@ -64,9 +67,80 @@ export class Game {
     this.changePlayerTun();
   }
 
+  quaternionToEuler(q) {
+    let w = q[0];
+    let x = q[1];
+    let y = q[2];
+    let z = q[3];
+    // Compute Euler angles in radians
+    const roll = Math.atan2(2 * (w * x + y * z), 1 - 2 * (x * x + y * y)); // X-axis rotation
+    const pitch = Math.asin(2 * (w * y - z * x)); // Y-axis rotation
+    const yaw = Math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)); // Z-axis rotation
+
+    // Convert radians to degrees
+    const radToDeg = 180 / Math.PI;
+    return {
+      roll: roll * radToDeg,
+      pitch: pitch * radToDeg,
+      yaw: yaw * radToDeg,
+    };
+  }
+
+  eulerToQuaternion(euler) {
+    const { roll, pitch, yaw } = euler;
+
+    // Convert degrees to radians
+    const degToRad = Math.PI / 180;
+    const r = roll * degToRad;
+    const p = pitch * degToRad;
+    const y = yaw * degToRad;
+
+    // Compute quaternion components
+    const cy = Math.cos(y * 0.5); // Cosine of half yaw
+    const sy = Math.sin(y * 0.5); // Sine of half yaw
+    const cp = Math.cos(p * 0.5); // Cosine of half pitch
+    const sp = Math.sin(p * 0.5); // Sine of half pitch
+    const cr = Math.cos(r * 0.5); // Cosine of half roll
+    const sr = Math.sin(r * 0.5); // Sine of half roll
+
+    return {
+      w: cr * cp * cy + sr * sp * sy,
+      x: sr * cp * cy - cr * sp * sy,
+      y: cr * sp * cy + sr * cp * sy,
+      z: cr * cp * sy - sr * sp * cy,
+    };
+  }
+
+  eulerToRotation(euler, transform) {
+    const { roll, pitch, yaw } = euler;
+    const rotation = this.eulerToQuaternion({ roll, pitch, yaw });
+    transform.rotation = [rotation.w, rotation.x, rotation.y, rotation.z];
+  }
+
   turnCamera(){
-    // TODO
-    // kamera se zamenja in po tem ko se zamenja, se da pulsing animacije
+    let transform = this.camera.getComponentOfType(Transform);
+    let eRotation = this.quaternionToEuler(transform.rotation);
+    if(this.currentPlayer === this.player1){
+      let cameraInterval = setInterval(() => {
+        if(transform.translation[2] < 12.6){
+          transform.translation[2] += (12.6 * 2) / 200;
+          eRotation.pitch += 0.9;
+          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: 15 }, transform);
+        }else{
+          clearInterval(cameraInterval);
+        }
+      }, 10);
+    }else{
+      let cameraInterval = setInterval(() => {
+        if(transform.translation[2] > -12.6){
+          transform.translation[2] -= (12.6 * 2) / 200;
+          eRotation.pitch -= 0.9;
+          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: 15 }, transform);
+        }else{
+          clearInterval(cameraInterval);
+        }
+      }, 10);
+    }
     this.startPulsingAnimations();
   }
 
@@ -87,7 +161,8 @@ export class Game {
   startCountdown() {
     this.stopCountdown();
     document.getElementById('countdown').style.backgroundColor = 'yellow';
-    this.remainingTime = this.currentPlayer.turnTime;
+    //this.remainingTime = this.currentPlayer.turnTime;
+    this.remainingTime = 5;
     let countdownDiv = document.getElementById('countdown');
 
     this.timerInterval = setInterval(() => {
@@ -102,6 +177,8 @@ export class Game {
         }
       } else {
         this.stopCountdown();
+        console.log(this.camera.getComponentOfType(Transform).translation);
+        this.turnCamera();
         // this.endTurn();
       }
     }, 1000);
