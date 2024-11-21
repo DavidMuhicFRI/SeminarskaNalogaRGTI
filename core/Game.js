@@ -88,6 +88,7 @@ export class Game {
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
         }else{
           clearInterval(cameraInterval);
+          transform.translation[2] = 12.6;
           this.eulerToRotation({ roll: eRotation.roll, pitch: 180, yaw: eRotation.yaw }, transform);
         }
       }, 10);
@@ -99,7 +100,7 @@ export class Game {
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
         }else{
           clearInterval(cameraInterval);
-          console.log(eRotation);
+          transform.translation[2] = -12.6;
           this.eulerToRotation({ roll: eRotation.roll, pitch: -180, yaw: eRotation.yaw }, transform);
         }
       }, 10);
