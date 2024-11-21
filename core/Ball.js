@@ -4,6 +4,7 @@ import { vec3 } from "../glm.js";
 export class Ball {
   constructor(node) {
     this.node = node;
+    this.transform = node.getComponentOfType(Transform);
     this.velocity = [0, 0, 0];
     this.acceleration = 10;
     this.maxSpeed = 50;
@@ -14,13 +15,14 @@ export class Ball {
     this.radius = 0.18;
     this.startPosition = null;
     this.moving = false;
+    this.isGrabbed = false;
   }
 
   setStartVelocity(){
     this.velocity = [0, 0, 0];
-    let diffX = this.node.getComponentOfType(Transform).translation[0] - this.startPosition[0];
-    let diffY = this.node.getComponentOfType(Transform).translation[1] - this.startPosition[1];
-    let diffZ = this.node.getComponentOfType(Transform).translation[2] - this.startPosition[2];
+    let diffX = this.transform.translation[0] - this.startPosition[0];
+    let diffY = this.transform.translation[1] - this.startPosition[1];
+    let diffZ = this.transform.translation[2] - this.startPosition[2];
     this.velocity[0] = -diffX * this.acceleration * 0.25;
     console.log(this.velocity[0]);
     this.velocity[1] = -diffY * this.acceleration;
@@ -36,12 +38,12 @@ export class Ball {
   }
 
   resetPlayer1(){
-    this.node.getComponentOfType(Transform).translation = [0, 7.5, -7.1];
+    this.transform.translation = [0, 7.5, -7.1];
     this.startPosition = [0, 7.5, -7.1];
   }
 
   resetPlayer2(){
-    this.node.getComponentOfType(Transform).translation = [0, 7.5, 7.1];
+    this.transform.translation = [0, 7.5, 7.1];
     this.startPosition = [0, 7.5, 7.1];
   }
 
@@ -59,8 +61,8 @@ export class Ball {
       vec3.normalize(this.velocity, this.velocity);
       vec3.scale(this.velocity, this.velocity, this.maxSpeed);
     }
-    this.node.getComponentOfType(Transform).translation[0] += this.velocity[0] * dt;
-    this.node.getComponentOfType(Transform).translation[1] += this.velocity[1] * dt;
-    this.node.getComponentOfType(Transform).translation[2] += this.velocity[2] * dt;
+    this.transform.translation[0] += this.velocity[0] * dt;
+    this.transform.translation[1] += this.velocity[1] * dt;
+    this.transform.translation[2] += this.velocity[2] * dt;
   }
 }

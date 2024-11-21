@@ -376,17 +376,17 @@ canvas.addEventListener("mousedown", () => {
   if (pageStatus === "main") {
     canvas.requestPointerLock();
   }else if(pageStatus === "game"){
-    ballGrabbed = true;
+    ball.isGrabbed = true;
     dragEnd = dragStart;
     clearInterval(ballSelectInterval);
     canvas.requestPointerLock();
-    ball.getComponentOfType(Transform).scale = [0.18, 0.18, 0.18];
+    ball.transform.scale = [0.18, 0.18, 0.18];
   }
 });
 canvas.addEventListener("mousemove", (event) => {
   if (rotate && pageStatus === "main") {
     rotatePlayer(rotatingCharacter, event.movementX * 0.01); // Rotate player based on mouse movement
-  }else if(pageStatus === "game" && ballGrabbed){
+  }else if(pageStatus === "game" && ball.isGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
     dragBall(event);
   }
@@ -432,7 +432,6 @@ let playerTurn = 1;
 let ball;
 let ballBlink = 0; //0 for increasing, 1 for decreasing
 let ballSelectInterval; //interval for blinking the ball
-let ballGrabbed = false;
 let dragStart = [960, 470];
 let dragEnd = [960, 470];
 
@@ -440,7 +439,7 @@ let dragEnd = [960, 470];
 //event listeners for the game
 canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game"){
-    ballGrabbed = false;
+    ball.isGrabbed = false;
     if(calculateDragDistance() < 85 || calculateDragForce() < 0){
       resetBall();
     }else{
@@ -476,18 +475,17 @@ function calculateDragForce(){
 
 //ball functions
 function throwBall(){
-  let ballObject = ball.getComponentOfType(Ball);
-  ballObject.moving = true;
-  ballObject.setStartVelocity();
+  ball.moving = true;
+  ball.setStartVelocity();
   clearInterval(ballSelectInterval);
 }
 function blinkBall(){
-  if(!ballGrabbed){
-    if(ball.getComponentOfType(Transform).scale[0] < 0.22 && ballBlink === 0){
-      ball.getComponentOfType(Transform).scale = ball.getComponentOfType(Transform).scale.map(x => x + 0.002);
-    }else if(ball.getComponentOfType(Transform).scale[0] > 0.15 && ballBlink === 1){
-      ball.getComponentOfType(Transform).scale = ball.getComponentOfType(Transform).scale.map(x => x - 0.002);
-    }else if(ball.getComponentOfType(Transform).scale[0] >= 0.22){
+  if(!ball.isGrabbed){
+    if(ball.transform.scale[0] < 0.22 && ballBlink === 0){
+      ball.transform.scale = ball.transform.scale.map(x => x + 0.002);
+    }else if(ball.transform.scale[0] > 0.15 && ballBlink === 1){
+      ball.transform.scale = ball.transform.scale.map(x => x - 0.002);
+    }else if(ball.transform.scale[0] >= 0.22){
       ballBlink = 1;
     }else{
       ballBlink = 0;
@@ -496,11 +494,11 @@ function blinkBall(){
 }
 function resetBall(){
   if(playerTurn === 1){
-    ball.getComponentOfType(Ball).resetPlayer1();
+    ball.resetPlayer1();
   }else{
-    ball.getComponentOfType(Ball).resetPlayer2();
+    ball.resetPlayer2();
   }
-  ball.getComponentOfType(Ball).reset();
+  ball.reset();
   clearInterval(ballSelectInterval);
   ballSelectInterval = setInterval(blinkBall, 20);
 }
@@ -509,7 +507,7 @@ function dragBall(event){
   let force = calculateDragForce();
   let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
   dragToughness = Math.min(dragToughness, 0.01);
-  let ballTranslation = ball.getComponentOfType(Transform).translation;
+  let ballTranslation = ball.transform.translation;
   if(playerTurn === 1){
     ballTranslation[2] -= event.movementY * dragToughness;
     ballTranslation[0] -= event.movementX * 0.01;
@@ -554,6 +552,7 @@ function initObjects(intro){
     ball = loadObject("Ball", "dynamic");
     ball.isStatic = false;
     ball.addComponent(new Ball(ball));
+    ball = ball.getComponentOfType(Ball);
     loadObject("AtlasObject", "static");
     loadObject("ChronoObject", "static");
     loadObject("CurveObject", "static");
