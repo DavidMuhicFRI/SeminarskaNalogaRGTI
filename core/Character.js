@@ -77,7 +77,7 @@ export class Character {
           playstyle: 'CASTER',
           plusPassive: 'Can steal the enemy\'s energy by scoring cups or health by hitting opponent',
           minusPassive: 'If she loses all HP she gains a random de-buff',
-          abilityText: '(TRANSFUSION) can transfer her energy to health',
+          abilityText: '(TRANSFUSION) can transfer her energy to health and reduce de-buff effects',
           funFact: 'Fun-fact: has crippling social anxiety',
           health: 5,
           strength: 1,

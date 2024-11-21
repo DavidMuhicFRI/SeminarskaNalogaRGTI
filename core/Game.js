@@ -29,7 +29,10 @@ export class Game {
     this.player1.setStats();
     this.player2.setStats();
     this.updatePlayerDivs();
-    this.startTurn();
+    setTimeout(() => {
+      this.startTurn();
+      this.startPulsingAnimations();
+    }, 2000);
   }
 
   updatePlayerDivs(){
@@ -40,7 +43,6 @@ export class Game {
     this.player1.setEnergy(1);
     this.player2.setEnergy(2);
     this.displayCups(this.player1.cups, this.player2.cups);
-    this.startPulsingAnimations();
   }
 
   displayCups() {
@@ -53,19 +55,103 @@ export class Game {
     });
   }
 
-  changePlayerTun(){
+  changePlayerTurn(){
+    this.stopPulsingAnimations();
     this.turn++;
     this.currentPlayer = this.currentPlayer === this.player1 ? this.player2 : this.player1;
     this.displayCups(this.player1.cups, this.player2.cups);
     this.turnCamera();
+    this.startPulsingAnimations();
   }
 
   startTurn(){
-    this.stopPulsingAnimations();
     this.startCountdown();
+    this.hideText();
   }
+
   endTurn(){
-    this.changePlayerTun();
+    this.stopCountdown();
+    this.changePlayerTurn();
+    setTimeout(() => {
+      this.startTurn();
+    }, 3000);
+  }
+
+  turnCamera(){
+    let transform = this.camera.getComponentOfType(Transform);
+    let eRotation = this.quaternionToEuler(transform.rotation);
+    if(this.currentPlayer === this.player2){
+      let cameraInterval = setInterval(() => {
+        if(transform.translation[2] < 12.6){
+          transform.translation[2] += (12.6 * 2) / 200;
+          eRotation.pitch += 0.9;
+          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: 15 }, transform);
+        }else{
+          clearInterval(cameraInterval);
+          this.eulerToRotation({ roll: eRotation.roll, pitch: 180, yaw: 15 }, transform);
+        }
+      }, 10);
+    }else {
+      let cameraInterval = setInterval(() => {
+        if(transform.translation[2] > -12.6){
+          transform.translation[2] -= (12.6 * 2) / 200;
+          eRotation.pitch -= 0.9;
+          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: 15 }, transform);
+        }else{
+          clearInterval(cameraInterval);
+          this.eulerToRotation({ roll: eRotation.roll, pitch: 0, yaw: 15 }, transform);
+        }
+      }, 10);
+    }
+  }
+
+  startPulsingAnimations(){
+    let side = this.currentPlayer === this.player1 ? 'left' : 'right';
+    let text = this.currentPlayer === this.player1 ? 'PLAYER1' : 'PLAYER2';
+    document.getElementById(`${side}BarHeader`).classList.add('pulseColor');
+    let textDiv = document.getElementById('currentPlayerText');
+    textDiv.innerText = `READY ${text}`;
+    textDiv.style.visibility = 'visible';
+  }
+  stopPulsingAnimations(){
+    let side = this.currentPlayer === this.player1 ? 'left' : 'right';
+    document.getElementById(`${side}BarHeader`).classList.remove('pulseColor');
+    this.hideText();
+  }
+  hideText(){
+    document.getElementById('currentPlayerText').style.visibility = 'hidden';
+  }
+
+  startCountdown() {
+    this.stopCountdown();
+    document.getElementById('countdown').style.backgroundColor = 'yellow';
+    this.remainingTime = this.currentPlayer.turnTime;
+    let countdownDiv = document.getElementById('countdown');
+
+    this.timerInterval = setInterval(() => {
+      if (this.remainingTime > 0) {
+        this.remainingTime--;
+        countdownDiv.innerText = this.remainingTime;
+        if(this.remainingTime <= 5){
+          if(!countdownDiv.classList.contains('pulseColorCountdown') && countdownDiv.style.backgroundColor !== 'rgba(160, 40, 40, 0.9)'){
+            countdownDiv.style.backgroundColor = 'rgba(160, 40, 40, 0.9)';
+            countdownDiv.classList.add('pulseColorCountdown');
+          }
+        }
+      } else {
+        this.endTurn();
+      }
+    }, 1000);
+  }
+
+  stopCountdown() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+    if(document.getElementById("countdown").classList.contains('pulseColorCountdown')){
+      document.getElementById("countdown").classList.remove('pulseColorCountdown');
+    }
   }
 
   quaternionToEuler(q) {
@@ -116,84 +202,5 @@ export class Game {
     const { roll, pitch, yaw } = euler;
     const rotation = this.eulerToQuaternion({ roll, pitch, yaw });
     transform.rotation = [rotation.w, rotation.x, rotation.y, rotation.z];
-  }
-
-  turnCamera(){
-    let transform = this.camera.getComponentOfType(Transform);
-    let eRotation = this.quaternionToEuler(transform.rotation);
-    if(this.currentPlayer === this.player1){
-      let cameraInterval = setInterval(() => {
-        if(transform.translation[2] < 12.6){
-          transform.translation[2] += (12.6 * 2) / 200;
-          eRotation.pitch += 0.9;
-          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: 15 }, transform);
-        }else{
-          clearInterval(cameraInterval);
-          this.eulerToRotation({ roll: eRotation.roll, pitch: 180, yaw: 15 }, transform);
-        }
-      }, 10);
-    }else{
-      let cameraInterval = setInterval(() => {
-        if(transform.translation[2] > -12.6){
-          transform.translation[2] -= (12.6 * 2) / 200;
-          eRotation.pitch -= 0.9;
-          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: 15 }, transform);
-        }else{
-          clearInterval(cameraInterval);
-          this.eulerToRotation({ roll: eRotation.roll, pitch: 0, yaw: 15 }, transform);
-        }
-      }, 10);
-    }
-    this.startPulsingAnimations();
-  }
-
-  startPulsingAnimations(){
-    let side = this.currentPlayer === this.player1 ? 'left' : 'right';
-    let text = this.currentPlayer === this.player1 ? 'PLAYER1' : 'PLAYER2';
-    document.getElementById(`${side}BarHeader`).classList.add('pulseColor');
-    let textDiv = document.getElementById('currentPlayerText');
-    textDiv.innerText = `READY ${text}`;
-    textDiv.style.visibility = 'visible';
-  }
-  stopPulsingAnimations(){
-    let side = this.currentPlayer === this.player1 ? 'left' : 'right';
-    document.getElementById(`${side}BarHeader`).classList.remove('pulseColor');
-    document.getElementById('currentPlayerText').style.visibility = 'hidden';
-  }
-
-  startCountdown() {
-    this.stopCountdown();
-    document.getElementById('countdown').style.backgroundColor = 'yellow';
-    //this.remainingTime = this.currentPlayer.turnTime;
-    this.remainingTime = 5;
-    let countdownDiv = document.getElementById('countdown');
-
-    this.timerInterval = setInterval(() => {
-      if (this.remainingTime > 0) {
-        this.remainingTime--;
-        countdownDiv.innerText = this.remainingTime;
-        if(this.remainingTime <= 5){
-          if(!countdownDiv.classList.contains('pulseColorCountdown') && countdownDiv.style.backgroundColor !== 'rgba(160, 40, 40, 0.9)'){
-            countdownDiv.style.backgroundColor = 'rgba(160, 40, 40, 0.9)';
-            countdownDiv.classList.add('pulseColorCountdown');
-          }
-        }
-      } else {
-        this.stopCountdown();
-        console.log(this.camera.getComponentOfType(Transform).translation);
-        this.turnCamera();
-        // this.endTurn();
-      }
-    }, 1000);
-  }
-
-  stopCountdown() {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
-    }
-    if(document.getElementById("countdown").classList.contains('pulseColorCountdown')){
-      document.getElementById("countdown").classList.remove('pulseColorCountdown');
-    }
   }
 }
