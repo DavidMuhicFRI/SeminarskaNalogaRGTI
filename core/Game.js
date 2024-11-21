@@ -175,6 +175,11 @@ export class Game {
     return this.currentPlayer === this.player1 ? this.player2 : this.player1;
   }
 
+  handleObjectHit(object){
+    this.otherPlayer().currentHP -= object.strength;
+    this.otherPlayer().setHearts();
+  }
+
   activateAbility(shiftPressed){
     switch(this.currentPlayer.character.stats.name){
       case 'TRIPP':

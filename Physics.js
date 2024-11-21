@@ -173,8 +173,8 @@ export class Physics {
       }
     }
 
-    objectBounce(minDirection, ball){
-
+    objectBounce(minDirection, ball, object){
+      this.game.handleObjectHit(object);
     }
 
     normalBounce(minDirection, ball){
