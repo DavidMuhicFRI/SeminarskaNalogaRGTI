@@ -129,6 +129,7 @@ export class Game {
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: 15 }, transform);
         }else{
           clearInterval(cameraInterval);
+          this.eulerToRotation({ roll: eRotation.roll, pitch: 180, yaw: 15 }, transform);
         }
       }, 10);
     }else{
@@ -139,6 +140,7 @@ export class Game {
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: 15 }, transform);
         }else{
           clearInterval(cameraInterval);
+          this.eulerToRotation({ roll: eRotation.roll, pitch: 0, yaw: 15 }, transform);
         }
       }, 10);
     }

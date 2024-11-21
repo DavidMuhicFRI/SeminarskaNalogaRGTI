@@ -375,6 +375,12 @@ document.addEventListener("pointerlockchange", () => {
 canvas.addEventListener("mousedown", () => {
   if (pageStatus === "main") {
     canvas.requestPointerLock();
+  }else if(pageStatus === "game"){
+    ballGrabbed = true;
+    dragEnd = dragStart;
+    clearInterval(ballSelectInterval);
+    canvas.requestPointerLock();
+    ball.getComponentOfType(Transform).scale = [0.18, 0.18, 0.18];
   }
 });
 canvas.addEventListener("mousemove", (event) => {
@@ -432,13 +438,6 @@ let dragEnd = [960, 470];
 
 
 //event listeners for the game
-document.getElementById("ballDiv").addEventListener("mousedown", function(event){
-  ballGrabbed = true;
-  dragEnd = dragStart;
-  clearInterval(ballSelectInterval);
-  canvas.requestPointerLock();
-  ball.getComponentOfType(Transform).scale = [0.18, 0.18, 0.18];
-});
 canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game"){
     ballGrabbed = false;
