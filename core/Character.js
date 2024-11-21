@@ -20,6 +20,7 @@ export class Character {
           funFact: 'Fun-fact: he thought he entered a bodybuilding competition',
           health: 10,
           strength: 1.5,
+          energyGain: 35,
           scale: [0.8, 0.9, 0.8],
           reference: 'AtlasObject',
           abilityImage: 'atlasAbility.png'
@@ -39,6 +40,7 @@ export class Character {
           funFact: 'Fun-fact: is still late to work',
           health: 7,
           strength: 1,
+          energyGain: 25,
           scale: [1, 1, 1],
           reference: 'ChronoObject',
           abilityImage: 'chronoAbility.png'
@@ -59,6 +61,7 @@ export class Character {
           funFact: 'Fun-fact: likes to cosplay as batman',
           health: 8,
           strength: 1.2,
+          energyGain: 40,
           scale: [1.1, 1.1, 1.1],
           reference: 'CurveObject',
           abilityImage: 'curveAbility.png'
@@ -78,6 +81,7 @@ export class Character {
           funFact: 'Fun-fact: has crippling social anxiety',
           health: 5,
           strength: 1,
+          energyGain: 35,
           scale: [1.2, 1.2, 1.2],
           reference: 'NeroObject',
           abilityImage: 'neroAbility.png'
@@ -97,6 +101,7 @@ export class Character {
           funFact: 'Fun-fact: can dunk on LeBron',
           health: 6,
           strength: 0.8,
+          energyGain: 0,
           scale: [1.2, 1.2, 1.2],
           reference: 'SpringObject',
           abilityImage: 'springAbility.png'
@@ -116,6 +121,7 @@ export class Character {
           funFact: 'Fun-fact: can smell colors',
           health: 6,
           strength: 1,
+          energyGain: 35,
           scale: [1.1, 1.1, 1.1],
           reference: 'TrippObject',
           abilityImage: 'trippAbility.png'
