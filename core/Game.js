@@ -8,6 +8,10 @@ export class Game {
     this.turn = 1;
     this.ballAngle = 45;
     ball.direction = 0;
+
+    this.turnTime = this.currentPlayer.turnTime;
+    this.remainingTime = this.turnTime;
+    this.timerInterval = null;
   }
 
   setUp(){
@@ -21,7 +25,7 @@ export class Game {
     this.player1.setStats();
     this.player2.setStats();
     this.updatePlayerDivs();
-    this.displayCups(this.player1.cups, this.player2.cups);
+    this.startTurn();
   }
 
   updatePlayerDivs(){
@@ -31,6 +35,8 @@ export class Game {
     this.player2.setHearts(2);
     this.player1.setEnergy(1);
     this.player2.setEnergy(2);
+    this.displayCups(this.player1.cups, this.player2.cups);
+    this.startPulsingAnimations();
   }
 
   displayCups() {
@@ -43,10 +49,71 @@ export class Game {
     });
   }
 
-  startTurn(player){
-
+  changePlayerTun(){
+    this.turn++;
+    this.currentPlayer = this.currentPlayer === this.player1 ? this.player2 : this.player1;
+    this.displayCups(this.player1.cups, this.player2.cups);
+    // TODO turnCamera();
   }
-  endTurn(player){
 
+  startTurn(){
+    this.stopPulsingAnimations();
+    this.startCountdown();
+  }
+  endTurn(){
+    this.changePlayerTun();
+  }
+
+  turnCamera(){
+    // TODO
+    // kamera se zamenja in po tem ko se zamenja, se da pulsing animacije
+    this.startPulsingAnimations();
+  }
+
+  startPulsingAnimations(){
+    let side = this.currentPlayer === this.player1 ? 'left' : 'right';
+    let text = this.currentPlayer === this.player1 ? 'PLAYER1' : 'PLAYER2';
+    document.getElementById(`${side}BarHeader`).classList.add('pulseColor');
+    let textDiv = document.getElementById('currentPlayerText');
+    textDiv.innerText = `READY ${text}`;
+    textDiv.style.visibility = 'visible';
+  }
+  stopPulsingAnimations(){
+    let side = this.currentPlayer === this.player1 ? 'left' : 'right';
+    document.getElementById(`${side}BarHeader`).classList.remove('pulseColor');
+    document.getElementById('currentPlayerText').style.visibility = 'hidden';
+  }
+
+  startCountdown() {
+    this.stopCountdown();
+    document.getElementById('countdown').style.backgroundColor = 'yellow';
+    this.remainingTime = this.currentPlayer.turnTime;
+    let countdownDiv = document.getElementById('countdown');
+
+    this.timerInterval = setInterval(() => {
+      if (this.remainingTime > 0) {
+        this.remainingTime--;
+        countdownDiv.innerText = this.remainingTime;
+        if(this.remainingTime <= 5){
+          if(!countdownDiv.classList.contains('pulseColor') && countdownDiv.style.backgroundColor !== 'rgba(180, 30, 30, 0.9)'){
+            countdownDiv.style.backgroundColor = 'rgba(180, 30, 30, 0.9)';
+            countdownDiv.classList.add('pulseColor');
+          }
+        }
+      } else {
+        this.stopCountdown();
+        // this.endTurn();
+      }
+    }, 1000);
+  }
+
+  stopCountdown() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+    if(document.getElementById("countdown").classList.contains('pulseColor')){
+      document.getElementById("countdown").classList.remove('pulseColor');
+    }
   }
 }

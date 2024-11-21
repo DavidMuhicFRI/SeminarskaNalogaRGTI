@@ -610,8 +610,10 @@ function initObjects(intro){
   }
 }
 
+
+
 // ================================================================ LOADING SCREEN ==================================================
-// new
+
 function loadingScreen(){
   let loadingScreen = document.getElementById("loadingScreen");
   loadingScreen.style.display = "block";
