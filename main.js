@@ -74,6 +74,7 @@ let camera;
 let light;
 
 //variables for the character page
+let game;
 let player1 = new Player(1);
 let player2 = new Player(2);
 let characterObjects = []; //array of character objects
@@ -296,7 +297,7 @@ async function startGame(){
   $("#characterPage").hide();
   showElement("game");
   $("#game").show(); //for 2nd and later showings
-  let game = new Game(player1, player2, ball, camera);
+  game = new Game(player1, player2, ball, camera);
   physics.game = game;
   game.setUp();
 }
@@ -390,6 +391,8 @@ canvas.addEventListener("mousemove", (event) => {
   }else if(pageStatus === "game" && ball.isGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
     dragBall(event);
+  }else if (pageStatus === "game" && spacePressed && game.currentPlayer.character.stats.name === "CURVE") {
+    game.activateCurveAbility(event);
   }
 });
 canvas.addEventListener("mouseover", () => {
@@ -429,6 +432,8 @@ async function initCharacterPage() {
 
 /////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
 
+let spacePressed = false;
+let shiftPressed = false;
 let playerTurn = 1;
 let ball;
 let ballBlink = 0; //0 for increasing, 1 for decreasing
@@ -519,20 +524,29 @@ function dragBall(event){
   ballTranslation[1] -= 1.5 * event.movementY * dragToughness;
 }
 
-/*document.addEventListener("keydown", function(event){
-  if(event.key === "r"){
-    resetBall();
-  } else if(event.key === "ArrowUp"){
-    ball.getComponentOfType(Transform).translation[1] += 0.1;
-  }else if(event.key === "ArrowDown") {
-    ball.getComponentOfType(Transform).translation[1] -= 0.1;
-  }else if(event.key === "ArrowLeft"){
-    ball.getComponentOfType(Transform).translation[2] += 0.1;
-  }else if(event.key === "ArrowRight"){
-    ball.getComponentOfType(Transform).translation[2] -= 0.1;
+document.addEventListener("keydown", function(event){
+  if(pageStatus === "game"){
+    if(event.key === "Space"){
+      game.activateAbility(shiftPressed);
+      spacePressed = true;
+    }else if(event.key === "Shift"){
+      shiftPressed = true;
+    }
   }
 });
- */
+document.addEventListener("keyup", function(event){
+  if(pageStatus === "game"){
+    if(event.key === "Space"){
+      spacePressed = false;
+    }
+  }
+});
+canvas.addEventListener("mousemove", (event) => {
+  if(pageStatus === "game" ){
+    dragEnd = [event.clientX, event.clientY];
+  }
+});
+
 
 //setting player objects
 function setPlayerObjects(){

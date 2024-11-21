@@ -16,6 +16,7 @@ export class Ball {
     this.startPosition = null;
     this.moving = false;
     this.isGrabbed = false;
+    this.effect = null;
   }
 
   setStartVelocity(){

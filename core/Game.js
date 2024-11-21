@@ -171,6 +171,103 @@ export class Game {
     this.startTurn();
   }
 
+  otherPlayer(){
+    return this.currentPlayer === this.player1 ? this.player2 : this.player1;
+  }
+
+  activateAbility(shiftPressed){
+    switch(this.currentPlayer.character.stats.name){
+      case 'TRIPP':
+        this.activateTrippAbility();
+        break;
+      case 'ATLAS':
+        this.activateAtlasAbility();
+        break;
+      case 'CHRONO':
+        this.activateChronoAbility();
+        break;
+      case 'CURVE':
+        this.activateCurveAbility();
+        break;
+      case 'NERO':
+        this.activateNeroAbility(shiftPressed);
+        break;
+      case 'SPRING':
+        this.activateSpringAbility();
+    }
+  }
+
+  activateTrippAbility(){
+    this.currentPlayer.energy = 0;
+    this.currentPlayer.setEnergy();
+    let currentHP = this.currentPlayer.currentHP;
+    this.currentPlayer.currentHP = this.otherPlayer().currentHP;
+    this.otherPlayer().currentHP = currentHP;
+    this.currentPlayer.setHearts();
+    this.otherPlayer().setHearts();
+    let debuffs = this.currentPlayer.debuffs;
+    this.currentPlayer.debuffs = this.otherPlayer().debuffs;
+    this.otherPlayer().debuffs = debuffs;
+  }
+
+
+  activateAtlasAbility(){
+    this.currentPlayer.energy = 0;
+    this.currentPlayer.setEnergy();
+    this.ball.effect = 'atlasEffect';
+  }
+
+  activateChronoAbility(){
+    this.currentPlayer.energy = 0;
+    this.currentPlayer.setEnergy();
+    if(this.remainingTime > 10 && !this.ball.moving){
+      //rewind opponent's turn
+    }else if(this.remainingTime <= 10 && !this.ball.moving){
+      this.remainingTime += 15;
+    }else{
+      //reset the ball and add 15 seconds to the timer
+      this.ball.reset();
+      this.remainingTime += 15;
+    }
+  }
+
+  activateCurveAbility(event){
+    this.currentPlayer.energy -= 0.25;
+    this.currentPlayer.setEnergy();
+    if(!event){
+      return;
+    }
+    let dx = event.movementX;
+    let dy = event.movementY;
+    this.ball.velocity[1] += dy * 0.01;
+    if(this.currentPlayer === this.player1){
+      this.ballAngle += dx * 0.1;
+    }else{
+      this.ballAngle -= dx * 0.1;
+    }
+  }
+
+  activateNeroAbility(shiftPressed){
+    if(shiftPressed) {
+      this.currentPlayer.energy -= 0.5;
+      this.currentPlayer.setEnergy();
+      this.ball.effect = 'neroEffect';
+    }else{
+      this.currentPlayer.energy = 0;
+      this.currentPlayer.setEnergy();
+      this.currentPlayer.currentHP += 2;
+      this.currentPlayer.setHearts();
+    }
+  }
+
+  activateSpringAbility(){
+    this.currentPlayer.energy = 0;
+    this.currentPlayer.setEnergy();
+    this.ball.effect = 'springEffect';
+    this.ball.bounciness = 1.5;
+  }
+
+
   handleCupHit(cup){
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
     console.log(cup.getComponentOfType(Transform).translation);
