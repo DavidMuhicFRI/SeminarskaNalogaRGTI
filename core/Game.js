@@ -95,7 +95,10 @@ export class Game {
         this.remainingTime--;
         countdownDiv.innerText = this.remainingTime;
         if(this.remainingTime <= 5){
-          countdownDiv.style.backgroundColor = 'red';
+          if(!countdownDiv.classList.contains('pulseColor') && countdownDiv.style.backgroundColor !== 'rgba(180, 30, 30, 0.9)'){
+            countdownDiv.style.backgroundColor = 'rgba(180, 30, 30, 0.9)';
+            countdownDiv.classList.add('pulseColor');
+          }
         }
       } else {
         this.stopCountdown();
@@ -108,6 +111,9 @@ export class Game {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
+    }
+    if(document.getElementById("countdown").classList.contains('pulseColor')){
+      document.getElementById("countdown").classList.remove('pulseColor');
     }
   }
 }
