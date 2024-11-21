@@ -1,7 +1,7 @@
 import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
-import {Camera, Model, Transform, Node, Ball, Character, Player, Game, Cup} from './core.js';
+import {Camera, Model, Transform, Node, Ball, Character, Player, Game} from './core.js';
 import {
     calculateAxisAlignedBoundingBox,
     mergeAxisAlignedBoundingBoxes,
@@ -634,7 +634,7 @@ function loadingScreen(){
       }, 500);
     }
     loadingText.innerText = loadingTextContent;
-  }, 15);
+  }, 10);
 }
 
 /////////////////////////////////////////////////////////////////////////////INIT/////////////////////////////////////////////////////////////

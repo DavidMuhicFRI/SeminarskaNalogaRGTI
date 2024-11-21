@@ -12,6 +12,7 @@ export class Game {
     this.turnTime = this.currentPlayer.turnTime;
     this.remainingTime = this.turnTime;
     this.timerInterval = null;
+    this.turnStarted = false;
   }
 
   setUp(){
@@ -95,9 +96,9 @@ export class Game {
         this.remainingTime--;
         countdownDiv.innerText = this.remainingTime;
         if(this.remainingTime <= 5){
-          if(!countdownDiv.classList.contains('pulseColor') && countdownDiv.style.backgroundColor !== 'rgba(180, 30, 30, 0.9)'){
-            countdownDiv.style.backgroundColor = 'rgba(180, 30, 30, 0.9)';
-            countdownDiv.classList.add('pulseColor');
+          if(!countdownDiv.classList.contains('pulseColorCountdown') && countdownDiv.style.backgroundColor !== 'rgba(160, 40, 40, 0.9)'){
+            countdownDiv.style.backgroundColor = 'rgba(160, 40, 40, 0.9)';
+            countdownDiv.classList.add('pulseColorCountdown');
           }
         }
       } else {
@@ -112,8 +113,8 @@ export class Game {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
     }
-    if(document.getElementById("countdown").classList.contains('pulseColor')){
-      document.getElementById("countdown").classList.remove('pulseColor');
+    if(document.getElementById("countdown").classList.contains('pulseColorCountdown')){
+      document.getElementById("countdown").classList.remove('pulseColorCountdown');
     }
   }
 }

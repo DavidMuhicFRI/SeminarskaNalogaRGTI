@@ -372,6 +372,11 @@ body, html {
   50% { filter: brightness(1.5); }
   100% { filter: brightness(1); }
 }
+@keyframes pulseColorCountdown {
+  0% {  filter: brightness(1); }
+  50% { filter: brightness(2.5); }
+  100% { filter: brightness(1); }
+}
 #backToP1, #forwardToP2 {
   width: 7vw;
   height: 20vh;
@@ -448,6 +453,9 @@ body, html {
 }
 .pulseColor {
   animation: pulseColor 1.5s ease-in-out infinite;
+}
+.pulseColorCountdown {
+  animation: pulseColor 1s ease-in-out infinite;
 }
 #leftBarHeader {
   left: 0;
