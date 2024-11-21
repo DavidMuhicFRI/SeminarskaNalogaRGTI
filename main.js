@@ -297,6 +297,7 @@ async function startGame(){
   showElement("game");
   $("#game").show(); //for 2nd and later showings
   let game = new Game(player1, player2, ball, camera);
+  physics.game = game;
   game.setUp();
 }
 //exit game

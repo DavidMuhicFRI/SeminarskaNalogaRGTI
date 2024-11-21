@@ -1,12 +1,13 @@
 import { vec3, mat4 } from './glm.js';
 import { getGlobalModelMatrix } from './core/SceneUtils.js';
-import { Transform, Ball } from './core.js';
+import { Transform, Ball, Game } from './core.js';
 import { FirstPersonController } from './controllers/FirstPersonController.js';
 
 export class Physics {
 
     constructor(scene) {
         this.scene = scene;
+        this.game = null;
     }
 
     //update primerja vse dinamične objekte z vsemi statičnimi objekti
@@ -158,12 +159,13 @@ export class Physics {
       let ballWidth = this.getBallWidth(ballBox) * 0.8; //adjust for easier hitting
       let cupWidth = (cupBox.max[0] - cupBox.min[0]) / 2;
       if (this.isBallInCup(ballWidth, cupWidth, distance)) {
-        if(ballTransform[1] - ballWidth <= cupBox.min[1]) {
+        if(ballTransform[1] <= cupBox.min[1] + 2 * ballWidth){
           ball.velocity = [0, 0, 0];
+          this.game.handleCupHit(cup);
         }else{
           ballTransform[0] = cupTransform[0];
           ballTransform[2] = cupTransform[2];
-          ball.velocity = [0, -0.3, 0];
+          ball.velocity = [0, -0.5, 0];
           console.log("Ball in the hole");
         }
       }else{

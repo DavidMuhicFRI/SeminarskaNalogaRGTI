@@ -156,6 +156,23 @@ export class Game {
     }
   }
 
+  giveAnotherTurn(){
+    //reset the timer and give the ball to the same player
+    this.stopCountdown();
+    this.startTurn();
+  }
+
+  handleCupHit(cup){
+    cup.getComponentOfType(Transform).translation = [0, -10, 0];
+    console.log(cup.getComponentOfType(Transform).translation);
+    this.currentPlayer.score++;
+    if(this.currentPlayer.score === 6){
+      console.log("Player won");
+    }else{
+      this.giveAnotherTurn();
+    }
+  }
+
   quaternionToEuler(q) {
     let w = q[0];
     let x = q[1];
