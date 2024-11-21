@@ -29,10 +29,11 @@ export class Game {
     this.player1.setStats();
     this.player2.setStats();
     this.updatePlayerDivs();
+    this.showText();
+    this.startPulsingAnimations();
     setTimeout(() => {
       this.startTurn();
-      this.startPulsingAnimations();
-    }, 2000);
+    }, 5000);
   }
 
   updatePlayerDivs(){
@@ -62,6 +63,9 @@ export class Game {
     this.displayCups(this.player1.cups, this.player2.cups);
     this.turnCamera();
     this.startPulsingAnimations();
+    setTimeout(() => {
+      this.startTurn();
+    }, 4000);
   }
 
   startTurn(){
@@ -70,11 +74,8 @@ export class Game {
   }
 
   endTurn(){
-    this.stopCountdown();
     this.changePlayerTurn();
-    setTimeout(() => {
-      this.startTurn();
-    }, 3000);
+    this.resetCountdown();
   }
 
   turnCamera(){
@@ -87,6 +88,7 @@ export class Game {
           eRotation.pitch += 0.9;
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
         }else{
+          this.showText();
           clearInterval(cameraInterval);
           transform.translation[2] = 12.6;
           this.eulerToRotation({ roll: eRotation.roll, pitch: 180, yaw: eRotation.yaw }, transform);
@@ -99,6 +101,7 @@ export class Game {
           eRotation.pitch -= 0.9;
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
         }else{
+          this.showText();
           clearInterval(cameraInterval);
           transform.translation[2] = -12.6;
           this.eulerToRotation({ roll: eRotation.roll, pitch: -180, yaw: eRotation.yaw }, transform);
@@ -111,23 +114,24 @@ export class Game {
     let side = this.currentPlayer === this.player1 ? 'left' : 'right';
     let text = this.currentPlayer === this.player1 ? 'PLAYER1' : 'PLAYER2';
     document.getElementById(`${side}BarHeader`).classList.add('pulseColor');
-    let textDiv = document.getElementById('currentPlayerText');
-    textDiv.innerText = `READY ${text}`;
-    textDiv.style.visibility = 'visible';
   }
   stopPulsingAnimations(){
     let side = this.currentPlayer === this.player1 ? 'left' : 'right';
     document.getElementById(`${side}BarHeader`).classList.remove('pulseColor');
-    this.hideText();
+  }
+
+  showText(){
+    let text = this.currentPlayer === this.player1 ? 'PLAYER1' : 'PLAYER2';
+    let textDiv = document.getElementById('currentPlayerText');
+    textDiv.innerText = `READY ${text}`;
+    textDiv.style.visibility = 'visible';
   }
   hideText(){
     document.getElementById('currentPlayerText').style.visibility = 'hidden';
   }
 
   startCountdown() {
-    this.stopCountdown();
-    document.getElementById('countdown').style.backgroundColor = 'yellow';
-    this.remainingTime = this.currentPlayer.turnTime;
+    this.resetCountdown();
     let countdownDiv = document.getElementById('countdown');
 
     this.timerInterval = setInterval(() => {
@@ -146,14 +150,19 @@ export class Game {
     }, 1000);
   }
 
-  stopCountdown() {
+  resetCountdown() {
+    let countdownDiv = document.getElementById('countdown');
+
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
     }
-    if(document.getElementById("countdown").classList.contains('pulseColorCountdown')){
-      document.getElementById("countdown").classList.remove('pulseColorCountdown');
+    if(countdownDiv.classList.contains('pulseColorCountdown')){
+      countdownDiv.classList.remove('pulseColorCountdown');
     }
+    this.remainingTime = this.currentPlayer.turnTime;
+    countdownDiv.innerText = this.remainingTime;
+    countdownDiv.style.backgroundColor = 'yellow';
   }
 
   giveAnotherTurn(){

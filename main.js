@@ -74,8 +74,8 @@ let camera;
 let light;
 
 //variables for the character page
-let player1 = new Player('left');
-let player2 = new Player('right');
+let player1 = new Player(1);
+let player2 = new Player(2);
 let characterObjects = []; //array of character objects
 let rotatingCharacter; //the player object for character page purposes
 let constantRotation; //interval for the rotation

@@ -14,8 +14,8 @@ export class Player {
     this.side = side;
   }
 
-  setHearts(number){
-    const heartsDiv = number === 1
+  setHearts(){
+    const heartsDiv = this.side === 1
       ? document.getElementById('heartsLeft')
       : document.getElementById('heartsRight');
     heartsDiv.innerHTML = '';
@@ -28,23 +28,27 @@ export class Player {
     }
   }
 
-  generateCups(number){
-    let side = '';
-    number === 1 ? side = 'left' : side = 'right';
+  generateCups(){
     let effects = ["darkness", "reverse", "rotate", "energy", "poison", "gravity", "none", "weakness"];
     for(let i = 0; i < 6; i++){
       let randomEffect = Math.floor(Math.random() * (effects.length));
       let randomEffectiveness = 1;
-      this.cups[i] = new Cup(true, side, i + 1, effects[randomEffect], randomEffectiveness);
+      this.cups[i] = new Cup(true, this.side, i + 1, effects[randomEffect], randomEffectiveness);
     }
   }
 
-  setEnergy(number){
-    const abilityBar = number === 1
+  setEnergy(){
+    const abilityBar = this.side === 1
       ? document.getElementById('abilityBarLeft')
       : document.getElementById('abilityBarRight');
 
     abilityBar.style.width = `${this.energy}%`;
+  }
+
+  gainEnergy(){
+    this.energy += this.character.stats.energyGain;
+    if(this.energy > 100) this.energy = 100;
+    this.setEnergy();
   }
 
   setStats(){

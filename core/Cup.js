@@ -15,12 +15,20 @@ export class Cup {
   constructor(full, side, position, effect, effectiveness) {
     this.full = full;
     this.side = side;
+    switch(this.side){
+      case 1 :
+        this.sideWord = 'left';
+        break;
+      case 2 :
+        this.sideWord = 'right';
+        break;
+    }
     this.position = position;
     this.effect = effect;
     this.selected = false;
     this.effectiveness = effectiveness;
     this.game = null;
-    this.div = document.getElementById(`${this.side}Cup${this.position}`);
+    this.div = document.getElementById(`${this.sideWord}Cup${this.position}`);
     this.color = Cup.effectColors[effect] || 'rgba(20, 20, 20, 0.1)';
 
     if (this.full) {
