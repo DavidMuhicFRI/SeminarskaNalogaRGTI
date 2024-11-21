@@ -85,10 +85,10 @@ export class Game {
         if(transform.translation[2] < 12.6){
           transform.translation[2] += (12.6 * 2) / 200;
           eRotation.pitch += 0.9;
-          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: 15 }, transform);
+          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
         }else{
           clearInterval(cameraInterval);
-          this.eulerToRotation({ roll: eRotation.roll, pitch: 180, yaw: 15 }, transform);
+          this.eulerToRotation({ roll: eRotation.roll, pitch: 180, yaw: eRotation.yaw }, transform);
         }
       }, 10);
     }else {
@@ -96,10 +96,11 @@ export class Game {
         if(transform.translation[2] > -12.6){
           transform.translation[2] -= (12.6 * 2) / 200;
           eRotation.pitch -= 0.9;
-          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: 15 }, transform);
+          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
         }else{
           clearInterval(cameraInterval);
-          this.eulerToRotation({ roll: eRotation.roll, pitch: 0, yaw: 15 }, transform);
+          console.log(eRotation);
+          this.eulerToRotation({ roll: eRotation.roll, pitch: -180, yaw: eRotation.yaw }, transform);
         }
       }, 10);
     }
