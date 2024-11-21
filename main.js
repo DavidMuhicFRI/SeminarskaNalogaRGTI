@@ -55,7 +55,7 @@ setTimeout(function () {
         showElement("introCanvas");
         pageStatus = "main";
       }
-    }, 2000);
+    }, 2200);
   }, 3500);
 }, 0);
 
@@ -113,14 +113,16 @@ function movePage() {
     }
     interacted = true;
   }
-  const page = pageOrientation === "left" ? leftPage : rightPage;
+  let page;
   let left;
   let right;
   if(pageOrientation === "left"){
+    page = leftPage;
     left = "-100vw";
     right = "0";
     pageOrientation = "right";
   }else{
+    page = rightPage;
     left = "0";
     right = "100vw";
     pageOrientation = "left";
@@ -200,8 +202,10 @@ async function loadCharacters(){
     characterObjects[index].applyScale();
   });
   if(characterSelected.length === 0){
+    //first time loading
     characterSelected = [characterObjects[0], null];
   }else{
+    //returning from game
     characterSelected[0] = characterObjects.find(character => character.stats.name === characterSelected[0].stats.name);
     characterSelected[1] = characterObjects.find(character => character.stats.name === characterSelected[1].stats.name);
   }
@@ -222,8 +226,7 @@ function displayCharacters(){
   let side = pageOrientation === "left" ? 0 : 1;
   for(let i = 0; i < characterObjects.length; i++){
     let transform = characterObjects[i].node.getComponentOfType(Transform);
-    if(characterObjects[i] === characterSelected[side]){
-      console.log("Selected character: " + characterObjects[i].stats.name, "found");
+    if(characterObjects[i].stats.name === characterSelected[side].stats.name){
       transform.translation = [0, 0, 0];
       rotatingCharacter = characterObjects[i];
     }else{
@@ -379,7 +382,7 @@ canvas.addEventListener("mousemove", (event) => {
     rotatePlayer(rotatingCharacter, event.movementX * 0.01); // Rotate player based on mouse movement
   }else if(pageStatus === "game" && ballGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
-    ballDrag(event);
+    dragBall(event);
   }
 });
 canvas.addEventListener("mouseover", () => {
@@ -414,9 +417,6 @@ async function initCharacterPage() {
   }else{
     changeStats('right');
   }
-
-  console.log(scene);
-
   constantRotation = setInterval(constantlyRotate, 5);
 }
 
@@ -458,10 +458,12 @@ async function initGame(){
   canvas.id = "gameCanvas";
   document.getElementById("game").appendChild(canvas);
   clearInterval(constantRotation);
-  await init(false);
   document.body.style.cursor = "default";
   document.getElementById("gameBackButton").style.visibility = "visible";
-  initGameObjects();
+  await init(false);
+  initObjects(false);
+  resetBall();
+  setPlayerObjects();
   setAABBs();
 }
 
@@ -504,7 +506,7 @@ function resetBall(){
   ballSelectInterval = setInterval(blinkBall, 20);
 }
 
-function ballDrag(event){
+function dragBall(event){
   let force = calculateDragForce();
   let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
   dragToughness = Math.min(dragToughness, 0.01);
@@ -519,7 +521,7 @@ function ballDrag(event){
   ballTranslation[1] -= 1.5 * event.movementY * dragToughness;
 }
 
-document.addEventListener("keydown", function(event){
+/*document.addEventListener("keydown", function(event){
   if(event.key === "r"){
     resetBall();
   } else if(event.key === "ArrowUp"){
@@ -532,6 +534,7 @@ document.addEventListener("keydown", function(event){
     ball.getComponentOfType(Transform).translation[2] -= 0.1;
   }
 });
+ */
 
 //setting player objects
 function setPlayerObjects(){
@@ -544,13 +547,6 @@ function setPlayerObjects(){
   player1.character.transform.translation = [0, 0, -14.2];
   player1.character.transform.rotation = [0, 0.707, 0, -0.707];
   player2.character.transform.translation = [0, 0, 14.2];
-}
-
-//game object initialization
-function initGameObjects(){
-  initObjects();
-  resetBall();
-  setPlayerObjects();
 }
 
 let originalTransforms = [];
@@ -612,7 +608,6 @@ function initObjects(intro){
       }
     }
   }
-  //camera.addComponent(new FirstPersonController(camera, canvas));
 }
 
 // ================================================================ LOADING SCREEN ==================================================
@@ -850,5 +845,14 @@ function setAABBs(){
         node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
     });
 }
+
+//TODO:
+// potek igre, vkljucno s streljanjem nasprotnika in izginjanjem kozarcev
+// power meter in adjustments metanju
+// character abilities
+// drinking the cups and getting effects
+// instructions
+// sound effects
+
 
 
