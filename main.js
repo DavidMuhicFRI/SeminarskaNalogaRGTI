@@ -386,12 +386,13 @@ canvas.addEventListener("mousedown", () => {
   }
 });
 canvas.addEventListener("mousemove", (event) => {
+  console.log(spacePressed);
   if (rotate && pageStatus === "main") {
     rotatePlayer(rotatingCharacter, event.movementX * 0.01); // Rotate player based on mouse movement
   }else if(pageStatus === "game" && ball.isGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
     dragBall(event);
-  }else if (pageStatus === "game" && spacePressed && game.currentPlayer.character.stats.name === "CURVE") {
+  }else if (pageStatus === "game" && spacePressed && game.currentPlayer.character.stats.name === "CURVE" && !ball.isGrabbed) {
     game.activateCurveAbility(event);
   }
 });
@@ -526,7 +527,7 @@ function dragBall(event){
 
 document.addEventListener("keydown", function(event){
   if(pageStatus === "game"){
-    if(event.key === "Space"){
+    if(event.key === " "){
       game.activateAbility(shiftPressed);
       spacePressed = true;
     }else if(event.key === "Shift"){
@@ -536,14 +537,11 @@ document.addEventListener("keydown", function(event){
 });
 document.addEventListener("keyup", function(event){
   if(pageStatus === "game"){
-    if(event.key === "Space"){
+    if(event.key === " "){
       spacePressed = false;
+    }else if(event.key === "Shift"){
+      shiftPressed = false;
     }
-  }
-});
-canvas.addEventListener("mousemove", (event) => {
-  if(pageStatus === "game" ){
-    dragEnd = [event.clientX, event.clientY];
   }
 });
 

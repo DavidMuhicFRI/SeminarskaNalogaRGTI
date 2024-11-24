@@ -237,18 +237,19 @@ export class Game {
   }
 
   activateCurveAbility(event){
-    this.currentPlayer.energy -= 0.25;
+    this.currentPlayer.energy -= 0.01;
     this.currentPlayer.setEnergy();
     if(!event){
       return;
     }
     let dx = event.movementX;
-    let dy = event.movementY;
-    this.ball.velocity[1] += dy * 0.01;
+    let direction = dx > 0 ? 1 : -1;
+    let adjustment = Math.min(0.05, Math.abs(dx) * 0.01);
+    console.log(adjustment);
     if(this.currentPlayer === this.player1){
-      this.ballAngle += dx * 0.1;
+      this.ball.velocity[0] -= adjustment * direction;
     }else{
-      this.ballAngle -= dx * 0.1;
+      this.ball.velocity[0] += adjustment * direction;
     }
   }
 
