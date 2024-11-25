@@ -264,6 +264,12 @@ export class Game {
     }
   }
 
+  stopBall(){
+    this.ball.velocity = [0, 0, 0];
+    this.ball.moving = false;
+    this.ball.effect = null;
+  }
+
   quaternionToEuler(q) {
     let w = q[0];
     let x = q[1];
