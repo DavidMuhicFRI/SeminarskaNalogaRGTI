@@ -467,8 +467,6 @@ function calculateDragDistance(){
 function calculateDragForce(){
   return dragEnd[1] - dragStart[1];
 }
-
-
 function dragBall(event){
   let force = calculateDragForce();
   let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
@@ -566,7 +564,6 @@ function initObjects(intro){
     }
   }
 }
-
 
 
 // ================================================================ LOADING SCREEN ==================================================

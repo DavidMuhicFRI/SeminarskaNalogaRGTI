@@ -48,7 +48,6 @@ export class Ball {
     this.velocity[2] = -diffZ * this.acceleration;
   }
 
-
   update(t, dt) {
     if(!this.moving){
       return;

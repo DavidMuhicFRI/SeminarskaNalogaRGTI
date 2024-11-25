@@ -9,7 +9,6 @@ export class Game {
 
     this.currentPlayer = player1;
     this.turn = 1;
-    this.ballAngle = 45;
     ball.direction = 0;
 
     this.turnTime = this.currentPlayer.turnTime;
@@ -244,13 +243,11 @@ export class Game {
     this.otherPlayer().debuffs = debuffs;
   }
 
-
   activateAtlasAbility(){
     this.currentPlayer.energy = 0;
     this.currentPlayer.setEnergy();
     this.ball.effect = 'atlasEffect';
   }
-
 
   activateCurveAbility(event){
     if(!event){
@@ -309,9 +306,11 @@ export class Game {
     //TODO: add bouncing sound and display bounce count, add spring energy (and others)
   }
 
+
   stopBall(){
     this.changePlayerTurn();
   }
+
 
   quaternionToEuler(q) {
     let w = q[0];
