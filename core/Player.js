@@ -14,20 +14,6 @@ export class Player {
     this.side = side;
   }
 
-  setHearts(){
-    const heartsDiv = this.side === 1
-      ? document.getElementById('heartsLeft')
-      : document.getElementById('heartsRight');
-    heartsDiv.innerHTML = '';
-
-    for (let i = 0; i < this.currentHP; i++) {
-      const heart = document.createElement('img');
-      heart.src = 'heartImg.png';
-      heart.className = 'heartsItem';
-      heartsDiv.appendChild(heart);
-    }
-  }
-
   generateCups(){
     let effects = ["darkness", "reverse", "rotate", "energy", "poison", "gravity", "none", "weakness"];
     for(let i = 0; i < 6; i++){
