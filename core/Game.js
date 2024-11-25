@@ -79,8 +79,14 @@ export class Game {
   }
 
   giveAnotherTurn(){
-    this.resetCountdown();
-    this.startTurn();
+    this.stopPulsingAnimations();
+    this.turn++;
+    this.displayCups(this.player1.cups, this.player2.cups);
+    this.startPulsingAnimations();
+    this.resetBall();
+    setTimeout(() => {
+      this.startTurn();
+    }, 4000);
   }
 
   turnCamera(){
@@ -119,7 +125,7 @@ export class Game {
 
   startPulsingAnimations(){
     let side = this.currentPlayer === this.player1 ? 'left' : 'right';
-    let text = this.currentPlayer === this.player1 ? 'PLAYER1' : 'PLAYER2';
+    //let text = this.currentPlayer === this.player1 ? 'PLAYER1' : 'PLAYER2';
     document.getElementById(`${side}BarHeader`).classList.add('pulseColor');
   }
   stopPulsingAnimations(){
