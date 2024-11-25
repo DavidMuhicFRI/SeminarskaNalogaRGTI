@@ -37,8 +37,6 @@ export class Game {
   updatePlayerDivs(){
     this.player1.generateCups(1);
     this.player2.generateCups(2);
-    //this.player1.setHearts(1);
-    //this.player2.setHearts(2);
     this.player1.setEnergy(1);
     this.player2.setEnergy(2);
     this.displayCups(this.player1.cups, this.player2.cups);
