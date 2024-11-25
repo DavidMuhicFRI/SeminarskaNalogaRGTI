@@ -197,7 +197,7 @@ function rotatePlayer(rotatingCharacter, angle){
 //character loading and character functions
 async function loadCharacters(){
   characterObjects = [];
-  let characterNames = ["Atlas", "Chrono", "Curve", "Nero", "Spring", "Tripp"];
+  let characterNames = ["Atlas", "Curve", "Nero", "Spring", "Tripp"];
   characterNames.forEach((name, index) => {
     characterObjects[index] = new Character(findObject(name + "Object"), name);
     characterObjects[index].applyScale();
@@ -562,7 +562,6 @@ function initObjects(intro){
     ball.addComponent(new Ball(ball));
     ball = ball.getComponentOfType(Ball);
     loadObject("AtlasObject", "static");
-    loadObject("ChronoObject", "static");
     loadObject("CurveObject", "static");
     loadObject("NeroObject", "static");
     loadObject("SpringObject", "static");
@@ -585,14 +584,6 @@ function initObjects(intro){
     loadObject("Wall4", "static");
     loadObject("Floor", "static");
     loadObject("Table", "static");
-    loadObject("Barricade1", "static");
-    loadObject("Barricade2", "static");
-    loadObject("Barricade3", "static");
-    loadObject("Barricade4", "static");
-    loadObject("Barricade1Holder", "static");
-    loadObject("Barricade2Holder", "static");
-    loadObject("Barricade3Holder", "static");
-    loadObject("Barricade4Holder", "static");
     for(let i = 0; i < scene.children.length; i++){
       originalTransforms[i] = new Node();
       originalTransforms[i].name = scene.children[i].name;
@@ -659,7 +650,7 @@ function initializeTheLoader(){
 }
 
 async function initializeTheScene(){
-  await loader.load('scene/scene.gltf'); // Load the scene
+  await loader.load('scene/scene2.gltf'); // Load the scene
   scene = new Node();
 }
 

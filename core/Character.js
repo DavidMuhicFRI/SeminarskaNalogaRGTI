@@ -21,32 +21,11 @@ export class Character {
           health: 10,
           strength: 1.5,
           energyGain: 35,
-          scale: [0.8, 0.9, 0.8],
+          scale: [0.85, 0.96, 0.85],
           reference: 'AtlasObject',
           iconImage: 'atlasIcon.png',
           abilityImage: 'atlasAbility.png'
         }
-        break;
-      case 'Chrono':
-        this.stats = {
-          name: name.toUpperCase(),
-          title: 'The one who conquered time',
-          difficulty: 4,
-          offense: 5,
-          defense: 6,
-          playstyle: 'CASTER',
-          plusPassive: 'Gains extra energy based on time left at round end',
-          minusPassive: 'Turn time reduced by half',
-          abilityText: '(REWIND) Can rewind time 10seconds back',
-          funFact: 'Fun-fact: is still late to work',
-          health: 7,
-          strength: 1,
-          energyGain: 25,
-          scale: [1, 1, 1],
-          reference: 'ChronoObject',
-          abilityImage: 'chronoAbility.png'
-        }
-        this.turnTime = this.turnTime / 2;
         break;
       case 'Curve':
         this.stats = {
@@ -63,7 +42,7 @@ export class Character {
           health: 8,
           strength: 1.2,
           energyGain: 40,
-          scale: [1.1, 1.1, 1.1],
+          scale: [1, 1, 1],
           reference: 'CurveObject',
           iconImage: 'curveIcon.png',
           abilityImage: 'curveAbility.png'
@@ -84,7 +63,7 @@ export class Character {
           health: 5,
           strength: 1,
           energyGain: 35,
-          scale: [1.2, 1.2, 1.2],
+          scale: [1.1, 1.1, 1.1],
           reference: 'NeroObject',
           iconImage: 'neroIcon.png',
           abilityImage: 'neroAbility.png'
@@ -105,7 +84,7 @@ export class Character {
           health: 6,
           strength: 0.8,
           energyGain: 0,
-          scale: [1.2, 1.2, 1.2],
+          scale: [1.1, 1.1, 1.1],
           reference: 'SpringObject',
           iconImage: 'springIcon.png',
           abilityImage: 'springAbility.png'

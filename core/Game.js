@@ -187,9 +187,6 @@ export class Game {
       case 'ATLAS':
         this.activateAtlasAbility();
         break;
-      case 'CHRONO':
-        this.activateChronoAbility();
-        break;
       case 'CURVE':
         this.activateCurveAbility();
         break;
@@ -221,19 +218,6 @@ export class Game {
     this.ball.effect = 'atlasEffect';
   }
 
-  activateChronoAbility(){
-    this.currentPlayer.energy = 0;
-    this.currentPlayer.setEnergy();
-    if(this.remainingTime > 10 && !this.ball.moving){
-      //rewind opponent's turn
-    }else if(this.remainingTime <= 10 && !this.ball.moving){
-      this.remainingTime += 15;
-    }else{
-      //reset the ball and add 15 seconds to the timer
-      this.ball.reset();
-      this.remainingTime += 15;
-    }
-  }
 
   activateCurveAbility(event){
     this.currentPlayer.energy -= 0.01;
