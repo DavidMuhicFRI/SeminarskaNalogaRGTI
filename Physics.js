@@ -172,7 +172,6 @@ export class Physics {
       //check if the ball can reach the cup height with its current velocity and bounciness
       let ballTransform = ball.node.getComponentOfType(Transform);
       let startHeight = ballTransform.translation[1] + ball.radius;
-      console.log(ball.velocity[1]);
       if(startHeight > 4.5 && ball.velocity[1] > 4){
         //off table
         return true;

@@ -57,6 +57,7 @@ export class Game {
     this.displayCups(this.player1.cups, this.player2.cups);
     this.turnCamera();
     this.startPulsingAnimations();
+    this.resetBall();
     setTimeout(() => {
       this.startTurn();
     }, 4000);
@@ -170,12 +171,28 @@ export class Game {
     countdownDiv.style.backgroundColor = 'yellow';
   }
 
+  resetBall(){
+    this.ball.velocity = [0, 0, 0];
+    this.ball.bounces = 0;
+    this.ball.moving = false;
+    this.ball.isGrabbed = false;
+    this.ball.effect = null;
+    if(this.currentPlayer === this.player1) {
+      this.ball.transform.translation = [0, 7.5, -7.1];
+      this.ball.startPosition = [0, 7.5, -7.1];
+    }else{
+      this.ball.transform.translation = [0, 7.5, 7.1];
+      this.ball.startPosition = [0, 7.5, 7.1];
+    }
+  }
+
+
   otherPlayer(){
     return this.currentPlayer === this.player1 ? this.player2 : this.player1;
   }
 
 
-  activateAbility(shiftPressed){
+  activateAbility(){
     switch(this.currentPlayer.character.stats.name){
       case 'TRIPP':
         this.activateTrippAbility();
@@ -270,9 +287,7 @@ export class Game {
   }
 
   stopBall(){
-    this.ball.velocity = [0, 0, 0];
-    this.ball.moving = false;
-    this.ball.effect = null;
+    this.resetBall();
   }
 
   quaternionToEuler(q) {

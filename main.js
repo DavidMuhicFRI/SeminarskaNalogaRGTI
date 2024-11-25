@@ -297,9 +297,6 @@ async function startGame(){
   $("#characterPage").hide();
   showElement("game");
   $("#game").show(); //for 2nd and later showings
-  game = new Game(player1, player2, ball, camera);
-  physics.game = game;
-  game.setUp();
 }
 //exit game
 async function cancelGame(){
@@ -459,8 +456,11 @@ async function initGame(){
   document.getElementById("gameBackButton").style.visibility = "visible";
   await init(false);
   initObjects(false);
-  resetBall();
+  game = new Game(player1, player2, ball, camera);
+  physics.game = game;
   setPlayerObjects();
+  game.setUp();
+  resetBall();
   setAABBs();
 }
 
@@ -476,11 +476,11 @@ function calculateDragForce(){
 function throwBall(){
   ball.moving = true;
   ball.setStartVelocity();
-  clearInterval(ballSelectInterval);
   canvas.style.cursor = "default";
 }
+
 function blinkBall(){
-  if(!ball.isGrabbed){
+  if(!ball.isGrabbed && !ball.moving){
     if(ball.transform.scale[0] < 0.22 && ballBlink === 0){
       ball.transform.scale = ball.transform.scale.map(x => x + 0.002);
     }else if(ball.transform.scale[0] > 0.15 && ballBlink === 1){
@@ -493,12 +493,7 @@ function blinkBall(){
   }
 }
 function resetBall(){
-  if(playerTurn === 1){
-    ball.resetPlayer1();
-  }else{
-    ball.resetPlayer2();
-  }
-  ball.reset();
+  game.resetBall();
   clearInterval(ballSelectInterval);
   ballSelectInterval = setInterval(blinkBall, 20);
 }

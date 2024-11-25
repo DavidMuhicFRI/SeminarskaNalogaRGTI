@@ -29,25 +29,6 @@ export class Ball {
     this.velocity[2] = -diffZ * this.acceleration;
   }
 
-  reset(){
-    this.velocity = [0, 0, 0];
-    this.bounces = 0;
-    this.moving = false;
-    this.isGrabbed = false;
-    this.effect = null;
-  }
-
-  resetPlayer1(){
-    this.transform.translation = [0, 7.5, -7.1];
-    this.startPosition = [0, 7.5, -7.1];
-  }
-
-  resetPlayer2(){
-    this.transform.translation = [0, 7.5, 7.1];
-    this.startPosition = [0, 7.5, 7.1];
-  }
-
-
 
   update(t, dt) {
     if(!this.moving){
