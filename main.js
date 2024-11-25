@@ -401,8 +401,8 @@ async function initCharacterPage() {
 
 let spacePressed = false;
 let ball;
-let dragStart = [960, 470];
-let dragEnd = [960, 470];
+let dragStart = [];
+let dragEnd = [];
 
 
 //event listeners for the game
