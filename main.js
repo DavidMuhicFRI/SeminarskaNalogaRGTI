@@ -370,37 +370,6 @@ charPreviousButtonRed.addEventListener('click', function() {
   changeStats('right');
 });
 
-//event listeners for model rotation on drag
-document.addEventListener("pointerlockchange", () => {
-  rotate = document.pointerLockElement === canvas;
-});
-canvas.addEventListener("mousedown", () => {
-  if (pageStatus === "main") {
-    canvas.requestPointerLock();
-  }else if(pageStatus === "game"){
-    ball.isGrabbed = true;
-    dragEnd = dragStart;
-    clearInterval(ballSelectInterval);
-    canvas.requestPointerLock();
-    ball.transform.scale = [0.18, 0.18, 0.18];
-  }
-});
-canvas.addEventListener("mousemove", (event) => {
-  console.log(spacePressed);
-  if (rotate && pageStatus === "main") {
-    rotatePlayer(rotatingCharacter, event.movementX * 0.01); // Rotate player based on mouse movement
-  }else if(pageStatus === "game" && ball.isGrabbed){
-    dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
-    dragBall(event);
-  }else if (pageStatus === "game" && spacePressed && game.currentPlayer.character.stats.name === "CURVE" && !ball.isGrabbed) {
-    game.activateCurveAbility(event);
-  }
-});
-canvas.addEventListener("mouseover", () => {
-  if (pageStatus === "main") {
-    canvas.style.cursor = "grab";
-  }
-});
 
 //init the systems
 async function initCharacterPage() {
@@ -444,8 +413,33 @@ let dragEnd = [960, 470];
 
 
 //event listeners for the game
+document.addEventListener("pointerlockchange", () => {
+  rotate = document.pointerLockElement === canvas;
+});
+canvas.addEventListener("mousedown", () => {
+  if (pageStatus === "main") {
+    canvas.requestPointerLock();
+  }else if(pageStatus === "game" && !ball.isGrabbed && !ball.moving){
+    ball.isGrabbed = true;
+    dragEnd = dragStart;
+    clearInterval(ballSelectInterval);
+    canvas.requestPointerLock();
+    ball.transform.scale = [0.18, 0.18, 0.18];
+  }
+});
+canvas.addEventListener("mousemove", (event) => {
+  console.log(spacePressed);
+  if (rotate && pageStatus === "main") {
+    rotatePlayer(rotatingCharacter, event.movementX * 0.01); // Rotate player based on mouse movement
+  }else if(pageStatus === "game" && ball.isGrabbed){
+    dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
+    dragBall(event);
+  }else if (pageStatus === "game" && spacePressed && game.currentPlayer.character.stats.name === "CURVE" && !ball.isGrabbed) {
+    game.activateCurveAbility(event);
+  }
+});
 canvas.addEventListener("mouseup", () => {
-  if(pageStatus === "game"){
+  if(pageStatus === "game" && !ball.moving){
     ball.isGrabbed = false;
     if(calculateDragDistance() < 85 || calculateDragForce() < 0){
       resetBall();
@@ -485,6 +479,7 @@ function throwBall(){
   ball.moving = true;
   ball.setStartVelocity();
   clearInterval(ballSelectInterval);
+  canvas.style.cursor = "default";
 }
 function blinkBall(){
   if(!ball.isGrabbed){
