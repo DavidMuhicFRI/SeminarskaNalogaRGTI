@@ -25,11 +25,8 @@ export class Ball {
     let diffY = this.transform.translation[1] - this.startPosition[1];
     let diffZ = this.transform.translation[2] - this.startPosition[2];
     this.velocity[0] = -diffX * this.acceleration * 0.25;
-    console.log(this.velocity[0]);
     this.velocity[1] = -diffY * this.acceleration;
-    console.log(this.velocity[1]);
     this.velocity[2] = -diffZ * this.acceleration;
-    console.log(this.velocity[2]);
   }
 
   reset(){

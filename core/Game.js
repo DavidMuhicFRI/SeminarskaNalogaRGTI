@@ -259,7 +259,6 @@ export class Game {
 
   handleCupHit(cup){
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
-    console.log(cup.getComponentOfType(Transform).translation);
     this.currentPlayer.score++;
     if(this.currentPlayer.score === 6){
       console.log("Player won");

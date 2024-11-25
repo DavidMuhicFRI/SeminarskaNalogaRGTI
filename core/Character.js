@@ -31,9 +31,9 @@ export class Character {
         this.stats = {
           name: name.toUpperCase(),
           title: 'Legendary space general',
-          difficulty: 7,
-          offense: 7,
-          defense: 5,
+          difficulty: 8,
+          offense: 8,
+          defense: 4,
           playstyle: 'MANIPULATOR',
           plusPassive: 'Can set room\'s gravity',
           minusPassive: 'Gets energy based on how long the ball is in the air before touching anything',
@@ -42,7 +42,7 @@ export class Character {
           health: 8,
           strength: 1.2,
           energyGain: 40,
-          scale: [1, 1, 1],
+          scale: [1.05, 1.05, 1.05],
           reference: 'CurveObject',
           iconImage: 'curveIcon.png',
           abilityImage: 'curveAbility.png'
@@ -73,7 +73,7 @@ export class Character {
         this.stats = {
           name: name.toUpperCase(),
           title: 'The pink princess',
-          difficulty: 5,
+          difficulty: 6,
           offense: 4,
           defense: 5,
           playstyle: 'MANIPULATOR',
@@ -94,7 +94,7 @@ export class Character {
         this.stats = {
           name: name.toUpperCase(),
           title: 'The Eccentric',
-          difficulty: 10,
+          difficulty: 9,
           offense: 7,
           defense: 3,
           playstyle: 'STRATEGIST',

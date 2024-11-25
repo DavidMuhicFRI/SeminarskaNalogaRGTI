@@ -428,7 +428,6 @@ canvas.addEventListener("mousedown", () => {
   }
 });
 canvas.addEventListener("mousemove", (event) => {
-  console.log(spacePressed);
   if (rotate && pageStatus === "main") {
     rotatePlayer(rotatingCharacter, event.movementX * 0.01); // Rotate player based on mouse movement
   }else if(pageStatus === "game" && ball.isGrabbed){
