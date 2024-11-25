@@ -4,12 +4,10 @@ export class Game {
   constructor(player1, player2, ball, camera){
     this.player1 = player1;
     this.player2 = player2;
+    this.currentPlayer = player1;
+
     this.ball = ball;
     this.camera = camera;
-
-    this.currentPlayer = player1;
-    this.turn = 1;
-    ball.direction = 0;
 
     this.turnTime = this.currentPlayer.turnTime;
     this.remainingTime = this.turnTime;
@@ -52,7 +50,6 @@ export class Game {
 
   changePlayerTurn(){
     this.stopPulsingAnimations();
-    this.turn++;
     this.currentPlayer = this.currentPlayer === this.player1 ? this.player2 : this.player1;
     this.displayCups(this.player1.cups, this.player2.cups);
     this.turnCamera();
@@ -79,7 +76,6 @@ export class Game {
 
   giveAnotherTurn(){
     this.stopPulsingAnimations();
-    this.turn++;
     this.displayCups(this.player1.cups, this.player2.cups);
     this.startPulsingAnimations();
     this.resetBall();
