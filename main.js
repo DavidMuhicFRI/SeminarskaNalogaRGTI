@@ -400,10 +400,7 @@ async function initCharacterPage() {
 /////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
 
 let spacePressed = false;
-let playerTurn = 1;
 let ball;
-let ballBlink = 0; //0 for increasing, 1 for decreasing
-let ballSelectInterval; //interval for blinking the ball
 let dragStart = [960, 470];
 let dragEnd = [960, 470];
 
@@ -415,12 +412,10 @@ document.addEventListener("pointerlockchange", () => {
 canvas.addEventListener("mousedown", () => {
   if (pageStatus === "main") {
     canvas.requestPointerLock();
-  }else if(pageStatus === "game" && !ball.isGrabbed && !ball.moving){
-    ball.isGrabbed = true;
+  }else if(pageStatus === "game" && !ball.moving){
     dragEnd = dragStart;
-    clearInterval(ballSelectInterval);
+    game.grabBall();
     canvas.requestPointerLock();
-    ball.transform.scale = [0.18, 0.18, 0.18];
   }
 });
 canvas.addEventListener("mousemove", (event) => {
@@ -435,11 +430,11 @@ canvas.addEventListener("mousemove", (event) => {
 });
 canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game" && !ball.moving){
-    ball.isGrabbed = false;
     if(calculateDragDistance() < 85 || calculateDragForce() < 0){
-      resetBall();
+      game.resetBall();
     }else{
-      throwBall();
+      game.throwBall();
+      canvas.style.cursor = "default";
     }
   }
   document.exitPointerLock();
@@ -454,13 +449,14 @@ async function initGame(){
   clearInterval(constantRotation);
   document.body.style.cursor = "default";
   document.getElementById("gameBackButton").style.visibility = "visible";
+  dragStart = [canvas.width / 2, canvas.height / 2.3];
+  dragEnd = [canvas.width / 2, canvas.height / 2.3];
   await init(false);
   initObjects(false);
+  setPlayerObjects();
   game = new Game(player1, player2, ball, camera);
   physics.game = game;
-  setPlayerObjects();
   game.setUp();
-  resetBall();
   setAABBs();
 }
 
@@ -472,38 +468,13 @@ function calculateDragForce(){
   return dragEnd[1] - dragStart[1];
 }
 
-//ball functions
-function throwBall(){
-  ball.moving = true;
-  ball.setStartVelocity();
-  canvas.style.cursor = "default";
-}
-
-function blinkBall(){
-  if(!ball.isGrabbed && !ball.moving){
-    if(ball.transform.scale[0] < 0.22 && ballBlink === 0){
-      ball.transform.scale = ball.transform.scale.map(x => x + 0.002);
-    }else if(ball.transform.scale[0] > 0.15 && ballBlink === 1){
-      ball.transform.scale = ball.transform.scale.map(x => x - 0.002);
-    }else if(ball.transform.scale[0] >= 0.22){
-      ballBlink = 1;
-    }else{
-      ballBlink = 0;
-    }
-  }
-}
-function resetBall(){
-  game.resetBall();
-  clearInterval(ballSelectInterval);
-  ballSelectInterval = setInterval(blinkBall, 20);
-}
 
 function dragBall(event){
   let force = calculateDragForce();
   let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
   dragToughness = Math.min(dragToughness, 0.01);
   let ballTranslation = ball.transform.translation;
-  if(playerTurn === 1){
+  if(game.currentPlayer === game.player1){
     ballTranslation[2] -= event.movementY * dragToughness;
     ballTranslation[0] -= event.movementX * 0.01;
   }else{
@@ -530,7 +501,7 @@ document.addEventListener("keyup", function(event){
 });
 
 
-//setting player objects
+//setting player characters and moving others
 function setPlayerObjects(){
   for(let i = 0; i < characterObjects.length; i++){
     let object = findObject(characterObjects[i].stats.reference);
@@ -667,7 +638,7 @@ function initializeTheCamera(intro){
   }else{
     let cameraTransform = camera.getComponentOfType(Transform);
     cameraTransform.translation = [0, 9, -12.6];
-    cameraTransform.rotation = [0, 1, 0.13, 0];
+    cameraTransform.rotation = [0, -0.99, -0.131, 0];
     camera.isStatic = true;
     camera.aabb = {
       min: [-0.5, -0.5, -0.5],

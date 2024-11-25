@@ -30,6 +30,7 @@ export class Game {
     this.showText();
     this.startPulsingAnimations();
     this.addTurnStartEventListener();
+    this.resetBall();
   }
 
   updatePlayerDivs(){
@@ -184,6 +185,21 @@ export class Game {
       this.ball.transform.translation = [0, 7.5, 7.1];
       this.ball.startPosition = [0, 7.5, 7.1];
     }
+    this.ball.transform.scale = [0.18, 0.18, 0.18];
+    this.ball.setBlinkingInterval();
+  }
+
+  throwBall(){
+    this.ball.startPosition = this.currentPlayer === this.player1 ? [0, 7.5, -7.1] : [0, 7.5, 7.1];
+    this.ball.setStartVelocity();
+    this.ball.moving = true;
+    this.ball.isGrabbed = false;
+  }
+
+  grabBall(){
+    this.ball.isGrabbed = true;
+    this.ball.moving = false;
+    this.ball.scale = [0.18, 0.18, 0.18];
   }
 
 
@@ -204,7 +220,7 @@ export class Game {
         this.activateCurveAbility();
         break;
       case 'NERO':
-        this.activateNeroAbility(shiftPressed);
+        this.activateNeroAbility();
         break;
       case 'SPRING':
         this.activateSpringAbility();
@@ -279,6 +295,7 @@ export class Game {
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.currentPlayer.currentHP += 15;
     }
+    this.changePlayerTurn();
   }
 
   handleBounce(){
@@ -287,7 +304,7 @@ export class Game {
   }
 
   stopBall(){
-    this.resetBall();
+    this.changePlayerTurn();
   }
 
   quaternionToEuler(q) {

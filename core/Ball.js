@@ -17,6 +17,25 @@ export class Ball {
     this.moving = false;
     this.isGrabbed = false;
     this.effect = null;
+    this.blinking = false;
+    this.shrinking = false;
+  }
+
+  blink(){
+    if(!this.isGrabbed && !this.moving){
+      if(this.transform.scale[0] < 0.22 && !this.shrinking){
+        this.transform.scale = this.transform.scale.map(x => x + 0.002);
+      }else if(this.transform.scale[0] > 0.15 && this.shrinking){
+        this.transform.scale = this.transform.scale.map(x => x - 0.002);
+      }else this.shrinking = this.transform.scale[0] >= 0.22;
+    }
+  }
+
+  setBlinkingInterval(){
+    if(this.blinking){
+      clearInterval(this.blinking);
+    }
+    this.blinking = setInterval(() => this.blink(), 20);
   }
 
   setStartVelocity(){
@@ -24,7 +43,7 @@ export class Ball {
     let diffX = this.transform.translation[0] - this.startPosition[0];
     let diffY = this.transform.translation[1] - this.startPosition[1];
     let diffZ = this.transform.translation[2] - this.startPosition[2];
-    this.velocity[0] = -diffX * this.acceleration * 0.25;
+    this.velocity[0] = -diffX * this.acceleration * 0.33;
     this.velocity[1] = -diffY * this.acceleration;
     this.velocity[2] = -diffZ * this.acceleration;
   }

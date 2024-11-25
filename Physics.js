@@ -123,9 +123,8 @@ export class Physics {
       let cupTransform = cup.getComponentOfType(Transform).translation;
       let distance = this.calculateRealDistance(cupBox, ballTransform, cupTransform);
       let cupWidth = (cupBox.max[0] - cupBox.min[0]) / 2;
-      let wallWidth = 0.1;
-      if (this.isBallInCup(cupWidth - wallWidth, distance, ball.radius * 1.1)) {
-        console.log("ball in cup");
+      let wallWidth = 0.05;
+      if (this.isBallInCup(cupWidth - wallWidth, distance, ball.radius)) {
         if(ballTransform[1] <= cupBox.min[1] + 2 * ball.radius){
           ball.velocity = [0, 0, 0];
           this.game.handleCupHit(cup);
@@ -172,10 +171,10 @@ export class Physics {
       //check if the ball can reach the cup height with its current velocity and bounciness
       let ballTransform = ball.node.getComponentOfType(Transform);
       let startHeight = ballTransform.translation[1] + ball.radius;
-      if(startHeight > 4.5 && ball.velocity[1] > 4){
+      if(startHeight > 4.5 && ball.velocity[1] > 3){
         //off table
         return true;
-      }else return ball.velocity[1] > 9;
+      }else return ball.velocity[1] > 8;
     }
 
   getNodeBName(node) {
