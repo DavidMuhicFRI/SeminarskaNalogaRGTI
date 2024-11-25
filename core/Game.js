@@ -19,12 +19,10 @@ export class Game {
   }
 
   setUp(){
-    document.getElementById('headerNameLeft').innerText = this.player1.character.stats.name;
-    document.getElementById('p1Score').innerText = this.player1.score;
-    document.getElementById('headerNameRight').innerText = this.player2.character.stats.name;
-    document.getElementById('p2Score').innerText = this.player2.score;
-    document.getElementById('rightBarHeader').style.width = '50%';
-    document.getElementById('leftBarHeader').style.width = '50%';
+    document.getElementById('rightBarHeader').style.width = '102%';
+    document.getElementById('leftBarHeader').style.width = '102%';
+    document.getElementById('leftIconImg').src = this.player1.character.stats.iconImage;
+    document.getElementById('rightIconImg').src = this.player2.character.stats.iconImage;
     this.currentPlayer.setCountdown();
     this.player1.setStats();
     this.player2.setStats();
@@ -39,8 +37,8 @@ export class Game {
   updatePlayerDivs(){
     this.player1.generateCups(1);
     this.player2.generateCups(2);
-    this.player1.setHearts(1);
-    this.player2.setHearts(2);
+    //this.player1.setHearts(1);
+    //this.player2.setHearts(2);
     this.player1.setEnergy(1);
     this.player2.setEnergy(2);
     this.displayCups(this.player1.cups, this.player2.cups);

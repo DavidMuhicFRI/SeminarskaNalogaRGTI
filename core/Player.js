@@ -61,3 +61,4 @@ export class Player {
     document.getElementById('countdown').innerText = this.character.turnTime;
   }
 }
+
