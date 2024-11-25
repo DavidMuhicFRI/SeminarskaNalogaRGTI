@@ -23,6 +23,7 @@ export class Character {
           energyGain: 35,
           scale: [0.8, 0.9, 0.8],
           reference: 'AtlasObject',
+          iconImage: 'atlasIcon.png',
           abilityImage: 'atlasAbility.png'
         }
         break;
@@ -64,6 +65,7 @@ export class Character {
           energyGain: 40,
           scale: [1.1, 1.1, 1.1],
           reference: 'CurveObject',
+          iconImage: 'curveIcon.png',
           abilityImage: 'curveAbility.png'
         }
         break;
@@ -84,6 +86,7 @@ export class Character {
           energyGain: 35,
           scale: [1.2, 1.2, 1.2],
           reference: 'NeroObject',
+          iconImage: 'neroIcon.png',
           abilityImage: 'neroAbility.png'
         }
         break;
@@ -104,6 +107,7 @@ export class Character {
           energyGain: 0,
           scale: [1.2, 1.2, 1.2],
           reference: 'SpringObject',
+          iconImage: 'springIcon.png',
           abilityImage: 'springAbility.png'
         }
         break;
@@ -124,6 +128,7 @@ export class Character {
           energyGain: 35,
           scale: [1.1, 1.1, 1.1],
           reference: 'TrippObject',
+          iconImage: 'trippIcon.png',
           abilityImage: 'trippAbility.png'
         }
         break;

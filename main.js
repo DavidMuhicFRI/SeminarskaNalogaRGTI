@@ -855,9 +855,8 @@ function setAABBs(){
 }
 
 //TODO:
-// potek igre, vkljucno s streljanjem nasprotnika in izginjanjem kozarcev
+// streljanje nasprotnika
 // power meter in adjustments metanju
-// character abilities
 // drinking the cups and getting effects
 // instructions
 // sound effects

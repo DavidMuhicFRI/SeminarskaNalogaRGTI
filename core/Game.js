@@ -19,28 +19,22 @@ export class Game {
   }
 
   setUp(){
-    document.getElementById('headerNameLeft').innerText = this.player1.character.stats.name;
-    document.getElementById('p1Score').innerText = this.player1.score;
-    document.getElementById('headerNameRight').innerText = this.player2.character.stats.name;
-    document.getElementById('p2Score').innerText = this.player2.score;
-    document.getElementById('rightBarHeader').style.width = '50%';
-    document.getElementById('leftBarHeader').style.width = '50%';
+    document.getElementById('rightBarHeader').style.width = '102%';
+    document.getElementById('leftBarHeader').style.width = '102%';
+    document.getElementById('leftIconImg').src = this.player1.character.stats.iconImage;
+    document.getElementById('rightIconImg').src = this.player2.character.stats.iconImage;
     this.currentPlayer.setCountdown();
     this.player1.setStats();
     this.player2.setStats();
     this.updatePlayerDivs();
     this.showText();
     this.startPulsingAnimations();
-    setTimeout(() => {
-      this.startTurn();
-    }, 5000);
+    this.addTurnStartEventListener();
   }
 
   updatePlayerDivs(){
     this.player1.generateCups(1);
     this.player2.generateCups(2);
-    this.player1.setHearts(1);
-    this.player2.setHearts(2);
     this.player1.setEnergy(1);
     this.player2.setEnergy(2);
     this.displayCups(this.player1.cups, this.player2.cups);
@@ -69,13 +63,22 @@ export class Game {
   }
 
   startTurn(){
-    this.startCountdown();
-    this.hideText();
+    if(!this.turnStarted){
+      this.startCountdown();
+      this.hideText();
+      this.turnStarted = true;
+    }
   }
 
   endTurn(){
+    this.turnStarted = false;
     this.changePlayerTurn();
     this.resetCountdown();
+  }
+
+  giveAnotherTurn(){
+    this.resetCountdown();
+    this.startTurn();
   }
 
   turnCamera(){
@@ -89,6 +92,7 @@ export class Game {
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
         }else{
           this.showText();
+          this.addTurnStartEventListener();
           clearInterval(cameraInterval);
           transform.translation[2] = 12.6;
           this.eulerToRotation({ roll: eRotation.roll, pitch: 180, yaw: eRotation.yaw }, transform);
@@ -102,6 +106,7 @@ export class Game {
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
         }else{
           this.showText();
+          this.addTurnStartEventListener();
           clearInterval(cameraInterval);
           transform.translation[2] = -12.6;
           this.eulerToRotation({ roll: eRotation.roll, pitch: -180, yaw: eRotation.yaw }, transform);
@@ -163,12 +168,6 @@ export class Game {
     this.remainingTime = this.currentPlayer.turnTime;
     countdownDiv.innerText = this.remainingTime;
     countdownDiv.style.backgroundColor = 'yellow';
-  }
-
-  giveAnotherTurn(){
-    //reset the timer and give the ball to the same player
-    this.stopCountdown();
-    this.startTurn();
   }
 
   otherPlayer(){
@@ -334,4 +333,14 @@ export class Game {
     const rotation = this.eulerToQuaternion({ roll, pitch, yaw });
     transform.rotation = [rotation.w, rotation.x, rotation.y, rotation.z];
   }
+
+  addTurnStartEventListener() {
+    this.removeTurnStartEventListener();
+    document.body.addEventListener('mousemove', this.startTurn.bind(this), { once: true });
+  }
+
+  removeTurnStartEventListener() {
+    document.body.removeEventListener('mousemove', this.startTurn.bind(this));
+  }
+
 }
