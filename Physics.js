@@ -115,6 +115,7 @@ export class Physics {
             this.normalBounce(minDirection, ball);
             break;
         }
+        this.game.handleBounce();
     }
 
     cupBounce(minDirection, ball, cup, cupBox, ballBox) {

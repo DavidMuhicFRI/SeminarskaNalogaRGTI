@@ -264,6 +264,11 @@ export class Game {
     }
   }
 
+  handleBounce(){
+    this.ball.bounces++;
+    //TODO: add bouncing sound and display bounce count, add spring energy (and others)
+  }
+
   stopBall(){
     this.ball.velocity = [0, 0, 0];
     this.ball.moving = false;
