@@ -602,6 +602,26 @@ body, html {
   color: black;
 }
 
+.powerContainer {
+  position: absolute;
+  left: 34.5%;
+  top: 80%;
+  width: 30%;
+  height: 5%;
+  border: 0.5vh solid black;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(to right, green, yellow, red);
+  display: none;
+}
+#powerBar {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  width: 70%;
+  background: black;
+}
+
 #loadingScreen {
   position: absolute;
   top: 0;

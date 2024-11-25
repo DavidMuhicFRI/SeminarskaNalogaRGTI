@@ -29,9 +29,7 @@ export class Game {
     this.updatePlayerDivs();
     this.showText();
     this.startPulsingAnimations();
-    setTimeout(() => {
-      this.startTurn();
-    }, 5000);
+    this.addTurnStartEventListener();
   }
 
   updatePlayerDivs(){
@@ -65,13 +63,22 @@ export class Game {
   }
 
   startTurn(){
-    this.startCountdown();
-    this.hideText();
+    if(!this.turnStarted){
+      this.startCountdown();
+      this.hideText();
+      this.turnStarted = true;
+    }
   }
 
   endTurn(){
+    this.turnStarted = false;
     this.changePlayerTurn();
     this.resetCountdown();
+  }
+
+  giveAnotherTurn(){
+    this.resetCountdown();
+    this.startTurn();
   }
 
   turnCamera(){
@@ -85,6 +92,7 @@ export class Game {
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
         }else{
           this.showText();
+          this.addTurnStartEventListener();
           clearInterval(cameraInterval);
           transform.translation[2] = 12.6;
           this.eulerToRotation({ roll: eRotation.roll, pitch: 180, yaw: eRotation.yaw }, transform);
@@ -98,6 +106,7 @@ export class Game {
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
         }else{
           this.showText();
+          this.addTurnStartEventListener();
           clearInterval(cameraInterval);
           transform.translation[2] = -12.6;
           this.eulerToRotation({ roll: eRotation.roll, pitch: -180, yaw: eRotation.yaw }, transform);
@@ -159,12 +168,6 @@ export class Game {
     this.remainingTime = this.currentPlayer.turnTime;
     countdownDiv.innerText = this.remainingTime;
     countdownDiv.style.backgroundColor = 'yellow';
-  }
-
-  giveAnotherTurn(){
-    //reset the timer and give the ball to the same player
-    this.stopCountdown();
-    this.startTurn();
   }
 
   otherPlayer(){
@@ -330,4 +333,14 @@ export class Game {
     const rotation = this.eulerToQuaternion({ roll, pitch, yaw });
     transform.rotation = [rotation.w, rotation.x, rotation.y, rotation.z];
   }
+
+  addTurnStartEventListener() {
+    this.removeTurnStartEventListener();
+    document.body.addEventListener('mousemove', this.startTurn.bind(this), { once: true });
+  }
+
+  removeTurnStartEventListener() {
+    document.body.removeEventListener('mousemove', this.startTurn.bind(this));
+  }
+
 }
