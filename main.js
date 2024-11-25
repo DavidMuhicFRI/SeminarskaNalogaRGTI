@@ -403,7 +403,6 @@ async function initCharacterPage() {
 /////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
 
 let spacePressed = false;
-let shiftPressed = false;
 let playerTurn = 1;
 let ball;
 let ballBlink = 0; //0 for increasing, 1 for decreasing
@@ -522,10 +521,8 @@ function dragBall(event){
 document.addEventListener("keydown", function(event){
   if(pageStatus === "game"){
     if(event.key === " "){
-      game.activateAbility(shiftPressed);
+      game.activateAbility();
       spacePressed = true;
-    }else if(event.key === "Shift"){
-      shiftPressed = true;
     }
   }
 });
@@ -533,8 +530,6 @@ document.addEventListener("keyup", function(event){
   if(pageStatus === "game"){
     if(event.key === " "){
       spacePressed = false;
-    }else if(event.key === "Shift"){
-      shiftPressed = false;
     }
   }
 });

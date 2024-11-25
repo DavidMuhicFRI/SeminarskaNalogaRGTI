@@ -109,7 +109,7 @@ export class Physics {
             this.cupBounce(minDirection, ball, b, bBox, aBox);
             break;
           case "object":
-            this.objectBounce(minDirection, ball, b);
+            this.objectBounce(minDirection, ball);
             break;
           default:
             this.normalBounce(minDirection, ball);
@@ -131,12 +131,6 @@ export class Physics {
     }
 
 
-    getBallWidth(ballBox){
-      let ballWidth = ballBox.max[0] - ballBox.min[0];
-      return ballWidth / 2;
-    }
-
-
     //returns the ball center distance from the center of the top of the cup
     calculateRealDistance(objectBox, ballTransform, objectTransform){
       let distance = [0, 0, 0];
@@ -146,21 +140,21 @@ export class Physics {
       return distance;
     }
 
-    isBallInCup(ballWidth, holeWidth, distance){
+    isBallInCup(holeWidth, distance, ballWidth){
       return Math.abs(distance[0]) + ballWidth < holeWidth && Math.abs(distance[2]) + ballWidth < holeWidth;
     }
 
-    getEdgeBounceCons(distance, ballWidth, cupWidth, inside){
+    getEdgeBounceCons(distance, ball, cupWidth, inside){
       let wallWidth = 0.1;
       let edge = distance[0] < distance[2] ? 0 : 2;
       if(inside){
-        return ((cupWidth - wallWidth - (Math.abs(distance[edge]))) / ballWidth) * 0.5;
+        return ((cupWidth - wallWidth - (Math.abs(distance[edge]))) / ball.radius) * 0.5;
       }else{
-        return ((Math.abs(distance[edge]) - cupWidth) / ballWidth) * 0.5;
+        return ((Math.abs(distance[edge]) - cupWidth) / ball.radius) * 0.5;
       }
     }
 
-    edgeBounce(minDirection, ball,  ballTransform, cupBox, ballBox, ballWidth, cupWidth, distance){
+    edgeBounce(minDirection, ball,  ballTransform, cupBox, ballBox, cupWidth, distance){
       let wallWidth = 0.1;
       let edge = distance[0] < distance[2] ? 0 : 2;
       let direction;
@@ -181,8 +175,8 @@ export class Physics {
         this.normalBounce(minDirection, ball);
         return;
       }
-      ball.velocity[edge] = (Math.abs(ball.velocity[edge]) * direction + this.getEdgeBounceCons(distance, ballWidth, cupWidth, inside) * Math.abs(ball.velocity[1])) * ball.bounciness;
-      ball.velocity[1] = directionY * ball.velocity[1] * ball.bounciness * (1 - this.getEdgeBounceCons(distance, ballWidth, cupWidth, inside));
+      ball.velocity[edge] = (Math.abs(ball.velocity[edge]) * direction + this.getEdgeBounceCons(distance, ball, cupWidth, inside) * Math.abs(ball.velocity[1])) * ball.bounciness;
+      ball.velocity[1] = directionY * ball.velocity[1] * ball.bounciness * (1 - this.getEdgeBounceCons(distance, ball, cupWidth, inside));
     }
 
 
@@ -190,10 +184,11 @@ export class Physics {
       let ballTransform = ball.node.getComponentOfType(Transform).translation;
       let cupTransform = cup.getComponentOfType(Transform).translation;
       let distance = this.calculateRealDistance(cupBox, ballTransform, cupTransform);
-      let ballWidth = this.getBallWidth(ballBox) * 0.99; //adjust for easier hitting
       let cupWidth = (cupBox.max[0] - cupBox.min[0]) / 2;
-      if (this.isBallInCup(ballWidth, cupWidth, distance)) {
-        if(ballTransform[1] <= cupBox.min[1] + 2 * ballWidth){
+      let wallWidth = 0.1;
+      if (this.isBallInCup(cupWidth - wallWidth, distance, ball.radius * 1.1)) {
+        console.log("ball in cup");
+        if(ballTransform[1] <= cupBox.min[1] + 2 * ball.radius){
           ball.velocity = [0, 0, 0];
           this.game.handleCupHit(cup);
         }else{
@@ -203,7 +198,7 @@ export class Physics {
         }
       }else{
         if(minDirection[1] !== 0){
-          this.edgeBounce(minDirection, ball, ballTransform, cupBox, ballBox, ballWidth, cupWidth, distance);
+          this.edgeBounce(minDirection, ball, ballTransform, cupBox, ballBox, cupWidth, distance);
         }else{
           this.normalBounce(minDirection, ball);
         }
@@ -211,8 +206,8 @@ export class Physics {
       }
     }
 
-    objectBounce(minDirection, ball, object){
-      this.game.handleObjectHit(object);
+    objectBounce(){
+      this.game.handleObjectHit();
     }
 
     normalBounce(minDirection, ball){

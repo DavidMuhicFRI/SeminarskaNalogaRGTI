@@ -174,10 +174,6 @@ export class Game {
     return this.currentPlayer === this.player1 ? this.player2 : this.player1;
   }
 
-  handleObjectHit(object){
-    this.otherPlayer().currentHP -= object.strength;
-    this.otherPlayer().setHearts();
-  }
 
   activateAbility(shiftPressed){
     switch(this.currentPlayer.character.stats.name){
@@ -204,8 +200,6 @@ export class Game {
     let currentHP = this.currentPlayer.currentHP;
     this.currentPlayer.currentHP = this.otherPlayer().currentHP;
     this.otherPlayer().currentHP = currentHP;
-    this.currentPlayer.setHearts();
-    this.otherPlayer().setHearts();
     let debuffs = this.currentPlayer.debuffs;
     this.currentPlayer.debuffs = this.otherPlayer().debuffs;
     this.otherPlayer().debuffs = debuffs;
@@ -220,11 +214,11 @@ export class Game {
 
 
   activateCurveAbility(event){
-    this.currentPlayer.energy -= 0.01;
-    this.currentPlayer.setEnergy();
     if(!event){
       return;
     }
+    this.currentPlayer.energy -= 1;
+    this.currentPlayer.setEnergy();
     let dx = event.movementX;
     let direction = dx > 0 ? 1 : -1;
     let adjustment = Math.min(0.05, Math.abs(dx) * 0.01);
@@ -236,17 +230,10 @@ export class Game {
     }
   }
 
-  activateNeroAbility(shiftPressed){
-    if(shiftPressed) {
-      this.currentPlayer.energy -= 0.5;
-      this.currentPlayer.setEnergy();
-      this.ball.effect = 'neroEffect';
-    }else{
-      this.currentPlayer.energy = 0;
-      this.currentPlayer.setEnergy();
-      this.currentPlayer.currentHP += 2;
-      this.currentPlayer.setHearts();
-    }
+  activateNeroAbility(){
+    this.currentPlayer.energy -= 1;
+    this.currentPlayer.setEnergy();
+    this.currentPlayer.currentHP += 1;
   }
 
   activateSpringAbility(){
@@ -260,10 +247,20 @@ export class Game {
   handleCupHit(cup){
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
     this.currentPlayer.score++;
+    if(this.currentPlayer.character.stats.name === 'NERO'){
+      this.currentPlayer.energy += 33;
+    }
     if(this.currentPlayer.score === 6){
       console.log("Player won");
     }else{
       this.giveAnotherTurn();
+    }
+  }
+
+  handleObjectHit(){
+    this.otherPlayer().currentHP -= this.currentPlayer.character.stats.strength;
+    if(this.currentPlayer.character.stats.name === 'NERO'){
+      this.currentPlayer.currentHP += 15;
     }
   }
 
