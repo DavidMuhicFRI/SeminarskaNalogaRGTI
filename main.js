@@ -650,7 +650,7 @@ function initializeTheLoader(){
 }
 
 async function initializeTheScene(){
-  await loader.load('scene/scene2.gltf'); // Load the scene
+  await loader.load('scene/scene.gltf'); // Load the scene
   scene = new Node();
 }
 
