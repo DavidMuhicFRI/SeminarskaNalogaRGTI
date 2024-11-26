@@ -12,6 +12,7 @@ export class Player {
     this.score = 0;
     this.cups = [];
     this.side = side;
+    this.rest = false;
   }
 
   generateCups(){

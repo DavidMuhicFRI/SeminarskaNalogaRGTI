@@ -424,7 +424,7 @@ canvas.addEventListener("mousemove", (event) => {
   }else if(pageStatus === "game" && ball.isGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
     dragBall(event);
-  }else if (pageStatus === "game" && spacePressed && game.currentPlayer.character.stats.name === "CURVE" && !ball.isGrabbed) {
+  }else if (pageStatus === "game" && spacePressed && game.currentPlayer.character.stats.name === "CURVE" && !ball.isGrabbed && ball.moving) {
     game.activateCurveAbility(event);
   }
 });

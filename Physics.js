@@ -123,7 +123,7 @@ export class Physics {
       let cupTransform = cup.getComponentOfType(Transform).translation;
       let distance = this.calculateRealDistance(cupBox, ballTransform, cupTransform);
       let cupWidth = (cupBox.max[0] - cupBox.min[0]) / 2;
-      let wallWidth = 0.05;
+      let wallWidth = 0.033;
       if (this.isBallInCup(cupWidth - wallWidth, distance, ball.radius)) {
         if(ballTransform[1] <= cupBox.min[1] + 2 * ball.radius){
           ball.velocity = [0, 0, 0];
@@ -143,6 +143,7 @@ export class Physics {
       }
     }
 
+
     objectBounce(){
       this.game.handleObjectHit();
     }
@@ -155,7 +156,7 @@ export class Physics {
       }
       if (minDirection[1] !== 0) {
         ball.velocity[1] = -ball.velocity[1] * ball.bounciness;
-        if(!this.hasEnoughEnergy(ball) && ball.effect !== "springEffect"){
+        if(ball.effect !== "springEffect" && ball.velocity[1] < 0.1){
           this.game.stopBall();
         }// Reverse Y direction if needed
         //console.log("from upDown")
@@ -165,16 +166,6 @@ export class Physics {
         //console.log("from straight")
       }
       transform.translation = vec3.add(vec3.create(), transform.translation, minDirection);
-    }
-
-    hasEnoughEnergy(ball){
-      //check if the ball can reach the cup height with its current velocity and bounciness
-      let ballTransform = ball.node.getComponentOfType(Transform);
-      let startHeight = ballTransform.translation[1] + ball.radius;
-      if(startHeight > 4.5 && ball.velocity[1] > 3){
-        //off table
-        return true;
-      }else return ball.velocity[1] > 8;
     }
 
   getNodeBName(node) {

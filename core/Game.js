@@ -51,6 +51,11 @@ export class Game {
   changePlayerTurn(){
     this.stopPulsingAnimations();
     this.currentPlayer = this.currentPlayer === this.player1 ? this.player2 : this.player1;
+    if(this.currentPlayer.rest){
+      this.currentPlayer.rest = false;
+      this.changePlayerTurn();
+      return;
+    }
     this.displayCups(this.player1.cups, this.player2.cups);
     this.turnCamera();
     this.startPulsingAnimations();
@@ -290,9 +295,14 @@ export class Game {
   }
 
   handleObjectHit(){
-    this.otherPlayer().currentHP -= this.currentPlayer.character.stats.strength;
+    let otherPlayer = this.otherPlayer();
+    otherPlayer.currentHP -= this.currentPlayer.character.stats.strength;
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.currentPlayer.currentHP += 15;
+    }
+    if(otherPlayer.currentHP <= 0){
+      otherPlayer.currentHP = this.otherPlayer().character.stats.health / 2;
+      otherPlayer.rest = true;
     }
     this.changePlayerTurn();
   }
