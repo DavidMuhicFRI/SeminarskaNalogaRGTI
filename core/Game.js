@@ -314,6 +314,7 @@ export class Game {
 
 
   stopBall(){
+    this.resetBall();
     this.changePlayerTurn();
   }
 
