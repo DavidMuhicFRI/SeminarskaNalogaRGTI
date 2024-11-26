@@ -401,7 +401,7 @@ body, html {
 #gameCanvas {
   width: 100%;
   height: 100%;
-  /*filter: blur(5px);*/
+  z-index: -1;
 }
 #gameBackButton{
   visibility: hidden;
@@ -417,6 +417,7 @@ body, html {
   border: 0.5vh solid black;
   font-weight: bold;
   cursor: pointer;
+  z-index: 3;
 }
 .iconImage2 {
   position: absolute;
@@ -425,12 +426,15 @@ body, html {
   height: 12%;
   border: 0.5vh solid black;
   border-radius: 5px;
+  z-index: 3;
 }
 #leftIconImg {
   left: 0.3%;
+  z-index: 3;
 }
 #rightIconImg {
   right: 0.3%;
+  z-index: 3;
 }
 
 .pulseScale {
@@ -451,7 +455,7 @@ body, html {
   border: 1vh solid black;
   border-radius: 3px;
   overflow: hidden;
-  z-index: 0;
+  z-index: 3;
   text-align: center;
   background-color: rgba(255, 255, 255, 0.2);
 }
@@ -466,6 +470,7 @@ body, html {
   height: 100%;
   border-radius: 3px;
   transition: width 0.5s ease;
+  z-index: 3;
 }
 #leftBarHeader {
   width: 80%;
@@ -486,6 +491,7 @@ body, html {
   overflow: hidden;
   background-color: rgba(255, 255, 255, 0.4);
   width: 38%;
+  z-index: 3;
 }
 #abilityContainerLeft {
   left: 8%;
@@ -500,6 +506,7 @@ body, html {
   border-radius: 3px;
   border: 0.6vh solid black;
   transition: width 0.5s ease;
+  z-index: 3;
 }
 #abilityBarLeft {
   background: linear-gradient(to right, blue, rgba(200, 200, 255, 1)) no-repeat;
@@ -523,60 +530,9 @@ body, html {
   height: 6vh;
   font-size: 5vh;
   font-weight: bold;
-}
-.cups {
-  position: absolute;
-  top: 35vh;
-  width: 16vw;
-  height: 25vh;
-  border-radius: 5%;
-  border: 0.5vh solid black;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-}
-#cupsLeft {
-  left: 2vw;
-  background-color: rgba(90, 90, 255, 0.5);;
-}
-#cupsRight {
-  right: 2vw;
-  background-color: rgba(255, 90, 90, 0.5);
-}
-.cups div {
-  height: 33%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-}
-.cupsMiddle {
-  width: 60%;
-}
-.cupsBottom {
-  width: 90%;
-}
-.cup {
-  height: 5vh;
-  width: 3vh;
-  border-radius: 50%;
-  border: 0.7vh solid black;
-}
-.cup:hover {
-  cursor: pointer;
-}
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-1px); }
-  50% { transform: translateX(1px); }
-  75% { transform: translateX(-1px); }
-  100% { transform: translateX(0); }
+  z-index: 3;
 }
 
-.shake {
-  animation: shake 0.3s ease-in-out;
-}
 
 #currentPlayerText {
   text-align: center;
@@ -587,7 +543,7 @@ body, html {
   top: 70%;
   font-size: 7vh;
   font-weight: bold;
-  z-index: 2;
+  z-index: 3;
   animation: pulseScale 2s ease-in-out infinite;
   color: black;
 }
@@ -603,6 +559,7 @@ body, html {
   overflow: hidden;
   background: linear-gradient(to right, green, yellow, red);
   display: none;
+  z-index: 3;
 }
 #powerBar {
   position: absolute;
@@ -610,6 +567,7 @@ body, html {
   height: 100%;
   width: 70%;
   background: black;
+  z-index: 3;
 }
 
 #loadingScreen {

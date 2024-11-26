@@ -454,7 +454,7 @@ async function initGame(){
   await init(false);
   initObjects(false);
   setPlayerObjects();
-  game = new Game(player1, player2, ball, camera);
+  game = new Game(player1, player2, ball, camera, canvas);
   physics.game = game;
   game.setUp();
   setAABBs();

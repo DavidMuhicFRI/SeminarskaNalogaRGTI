@@ -1,13 +1,17 @@
 import { Transform } from "./Transform.js";
 
 export class Game {
-  constructor(player1, player2, ball, camera){
+  constructor(player1, player2, ball, camera, canvas){
     this.player1 = player1;
     this.player2 = player2;
     this.currentPlayer = player1;
 
     this.ball = ball;
     this.camera = camera;
+    this.canvas = canvas;
+
+    this.cameraShakeInterval = null;
+    this.ballShakeInterval = null;
 
     this.turnTime = this.currentPlayer.turnTime;
     this.remainingTime = this.turnTime;
@@ -29,23 +33,9 @@ export class Game {
     this.addTurnStartEventListener();
     this.resetBall();
   }
-
   updatePlayerDivs(){
-    this.player1.generateCups(1);
-    this.player2.generateCups(2);
-    this.player1.setEnergy(1);
-    this.player2.setEnergy(2);
-    this.displayCups(this.player1.cups, this.player2.cups);
-  }
-
-  displayCups() {
-    const colorValue = this.currentPlayer.character.stats.name === 'TRIPP' ? 1 : 0;
-    [this.player1.cups, this.player2.cups].forEach((cupsArray) => {
-      cupsArray.forEach((cup) => {
-        cup.game = this;
-        cup.colorCup(colorValue);
-      });
-    });
+    this.player1.setEnergy();
+    this.player2.setEnergy();
   }
 
   changePlayerTurn(){
@@ -56,7 +46,6 @@ export class Game {
       this.endTurn();
       return;
     }
-    this.displayCups(this.player1.cups, this.player2.cups);
     this.turnCamera();
     this.startPulsingAnimations();
     this.resetBall();
@@ -64,24 +53,22 @@ export class Game {
       this.startTurn();
     }, 4000);
   }
-
   startTurn(){
     if(!this.turnStarted){
       this.startCountdown();
+      this.activateCupEffects();
       this.hideText();
       this.turnStarted = true;
     }
   }
-
   endTurn(){
     this.turnStarted = false;
     this.changePlayerTurn();
+    this.stopCupEffects();
     this.resetCountdown();
   }
-
   giveAnotherTurn(){
     this.stopPulsingAnimations();
-    this.displayCups(this.player1.cups, this.player2.cups);
     this.resetBall();
     this.resetCountdown();
     this.turnStarted = false;
@@ -93,7 +80,8 @@ export class Game {
     let eRotation = this.quaternionToEuler(transform.rotation);
     if(this.currentPlayer === this.player2){
       let cameraInterval = setInterval(() => {
-        if(transform.translation[2] < 12.6){
+        console.log(eRotation.pitch);
+        if(eRotation.pitch < 180){
           transform.translation[2] += (12.6 * 2) / 200;
           eRotation.pitch += 0.9;
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
@@ -102,12 +90,13 @@ export class Game {
           this.addTurnStartEventListener();
           clearInterval(cameraInterval);
           transform.translation[2] = 12.6;
-          this.eulerToRotation({ roll: eRotation.roll, pitch: 180, yaw: eRotation.yaw }, transform);
+          //this.eulerToRotation({ roll: 180, pitch: 180, yaw: 15.035 }, transform);
         }
       }, 10);
-    }else {
+    }else{
+      eRotation.pitch = 0;
       let cameraInterval = setInterval(() => {
-        if(transform.translation[2] > -12.6){
+        if(eRotation.pitch > -180){
           transform.translation[2] -= (12.6 * 2) / 200;
           eRotation.pitch -= 0.9;
           this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
@@ -116,7 +105,7 @@ export class Game {
           this.addTurnStartEventListener();
           clearInterval(cameraInterval);
           transform.translation[2] = -12.6;
-          this.eulerToRotation({ roll: eRotation.roll, pitch: -180, yaw: eRotation.yaw }, transform);
+          //this.eulerToRotation({ roll: 180, pitch: 0, yaw: 15.035 }, transform);
         }
       }, 10);
     }
@@ -162,7 +151,6 @@ export class Game {
       }
     }, 1000);
   }
-
   resetCountdown() {
     let countdownDiv = document.getElementById('countdown');
 
@@ -194,46 +182,47 @@ export class Game {
     this.ball.transform.scale = [0.18, 0.18, 0.18];
     this.ball.setBlinkingInterval();
   }
-
   throwBall(){
     this.ball.startPosition = this.currentPlayer === this.player1 ? [0, 7.5, -7.1] : [0, 7.5, 7.1];
     this.ball.setStartVelocity();
     this.ball.moving = true;
     this.ball.isGrabbed = false;
   }
-
   grabBall(){
     this.ball.isGrabbed = true;
     this.ball.moving = false;
     this.ball.scale = [0.18, 0.18, 0.18];
     this.stopPulsingAnimations();
   }
-
+  stopBall(){
+    this.resetBall();
+    this.endTurn();
+  }
 
   otherPlayer(){
     return this.currentPlayer === this.player1 ? this.player2 : this.player1;
   }
 
-
   activateAbility(){
-    switch(this.currentPlayer.character.stats.name){
-      case 'TRIPP':
-        this.activateTrippAbility();
-        break;
-      case 'ATLAS':
-        this.activateAtlasAbility();
-        break;
-      case 'CURVE':
-        this.activateCurveAbility();
-        break;
-      case 'NERO':
-        this.activateNeroAbility();
-        break;
-      case 'SPRING':
-        this.activateSpringAbility();
+    if(this.currentPlayer.energy > 0){
+      switch(this.currentPlayer.character.stats.name){
+        case 'TRIPP':
+          this.activateTrippAbility();
+          break;
+        case 'ATLAS':
+          this.activateAtlasAbility();
+          break;
+        case 'CURVE':
+          this.activateCurveAbility();
+          break;
+        case 'NERO':
+          this.activateNeroAbility();
+          break;
+        case 'SPRING':
+          this.activateSpringAbility();
+      }
     }
   }
-
   activateTrippAbility(){
     this.currentPlayer.energy = 0;
     this.currentPlayer.setEnergy();
@@ -244,13 +233,11 @@ export class Game {
     this.currentPlayer.debuffs = this.otherPlayer().debuffs;
     this.otherPlayer().debuffs = debuffs;
   }
-
   activateAtlasAbility(){
     this.currentPlayer.energy = 0;
     this.currentPlayer.setEnergy();
     this.ball.effect = 'atlasEffect';
   }
-
   activateCurveAbility(event){
     if(!event){
       return;
@@ -267,13 +254,12 @@ export class Game {
       this.ball.velocity[0] += adjustment * direction;
     }
   }
-
   activateNeroAbility(){
     this.currentPlayer.energy -= 1;
     this.currentPlayer.setEnergy();
+    this.currentPlayer.effectImpact *= 0.95;
     this.currentPlayer.currentHP += 1;
   }
-
   activateSpringAbility(){
     this.currentPlayer.energy = 0;
     this.currentPlayer.setEnergy();
@@ -281,26 +267,27 @@ export class Game {
     this.ball.bounciness = 1.5;
   }
 
-
   handleCupHit(cup){
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
     this.currentPlayer.score++;
+    this.otherPlayer().effectImpact += 1;
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.currentPlayer.energy += 33;
     }
     if(this.currentPlayer.score === 6){
       console.log("Player won");
     }else{
-      console.log("Player scored");
       this.giveAnotherTurn();
     }
   }
 
+
   handleObjectHit(){
     let otherPlayer = this.otherPlayer();
-    otherPlayer.currentHP -= this.currentPlayer.character.stats.strength;
+    let damage = this.getBallSpeed() * this.currentPlayer.character.stats.strength;
+    otherPlayer.currentHP -= damage;
     if(this.currentPlayer.character.stats.name === 'NERO'){
-      this.currentPlayer.currentHP += 15;
+      this.currentPlayer.currentHP += damage / 2;
     }
     if(otherPlayer.currentHP <= 0){
       otherPlayer.currentHP = this.otherPlayer().character.stats.health / 2;
@@ -308,19 +295,45 @@ export class Game {
     }
     this.endTurn();
   }
-
   handleBounce(){
     this.ball.bounces++;
     //TODO: add bouncing sound and display bounce count, add spring energy (and others)
   }
 
-
-  stopBall(){
-    this.resetBall();
-    this.endTurn();
+  activateCupEffects(){
+    this.canvas.style.filter = `blur(${this.currentPlayer.effectImpact / 2}px)`;
+    this.clearCameraShakeInterval();
+    //this.setCameraShakeInterval();
   }
 
+  setCameraShakeInterval(){
+    this.cameraShakeInterval = setInterval(() => {
+      this.shakeCamera();
+    }, 10);
+  }
 
+  stopCupEffects(){
+    this.canvas.style.filter = 'blur(0px)';
+    this.clearCameraShakeInterval();
+  }
+
+  shakeCamera(){
+    let transform = this.camera.getComponentOfType(Transform);
+    let eRotation = this.quaternionToEuler(transform.rotation);
+    let minus = Math.random() > 0.5 ? -1 : 1;
+    eRotation.pitch += Math.random() * 0.1 * minus * this.currentPlayer.effectImpact;
+    eRotation.yaw += Math.random() * 0.1 * minus * this.currentPlayer.effectImpact;
+    this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
+  }
+
+  clearCameraShakeInterval() {
+    clearInterval(this.cameraShakeInterval);
+    this.cameraShakeInterval = null;
+  }
+
+  getBallSpeed(){
+    return Math.sqrt(this.ball.velocity[0] ** 2 + this.ball.velocity[1] ** 2 + this.ball.velocity[2] ** 2) / 2;
+  }
   quaternionToEuler(q) {
     let w = q[0];
     let x = q[1];
@@ -339,7 +352,6 @@ export class Game {
       yaw: yaw * radToDeg,
     };
   }
-
   eulerToQuaternion(euler) {
     const { roll, pitch, yaw } = euler;
 
@@ -364,7 +376,6 @@ export class Game {
       z: cr * cp * sy - sr * sp * cy,
     };
   }
-
   eulerToRotation(euler, transform) {
     const { roll, pitch, yaw } = euler;
     const rotation = this.eulerToQuaternion({ roll, pitch, yaw });
@@ -375,11 +386,9 @@ export class Game {
     this.removeTurnStartEventListener();
     document.body.addEventListener('mousemove', this.startTurn.bind(this), { once: true });
   }
-
   removeTurnStartEventListener() {
     document.body.removeEventListener('mousemove', this.startTurn.bind(this));
   }
-  // TODO cups logic + effects
   // TODO drunk effects
   // TODO HP, energy
   // TODO finish abilities

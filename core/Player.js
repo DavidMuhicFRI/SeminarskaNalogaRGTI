@@ -1,5 +1,3 @@
-import {Cup} from "./Cup.js";
-
 export class Player {
   constructor(side) {
     this.ready = false;
@@ -8,27 +6,14 @@ export class Player {
     this.strength = 0;
     this.turnTime = 0;
     this.energy = 0;
-    this.debuffs = [];
+    this.effectImpact = 0;
     this.score = 0;
-    this.cups = [];
     this.side = side;
     this.rest = false;
   }
 
-  generateCups(){
-    let effects = ["darkness", "reverse", "rotate", "energy", "poison", "gravity", "none", "weakness"];
-    for(let i = 0; i < 6; i++){
-      let randomEffect = Math.floor(Math.random() * (effects.length));
-      let randomEffectiveness = 1;
-      this.cups[i] = new Cup(true, this.side, i + 1, effects[randomEffect], randomEffectiveness);
-    }
-  }
-
   setEnergy(){
-    const abilityBar = this.side === 1
-      ? document.getElementById('abilityBarLeft')
-      : document.getElementById('abilityBarRight');
-
+    const abilityBar = this.side === 1 ? document.getElementById('abilityBarLeft') : document.getElementById('abilityBarRight');
     abilityBar.style.width = `${this.energy}%`;
   }
 

@@ -13,4 +13,3 @@ export * from './core/Ball.js';
 export * from './core/Player.js';
 export * from './core/Character.js';
 export * from './core/Game.js';
-export * from './core/Cup.js';
