@@ -53,7 +53,7 @@ export class Game {
     this.currentPlayer = this.currentPlayer === this.player1 ? this.player2 : this.player1;
     if(this.currentPlayer.rest){
       this.currentPlayer.rest = false;
-      this.changePlayerTurn();
+      this.endTurn();
       return;
     }
     this.displayCups(this.player1.cups, this.player2.cups);
