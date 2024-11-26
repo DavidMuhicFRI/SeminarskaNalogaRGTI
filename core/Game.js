@@ -304,7 +304,7 @@ export class Game {
       otherPlayer.currentHP = this.otherPlayer().character.stats.health / 2;
       otherPlayer.rest = true;
     }
-    this.changePlayerTurn();
+    this.endTurn();
   }
 
   handleBounce(){
@@ -315,7 +315,7 @@ export class Game {
 
   stopBall(){
     this.resetBall();
-    this.changePlayerTurn();
+    this.endTurn();
   }
 
 
