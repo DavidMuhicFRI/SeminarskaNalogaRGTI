@@ -2,14 +2,12 @@
 export class Cup {
 
   static effectColors = {
-    darkness: 'rgba(20, 20, 20, 0.9)',
-    reverse: 'rgba(20, 60, 150, 1)',
-    rotate: 'rgba(20, 200, 100, 1)',
-    energy: 'rgba(180, 180, 20, 0.9)',
-    poison: 'rgba(120, 20, 150, 0.9)',
-    gravity: 'rgba(150, 150, 150, 0.9)',
-    weakness: 'rgba(150, 20, 20, 0.9)',
-    none: 'rgba(20, 20, 20, 0.1)',
+    time: 'rgba(20, 20, 20, 0.9)', // YES (speeds up time x2)
+    reverse: 'rgba(20, 60, 150, 1)', // YES (inverts X and Y on drag ball)
+    rotate: 'rgba(20, 200, 100, 1)', // YES (rotates camera)
+    energy: 'rgba(180, 180, 20, 0.9)', // YES (decreases energy)
+    poison: 'rgba(120, 20, 150, 0.9)', // YES (decreases health periodically)
+    weakness: 'rgba(150, 20, 20, 0.9)', // YES (less throw strength)
   };
 
   constructor(full, side, position, effect, effectiveness) {

@@ -82,11 +82,10 @@ export class Game {
   giveAnotherTurn(){
     this.stopPulsingAnimations();
     this.displayCups(this.player1.cups, this.player2.cups);
-    this.startPulsingAnimations();
     this.resetBall();
-    setTimeout(() => {
-      this.startTurn();
-    }, 4000);
+    this.resetCountdown();
+    this.turnStarted = false;
+    this.startTurn();
   }
 
   turnCamera(){
@@ -125,12 +124,13 @@ export class Game {
 
   startPulsingAnimations(){
     let side = this.currentPlayer === this.player1 ? 'left' : 'right';
-    //let text = this.currentPlayer === this.player1 ? 'PLAYER1' : 'PLAYER2';
     document.getElementById(`${side}BarHeader`).classList.add('pulseColor');
+    document.getElementById(`${side}IconImg`).classList.add('pulseScale');
   }
   stopPulsingAnimations(){
     let side = this.currentPlayer === this.player1 ? 'left' : 'right';
     document.getElementById(`${side}BarHeader`).classList.remove('pulseColor');
+    document.getElementById(`${side}IconImg`).classList.remove('pulseScale');
   }
 
   showText(){
@@ -206,6 +206,7 @@ export class Game {
     this.ball.isGrabbed = true;
     this.ball.moving = false;
     this.ball.scale = [0.18, 0.18, 0.18];
+    this.stopPulsingAnimations();
   }
 
 
@@ -290,6 +291,7 @@ export class Game {
     if(this.currentPlayer.score === 6){
       console.log("Player won");
     }else{
+      console.log("Player scored");
       this.giveAnotherTurn();
     }
   }
@@ -377,5 +379,11 @@ export class Game {
   removeTurnStartEventListener() {
     document.body.removeEventListener('mousemove', this.startTurn.bind(this));
   }
-
+  // TODO cups logic + effects
+  // TODO drunk effects
+  // TODO HP, energy
+  // TODO finish abilities
+  // TODO end game
+  // TODO instructions
+  // TODO sounds
 }

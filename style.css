@@ -364,17 +364,17 @@ body, html {
 
 @keyframes pulseScale {
   0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  50% { transform: scale(1.08); }
   100% { transform: scale(1); }
 }
 @keyframes pulseColor {
   0% {  filter: brightness(1); }
-  50% { filter: brightness(1.5); }
+  50% { filter: brightness(6); }
   100% { filter: brightness(1); }
 }
 @keyframes pulseColorCountdown {
   0% {  filter: brightness(1); }
-  50% { filter: brightness(2.5); }
+  50% { filter: brightness(2); }
   100% { filter: brightness(1); }
 }
 #backToP1, #forwardToP2 {
@@ -427,17 +427,21 @@ body, html {
   border-radius: 5px;
 }
 #leftIconImg {
-  left: 0.5%;
+  left: 0.3%;
 }
 #rightIconImg {
-  right: 0.5%;
+  right: 0.3%;
+}
+
+.pulseScale {
+  animation: pulseScale 1.5s ease-in-out infinite;
 }
 
 .pulseColor {
   animation: pulseColor 1.5s ease-in-out infinite;
 }
 .pulseColorCountdown {
-  animation: pulseColor 1s ease-in-out infinite;
+  animation: pulseColorCountdown 1s ease-in-out infinite;
 }
 .headerBarContainer {
   position: absolute;
@@ -465,12 +469,12 @@ body, html {
 }
 #leftBarHeader {
   width: 80%;
-  background-color: rgba(60, 60, 255, 1);
+  background-color: rgba(20, 20, 240, 1);
   left: -1%;
 }
 #rightBarHeader {
   width: 30%;
-  background-color: rgba(255, 40, 40, 1);
+  background-color: rgba(240, 20, 20, 1);
   right: -1%;
 }
 .abilityContainer {
