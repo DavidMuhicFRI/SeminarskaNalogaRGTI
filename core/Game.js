@@ -47,6 +47,7 @@ export class Game {
       return;
     }
     this.turnCamera();
+    console.log(this.quaternionToEuler(this.camera.getComponentOfType(Transform).rotation))
     this.startPulsingAnimations();
     this.resetBall();
     setTimeout(() => {
@@ -80,7 +81,6 @@ export class Game {
     let eRotation = this.quaternionToEuler(transform.rotation);
     if(this.currentPlayer === this.player2){
       let cameraInterval = setInterval(() => {
-        console.log(eRotation.pitch);
         if(eRotation.pitch < 180){
           transform.translation[2] += (12.6 * 2) / 200;
           eRotation.pitch += 0.9;
@@ -90,7 +90,9 @@ export class Game {
           this.addTurnStartEventListener();
           clearInterval(cameraInterval);
           transform.translation[2] = 12.6;
-          //this.eulerToRotation({ roll: 180, pitch: 180, yaw: 15.035 }, transform);
+          eRotation.yaw = eRotation.yaw < 0 ? -164.965 : 15.035;
+          eRotation.pitch = 180;
+          this.eulerToRotation(eRotation, transform);
         }
       }, 10);
     }else{
@@ -105,7 +107,9 @@ export class Game {
           this.addTurnStartEventListener();
           clearInterval(cameraInterval);
           transform.translation[2] = -12.6;
-          //this.eulerToRotation({ roll: 180, pitch: 0, yaw: 15.035 }, transform);
+          eRotation.yaw = eRotation.yaw < 0 ? -164.665 : 15.335
+          eRotation.pitch = -180;
+          this.eulerToRotation(eRotation, transform);
         }
       }, 10);
     }
@@ -303,13 +307,13 @@ export class Game {
   activateCupEffects(){
     this.canvas.style.filter = `blur(${this.currentPlayer.effectImpact / 2}px)`;
     this.clearCameraShakeInterval();
-    //this.setCameraShakeInterval();
+    this.setCameraShakeInterval();
   }
 
   setCameraShakeInterval(){
     this.cameraShakeInterval = setInterval(() => {
       this.shakeCamera();
-    }, 10);
+    }, 200);
   }
 
   stopCupEffects(){
@@ -321,9 +325,16 @@ export class Game {
     let transform = this.camera.getComponentOfType(Transform);
     let eRotation = this.quaternionToEuler(transform.rotation);
     let minus = Math.random() > 0.5 ? -1 : 1;
-    eRotation.pitch += Math.random() * 0.1 * minus * this.currentPlayer.effectImpact;
-    eRotation.yaw += Math.random() * 0.1 * minus * this.currentPlayer.effectImpact;
-    this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
+    let randomYawRotation = minus * Math.random() * 0.005 * this.currentPlayer.effectImpact;
+    let randomPitchRotation = minus * Math.random() * 0.005 * this.currentPlayer.effectImpact;
+    for (let i = 0; i < 100; i++) {
+      setTimeout(() => {
+        eRotation.yaw += randomYawRotation;
+        eRotation.pitch += randomPitchRotation;
+        this.eulerToRotation(eRotation, transform);
+      }, i * 2);
+    }
+
   }
 
   clearCameraShakeInterval() {
