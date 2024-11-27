@@ -19,8 +19,7 @@ export class Game {
     this.turnStarted = false;
     this.bounceSound = new Audio('ballBounceSound.mp3');
     this.cupHitSound = new Audio('ballCupSound.mp3');
-    // TODO: fix camera rotation: take starting eRotation and add to it
-    this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
+    this.cameraRotation = { roll: -180, pitch: 0, yaw: 15 };
   }
 
   setUp(){
@@ -84,7 +83,7 @@ export class Game {
     let transform = this.camera.getComponentOfType(Transform);
     console.log(this.quaternionToEuler(transform.rotation));
     if(this.currentPlayer === this.player2){
-      this.eulerToRotation({ roll: -180, pitch: 0, yaw: 15.035 }, transform);
+      this.eulerToRotation({ roll: -180, pitch: 0, yaw: 15 }, transform);
       let cameraInterval = setInterval(() => {
         if(this.cameraRotation.pitch < 180){
           transform.translation[2] += (12.6 * 2) / 200;
@@ -98,7 +97,7 @@ export class Game {
         }
       }, 10);
     }else{
-      this.eulerToRotation({ roll: -180, pitch: 180, yaw: 15.035 }, transform);
+      this.eulerToRotation({ roll: -180, pitch: 180, yaw: 15 }, transform);
       let cameraInterval = setInterval(() => {
         if(this.cameraRotation.pitch > 0){
           transform.translation[2] -= (12.6 * 2) / 200;

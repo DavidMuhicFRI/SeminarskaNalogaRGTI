@@ -10,7 +10,7 @@ export class Ball {
     this.maxSpeed = 50;
     this.deceleration = 0.995;
     this.bounces = 0;
-    this.bounciness = 0.95;
+    this.bounciness = 0.85;
     this.gravity = 9.81;
     this.radius = 0.18;
     this.startPosition = null;
