@@ -182,18 +182,21 @@ export class Game {
     }
     this.ball.transform.scale = [0.18, 0.18, 0.18];
     this.ball.setBlinkingInterval();
+    document.getElementById("powerContainer").style.display = "none";
   }
   throwBall(){
     this.ball.startPosition = this.currentPlayer === this.player1 ? [0, 7.5, -7.1] : [0, 7.5, 7.1];
     this.ball.setStartVelocity();
     this.ball.moving = true;
     this.ball.isGrabbed = false;
+    document.getElementById("powerContainer").style.display = "none";
   }
   grabBall(){
     this.ball.isGrabbed = true;
     this.ball.moving = false;
     this.ball.scale = [0.18, 0.18, 0.18];
     this.stopPulsingAnimations();
+    document.getElementById("powerContainer").style.display = "block";
   }
   stopBall(){
     this.resetBall();

@@ -565,7 +565,7 @@ body, html {
   position: absolute;
   right: 0;
   height: 100%;
-  width: 70%;
+  width: 100%;
   background: black;
   z-index: 3;
 }
