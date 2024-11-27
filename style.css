@@ -17,37 +17,21 @@ body, html {
   width: 100vw;
   height: 100vh;
 }
-#introCharacters{
+#introText{
+  visibility: hidden;
   position: absolute;
-  height: 12vh;
-  width: 17vw;
-  top: 50vh;
-  left: 41vw;
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
-  user-select: none;
-}
-.introText{
-  position: absolute;
-  opacity: 0;
-  color: white;
+  height: 5%;
+  width: 50%;
+  text-align: center;
+  top: 75vh;
+  left: 25vw;
+  font-size: 3vh;
   font-weight: bolder;
-  transition: opacity 0.5s ease-in-out;
   user-select: none;
-}
-#name1{
-  height: 5vh;
-  width: 20vw;
-  top: 44vh;
-  left: 43.4vw;
-  font-size: 1.5vh;
-}
-#name2{
-  height: 5vh;
-  width: 20vw;
-  top: 44vh;
-  left: 53.4vw;
-  font-size: 1.5vh;
+  color: rgba(230, 30, 30, 0.9);
+  animation: pulseScale 1s ease-in-out infinite;
+  opacity: 0;
+  transition: opacity 3s ease-in-out;
 }
 #introLogo{
   position: absolute;

@@ -13,7 +13,6 @@ import {FirstPersonController} from "./controllers/FirstPersonController.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
-let skipIntro = false;
 let pageStatus = "intro";
 const intro = document.getElementById('intro');
 
@@ -23,7 +22,6 @@ intro.addEventListener("click", async() => {
   $("#intro").hide();
   showElement("characterPage");
   showElement("introCanvas");
-  skipIntro = true;
 });
 
 //sets the visibility of an element to hidden
@@ -39,25 +37,15 @@ function elementDisappear(element){
   document.getElementById(element).style.opacity = '0';
 }
 
-setTimeout(function () {
-  // First appearance of the logo
-  elementAppear("introLogo");
-
-  // After 400ms, make the logo disappear
-  setTimeout(function () {
-    elementDisappear("introLogo");
-
-    setTimeout(async function () {
-      if (!skipIntro) {
-        await initCharacterPage();
-        $("#intro").hide();
-        showElement("characterPage");
-        showElement("introCanvas");
-        pageStatus = "main";
-      }
-    }, 2200);
-  }, 3500);
-}, 0);
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    elementAppear("introLogo");
+    setTimeout(() => {
+      showElement("introText");
+      elementAppear("introText");
+    }, 4500);
+  }, 0);
+});
 
 /////////////////////////////////////////////////////////////////////////////CHARACTER PAGE/////////////////////////////////////////////////////////////
 
@@ -101,6 +89,14 @@ let charNextButtonBlue = document.getElementById("CPLeftNextCharacter");
 let charPreviousButtonBlue = document.getElementById("CPLeftPreviousCharacter");
 let charNextButtonRed = document.getElementById("CPRightNextCharacter");
 let charPreviousButtonRed = document.getElementById("CPRightPreviousCharacter");
+
+const introSound = new Audio("introBackground.mp3");
+introSound.loop = true;
+introSound.volume = 0.4;
+introSound.playbackRate = 0.8;
+const gameSound = new Audio('gameBackground.mp3');
+gameSound.loop = true;
+gameSound.volume = 0.2;
 
 
 //functions for the character page
@@ -370,6 +366,10 @@ charPreviousButtonRed.addEventListener('click', function() {
 
 //init the systems
 async function initCharacterPage() {
+  gameSound.pause();
+  gameSound.currentTime = 0;
+  introSound.currentTime = 0;
+  await introSound.play();
   pageStatus = "main";
   canvas.id = "introCanvas";
   let container;
@@ -396,6 +396,7 @@ async function initCharacterPage() {
   }
   constantRotation = setInterval(constantlyRotate, 5);
 }
+
 
 /////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
 
@@ -441,6 +442,11 @@ canvas.addEventListener("mouseup", () => {
 
 //game functions
 async function initGame(){
+  introSound.pause();
+  introSound.currentTime = 0;
+  gameSound.currentTime = 0;
+  await gameSound.play();
+
   pageStatus = "game";
   rotate = false;
   canvas.id = "gameCanvas";

@@ -17,6 +17,8 @@ export class Game {
     this.remainingTime = this.turnTime;
     this.timerInterval = null;
     this.turnStarted = false;
+    this.bounceSound = new Audio('ballBounceSound.mp3');
+    this.cupHitSound = new Audio('ballCupSound.mp3');
     // TODO: fix camera rotation: take starting eRotation and add to it
     this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
   }
@@ -290,6 +292,7 @@ export class Game {
   }
 
   handleCupHit(cup){
+    this.cupHitSound.play().then(r => console.log(r));
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
     this.currentPlayer.score++;
     this.otherPlayer().effectImpact += 1;
@@ -319,6 +322,7 @@ export class Game {
   }
   handleBounce(){
     this.ball.bounces++;
+    this.bounceSound.play().then(r => console.log(r));
     //TODO: add bouncing sound and display bounce count, add spring energy (and others)
   }
 
@@ -418,7 +422,6 @@ export class Game {
   removeTurnStartEventListener() {
     document.body.removeEventListener('mousemove', this.startTurn.bind(this));
   }
-  // TODO drunk effects
   // TODO HP, energy
   // TODO finish abilities
   // TODO end game
