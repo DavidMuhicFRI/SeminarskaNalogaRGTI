@@ -190,11 +190,12 @@ export class Game {
     this.ball.moving = true;
     this.ball.isGrabbed = false;
     document.getElementById("powerContainer").style.display = "none";
+    this.canvas.style.cursor = "default";
   }
   grabBall(){
     this.ball.isGrabbed = true;
     this.ball.moving = false;
-    this.ball.scale = [0.18, 0.18, 0.18];
+    this.ball.transform.scale = [0.18, 0.18, 0.18];
     this.stopPulsingAnimations();
     document.getElementById("powerContainer").style.display = "block";
   }

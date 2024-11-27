@@ -434,7 +434,6 @@ canvas.addEventListener("mouseup", () => {
       game.resetBall();
     }else{
       game.throwBall();
-      canvas.style.cursor = "default";
     }
   }
   document.exitPointerLock();
