@@ -423,14 +423,14 @@ canvas.addEventListener("mousemove", (event) => {
     rotatePlayer(rotatingCharacter, event.movementX * 0.01); // Rotate player based on mouse movement
   }else if(pageStatus === "game" && ball.isGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
-    dragBall(event);
+    game.dragBall(event, dragStart, dragEnd);
   }else if (pageStatus === "game" && spacePressed && game.currentPlayer.character.stats.name === "CURVE" && !ball.isGrabbed && ball.moving) {
     game.activateCurveAbility(event);
   }
 });
 canvas.addEventListener("mouseup", () => {
   if(pageStatus === "game" && !ball.moving){
-    if(calculateDragDistance() < 85 || calculateDragForce() < 0){
+    if(Math.sqrt(Math.pow(dragEnd[0] - dragStart[0], 2) + Math.pow(dragEnd[1] - dragStart[1], 2)) < 85 || dragEnd[1] - dragStart[1] < 0){
       game.resetBall();
     }else{
       game.throwBall();
@@ -458,31 +458,6 @@ async function initGame(){
   physics.game = game;
   game.setUp();
   setAABBs();
-}
-
-//drag functions
-function calculateDragDistance(){
-  return Math.sqrt(Math.pow(dragEnd[0] - dragStart[0], 2) + Math.pow(dragEnd[1] - dragStart[1], 2));
-}
-function calculateDragForce(){
-  return dragEnd[1] - dragStart[1];
-}
-function dragBall(event){
-  let force = calculateDragForce();
-  let powerBar = document.getElementById("powerBar");
-  console.log(force / 7 + "%");
-  powerBar.style.width = 100 - force / 10 + "%";
-  let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
-  dragToughness = Math.min(dragToughness, 0.01);
-  let ballTranslation = ball.transform.translation;
-  if(game.currentPlayer === game.player1){
-    ballTranslation[2] -= event.movementY * dragToughness;
-    ballTranslation[0] -= event.movementX * 0.01;
-  }else{
-    ballTranslation[2] += event.movementY * dragToughness;
-    ballTranslation[0] += event.movementX * 0.01;
-  }
-  ballTranslation[1] -= 1.5 * event.movementY * dragToughness;
 }
 
 document.addEventListener("keydown", function(event){

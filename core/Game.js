@@ -202,6 +202,23 @@ export class Game {
     this.resetBall();
     this.endTurn();
   }
+  dragBall(event, dragStart, dragEnd){
+    let force = dragEnd[1] - dragStart[1];
+    let powerBar = document.getElementById("powerBar");
+    console.log(force / 7 + "%");
+    powerBar.style.width = 100 - force / 10 + "%";
+    let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
+    dragToughness = Math.min(dragToughness, 0.01);
+    let ballTranslation = this.ball.transform.translation;
+    if(this.currentPlayer === this.player1){
+      ballTranslation[2] -= event.movementY * dragToughness;
+      ballTranslation[0] -= event.movementX * 0.01;
+    }else{
+      ballTranslation[2] += event.movementY * dragToughness;
+      ballTranslation[0] += event.movementX * 0.01;
+    }
+    ballTranslation[1] -= 1.5 * event.movementY * dragToughness;
+  }
 
   otherPlayer(){
     return this.currentPlayer === this.player1 ? this.player2 : this.player1;
