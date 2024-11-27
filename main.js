@@ -469,6 +469,9 @@ function calculateDragForce(){
 }
 function dragBall(event){
   let force = calculateDragForce();
+  let powerBar = document.getElementById("powerBar");
+  console.log(force / 7 + "%");
+  powerBar.style.width = 100 - force / 10 + "%";
   let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
   dragToughness = Math.min(dragToughness, 0.01);
   let ballTranslation = ball.transform.translation;
