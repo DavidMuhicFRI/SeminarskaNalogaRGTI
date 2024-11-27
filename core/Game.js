@@ -17,6 +17,8 @@ export class Game {
     this.remainingTime = this.turnTime;
     this.timerInterval = null;
     this.turnStarted = false;
+    // TODO: fix camera rotation: take starting eRotation and add to it
+    this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
   }
 
   setUp(){
@@ -78,38 +80,33 @@ export class Game {
 
   turnCamera(){
     let transform = this.camera.getComponentOfType(Transform);
-    let eRotation = this.quaternionToEuler(transform.rotation);
+    console.log(this.quaternionToEuler(transform.rotation));
     if(this.currentPlayer === this.player2){
+      this.eulerToRotation({ roll: -180, pitch: 0, yaw: 15.035 }, transform);
       let cameraInterval = setInterval(() => {
-        if(eRotation.pitch < 180){
+        if(this.cameraRotation.pitch < 180){
           transform.translation[2] += (12.6 * 2) / 200;
-          eRotation.pitch += 0.9;
-          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
+          this.cameraRotation.pitch += 0.9;
+          this.eulerToRotation(this.cameraRotation, transform);
         }else{
           this.showText();
           this.addTurnStartEventListener();
           clearInterval(cameraInterval);
           transform.translation[2] = 12.6;
-          eRotation.yaw = eRotation.yaw < 0 ? -164.965 : 15.035;
-          eRotation.pitch = 180;
-          this.eulerToRotation(eRotation, transform);
         }
       }, 10);
     }else{
-      eRotation.pitch = 0;
+      this.eulerToRotation({ roll: -180, pitch: 180, yaw: 15.035 }, transform);
       let cameraInterval = setInterval(() => {
-        if(eRotation.pitch > -180){
+        if(this.cameraRotation.pitch > 0){
           transform.translation[2] -= (12.6 * 2) / 200;
-          eRotation.pitch -= 0.9;
-          this.eulerToRotation({ roll: eRotation.roll, pitch: eRotation.pitch, yaw: eRotation.yaw }, transform);
+          this.cameraRotation.pitch -= 0.9;
+          this.eulerToRotation(this.cameraRotation, transform);
         }else{
           this.showText();
           this.addTurnStartEventListener();
           clearInterval(cameraInterval);
           transform.translation[2] = -12.6;
-          eRotation.yaw = eRotation.yaw < 0 ? -164.665 : 15.335
-          eRotation.pitch = -180;
-          this.eulerToRotation(eRotation, transform);
         }
       }, 10);
     }
