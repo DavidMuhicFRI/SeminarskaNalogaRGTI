@@ -203,7 +203,7 @@ export class Game {
   dragBall(dragDistance, event){
     let powerBar = document.getElementById("powerBar");
     powerBar.style.width = 100 - dragDistance / 30 + "%";
-    let dragToughness = 0.5 / Math.pow(Math.abs(dragDistance + 1), 1.04);
+    let dragToughness = 0.7 / Math.pow(Math.abs(dragDistance + 1), 1.1);
     dragToughness = Math.min(dragToughness, 0.001);
     let ballTranslation = this.ball.transform.translation;
     if(dragDistance > 3000){
