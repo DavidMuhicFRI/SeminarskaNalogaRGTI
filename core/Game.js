@@ -9,6 +9,7 @@ export class Game {
     this.ball = ball;
     this.camera = camera;
     this.canvas = canvas;
+    this.gravity = 1;
 
     this.cameraShakeInterval = null;
 
@@ -191,7 +192,7 @@ export class Game {
   }
   throwBall(){
     this.ball.startPosition = this.currentPlayer === this.player1 ? [0, 7.5, -7.1] : [0, 7.5, 7.1];
-    this.ball.setStartVelocity();
+    this.ball.setStartVelocity(this.gravity);
     this.ball.moving = true;
     this.ball.isGrabbed = false;
     document.getElementById("powerContainer").style.display = "none";
