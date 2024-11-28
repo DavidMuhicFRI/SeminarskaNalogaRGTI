@@ -238,7 +238,7 @@ export class Game {
   }
 
   activateAbility(){
-    if(this.currentPlayer.energy > this.currentPlayer.character.stats.minCastEnergy){
+    if(this.currentPlayer.energy >= this.currentPlayer.character.stats.minCastEnergy){
       switch(this.currentPlayer.character.stats.name){
         case 'TRIPP':
           this.activateTrippAbility();
