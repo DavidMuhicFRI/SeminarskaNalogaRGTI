@@ -18,7 +18,8 @@ export class Game {
     this.timerInterval = null;
     this.turnStarted = false;
     this.bounceSound = new Audio('ballBounceSound.mp3');
-    this.cupHitSound = new Audio('cupHitSound.mp3');
+    this.cheerSound = new Audio('applause.mp3');
+    this.cheerSound.volume = 0.5;
     // TODO: fix camera rotation: take starting eRotation and add to it
     this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
   }
@@ -44,6 +45,7 @@ export class Game {
 
   changePlayerTurn(){
     this.stopPulsingAnimations();
+    this.currentPlayer.gainEnergy(this.currentPlayer.character.stats.energyGain);
     this.currentPlayer = this.currentPlayer === this.player1 ? this.player2 : this.player1;
     if(this.currentPlayer.rest){
       this.currentPlayer.rest = false;
@@ -288,7 +290,8 @@ export class Game {
   }
 
   handleCupHit(cup){
-    this.cupHitSound.play().then(function(){});
+    this.currentPlayer.gainEnergy(10);
+    this.cheerSound.play().then(r => console.log(r));
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
     this.currentPlayer.score++;
     this.otherPlayer().effectImpact += 1;
@@ -303,12 +306,12 @@ export class Game {
   }
 
 
-  handleObjectHit(){
+  handlePlayerHit(){
     let otherPlayer = this.otherPlayer();
     let damage = this.getBallSpeed() * this.currentPlayer.character.stats.strength;
-    otherPlayer.currentHP -= damage;
+    otherPlayer.loseHP(damage);
     if(this.currentPlayer.character.stats.name === 'NERO'){
-      this.currentPlayer.currentHP += damage / 2;
+      this.currentPlayer.gainHP(damage / 2);
     }
     if(otherPlayer.currentHP <= 0){
       otherPlayer.currentHP = this.otherPlayer().character.stats.health / 2;

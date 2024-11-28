@@ -16,11 +16,30 @@ export class Player {
     const abilityBar = this.side === 1 ? document.getElementById('abilityBarLeft') : document.getElementById('abilityBarRight');
     abilityBar.style.width = `${this.energy}%`;
   }
-
-  gainEnergy(){
+  gainEnergy(amount){
     this.energy += this.character.stats.energyGain;
     if(this.energy > 100) this.energy = 100;
     this.setEnergy();
+  }
+  loseEnergy(amount){
+    this.energy -= amount;
+    if(this.energy < 0) this.energy = 0;
+    this.setEnergy();
+  }
+
+  setHP() {
+    const HPBar = this.side === 1 ? document.getElementById('leftBarHeader') : document.getElementById('rightBarHeader');
+    HPBar.style.width = `${this.currentHP}%`;
+  }
+  gainHP(amount){
+    this.currentHP += amount
+    if(this.currentHP > 100) this.currentHP = 100;
+    this.setHP();
+  }
+  loseHP(amount){
+    this.currentHP -= amount
+    if(this.currentHP < 0) this.currentHP = 0;
+    this.setHP();
   }
 
   setStats(){

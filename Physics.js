@@ -109,7 +109,7 @@ export class Physics {
             this.cupBounce(minDirection, ball, b, bBox, aBox);
             break;
           case "object":
-            this.objectBounce(minDirection, ball);
+            this.playerBounce(minDirection, ball);
             break;
           default:
             this.normalBounce(minDirection, ball);
@@ -142,9 +142,8 @@ export class Physics {
       }
     }
 
-
-    objectBounce(){
-      this.game.handleObjectHit();
+    playerBounce(){
+      this.game.handlePlayerHit();
     }
 
     normalBounce(minDirection, ball){

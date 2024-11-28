@@ -489,7 +489,7 @@ body, html {
   height: 90%;
   border-radius: 3px;
   border: 0.6vh solid black;
-  transition: width 0.5s ease;
+  transition: width 2s ease;
   z-index: 3;
 }
 #abilityBarLeft {
