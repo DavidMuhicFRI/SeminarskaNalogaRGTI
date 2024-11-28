@@ -84,7 +84,7 @@ export class Character {
           defense: 4,
           playstyle: 'MANIPULATOR',
           plusPassive: 'Can set the bounciness of the ball',
-          minusPassive: 'Gets less energy per turn but additional per ball bounce',
+          minusPassive: 'Gets less energy per turn but additional energy and HP per bounce',
           abilityText: '(BULLET) Throws an extra bouncy ball that speeds up with each bounce',
           funFact: 'Fun-fact: can dunk on LeBron',
           health: 70,

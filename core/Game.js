@@ -350,7 +350,8 @@ export class Game {
     this.ball.bounces++;
     this.bounceSound.play().then(function(){});
     if(this.currentPlayer.character.stats.name === 'SPRING'){
-      this.currentPlayer.gainEnergy(5);
+      this.currentPlayer.gainEnergy(3);
+      this.currentPlayer.gainHP(1);
     }
     if(this.ball.effect === 'atlasEffect'){
       this.ball.effect = null;
