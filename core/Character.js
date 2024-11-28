@@ -37,7 +37,7 @@ export class Character {
           defense: 4,
           playstyle: 'MANIPULATOR',
           plusPassive: 'Can set room\'s gravity',
-          minusPassive: 'Changing gravity drains energy',
+          minusPassive: 'Can\'t throw straight',
           abilityText: '(THE FORCE) can curve his throw by pressing "SPACE" and dragging the mouse horizontally',
           funFact: 'Fun-fact: likes to cosplay as batman',
           health: 80,
