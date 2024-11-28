@@ -408,7 +408,7 @@ canvas.addEventListener("mousemove", (event) => {
     rotatePlayer(rotatingCharacter, event.movementX * 0.01); // Rotate player based on mouse movement
   }else if(pageStatus === "game" && ball.isGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
-    game.dragBall(event, dragStart, dragEnd);
+    game.dragBall(dragEnd[1] - dragStart[1], event);
   }else if (pageStatus === "game" && spacePressed && game.currentPlayer.character.stats.name === "CURVE" && !ball.isGrabbed && ball.moving) {
     game.activateCurveAbility(event);
   }
