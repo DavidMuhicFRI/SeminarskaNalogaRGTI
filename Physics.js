@@ -136,10 +136,10 @@ export class Physics {
       }else{
         if(minDirection[1] !== 0){
           this.edgeBounce(minDirection, ball, ballTransform, cupBox, ballBox, cupWidth, distance);
+          ball.transform.translation = vec3.add(vec3.create(), ballTransform, minDirection);
         }else{
           this.normalBounce(minDirection, ball);
         }
-        vec3.add(vec3.create(), ballTransform, minDirection);
       }
     }
 
