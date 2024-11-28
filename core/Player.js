@@ -14,15 +14,7 @@ export class Player {
 
   setEnergy(){
     const abilityBar = this.side === 1 ? document.getElementById('abilityBarLeft') : document.getElementById('abilityBarRight');
-    const abilityContainer = this.side === 1 ? document.getElementById('abilityContainerLeft') : document.getElementById('abilityContainerRight');
     abilityBar.style.width = `${this.energy}%`;
-    if(this.energy === 100) {
-      abilityContainer.style.borderColor = 'yellow';
-      abilityContainer.classList.add('pulseBorder');
-    } else {
-      if(abilityContainer.classList.contains('pulseBorder')) abilityContainer.classList.remove('pulseBorder');
-      abilityContainer.style.borderColor = 'black';
-    }
   }
   gainEnergy(amount){
     this.energy += amount;

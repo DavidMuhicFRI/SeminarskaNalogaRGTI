@@ -361,11 +361,6 @@ body, html {
   50% { filter: brightness(2); }
   100% { filter: brightness(1); }
 }
-@keyframes pulseBorder {
-  0% { border-color: yellow; }
-  50% { border-color: black; }
-  100% { border-color: yellow; }
-}
 
 #backToP1, #forwardToP2 {
   width: 7vw;
@@ -436,10 +431,6 @@ body, html {
 .pulseColorCountdown {
   animation: pulseColorCountdown 1s ease-in-out infinite;
 }
-.pulseBorder {
-  animation: pulseBorder 1.5s ease-in-out infinite;
-}
-
 
 .headerBarContainer.loseHP {
   box-shadow: 0 0 15px 12px rgba(255, 0, 0, 1);
@@ -512,11 +503,11 @@ body, html {
 }
 #abilityBarLeft {
   background: linear-gradient(to right, blue, rgba(200, 200, 255, 1)) no-repeat;
-  left: 0;
+  left: -1%;
 }
 #abilityBarRight {
   background: linear-gradient(to left, red, rgba(255, 200, 200, 1)) no-repeat;
-  right: 0;
+  right: -1%;
 }
 #countdown {
   display: flex;

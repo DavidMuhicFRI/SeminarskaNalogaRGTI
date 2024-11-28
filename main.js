@@ -27,8 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("introLogo").style.opacity = '1';
     setTimeout(() => {
       document.getElementById("introText").style.visibility = "visible";
-      document.getElementById("introLogo").style.opacity = '1';
-    }, 4500);
+      document.getElementById("introText").style.opacity = '1';
+    }, 3500);
   }, 0);
 });
 
@@ -81,7 +81,7 @@ introSound.loop = true;
 introSound.volume = 0.4;
 const gameSound = new Audio('gameBackground.mp3');
 gameSound.loop = true;
-gameSound.volume = 0.2;
+gameSound.volume = 0.1;
 
 
 //functions for the character page

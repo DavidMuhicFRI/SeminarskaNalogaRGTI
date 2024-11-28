@@ -18,7 +18,7 @@ export class Game {
     this.timerInterval = null;
     this.turnStarted = false;
     this.bounceSound = new Audio('ballBounceSound.mp3');
-    this.cheerSound = new Audio('applause.mp3');
+    this.cheerSound = new Audio('cupHitSound.mp3');
     this.cheerSound.volume = 0.5;
     this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
   }
@@ -419,7 +419,6 @@ export class Game {
   removeTurnStartEventListener() {
     document.body.removeEventListener('mousemove', this.startTurn.bind(this));
   }
-  // TODO HP, energy
   // TODO finish abilities
   // TODO end game
   // TODO instructions
