@@ -238,7 +238,7 @@ export class Game {
   }
 
   activateAbility(){
-    if(this.currentPlayer.energy > 0){
+    if(this.currentPlayer.energy > this.currentPlayer.character.stats.minCastEnergy){
       switch(this.currentPlayer.character.stats.name){
         case 'TRIPP':
           this.activateTrippAbility();
@@ -262,6 +262,8 @@ export class Game {
     let effects = this.currentPlayer.effectImpact;
     this.currentPlayer.effectImpact = this.otherPlayer().effectImpact;
     this.otherPlayer().effectImpact = effects;
+    this.stopCupEffects();
+    this.activateCupEffects();
   }
   activateAtlasAbility(){
     this.currentPlayer.loseEnergy(100);
@@ -284,8 +286,8 @@ export class Game {
   activateNeroAbility(){
     let amount = 1;
     this.currentPlayer.loseEnergy(amount);
-    this.currentPlayer.effectImpact *= 0.95;
-    this.currentPlayer.gainHP(amount / 2);
+    this.currentPlayer.effectImpact *= 0.98;
+    this.currentPlayer.gainHP(amount / 4);
   }
   activateSpringAbility(){
     this.currentPlayer.loseEnergy(100);
@@ -304,6 +306,7 @@ export class Game {
     this.otherPlayer().effectImpact += 1;
     if(this.currentPlayer.score === 6){
       console.log("Player won");
+      this.gameOver();
     }else{
       this.giveAnotherTurn();
     }
@@ -312,20 +315,28 @@ export class Game {
   handlePlayerHit(){
     let otherPlayer = this.otherPlayer();
     let damage = this.getBallSpeed() * this.currentPlayer.character.stats.strength;
-    console.log("damage =" + damage);
+    if(this.ball.effect === 'atlasEffect'){
+      damage *= 1.5;
+      this.otherPlayer().rest = true;
+    }
     otherPlayer.loseHP(damage);
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.currentPlayer.gainHP(damage / 2);
     }
     if(otherPlayer.currentHP <= 0){
-      otherPlayer.currentHP = this.otherPlayer().character.stats.health / 2;
-      otherPlayer.rest = true;
+      this.gameOver();
     }
     this.endTurn();
   }
   handleBounce(){
     this.ball.bounces++;
     this.bounceSound.play().then(function(){});
+    if(this.currentPlayer.character.stats.name === 'SPRING'){
+      this.currentPlayer.gainEnergy(5);
+    }
+    if(this.ball.effect === 'atlasEffect'){
+      this.ball.effect = null;
+    }
     //TODO display bounce count, add spring energy (and others)
   }
 
