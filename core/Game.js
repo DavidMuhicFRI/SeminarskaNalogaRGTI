@@ -300,10 +300,15 @@ export class Game {
     this.cheerSound.play().then(r => console.log(r));
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.otherPlayer().loseEnergy(6);
+    }else if(this.otherPlayer().character.stats.name === 'TRIPP'){
+      this.otherPlayer().gainHP(5);
+      this.otherPlayer().effectImpact += 0.5;
+    }else if(this.currentPlayer.character.stats.name === 'TRIPP') {
+      this.otherPlayer().loseHP(5);
     }
+    this.otherPlayer().effectImpact += 1;
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
     this.currentPlayer.score++;
-    this.otherPlayer().effectImpact += 1;
     if(this.currentPlayer.score === 6){
       console.log("Player won");
       this.gameOver();
@@ -322,6 +327,8 @@ export class Game {
     otherPlayer.loseHP(damage);
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.currentPlayer.gainHP(damage / 2);
+    }else if(this.otherPlayer().character.stats.name === 'NERO'){
+      this.otherPlayer().loseHP(damage * 1.5);
     }
     if(otherPlayer.currentHP <= 0){
       this.gameOver();
