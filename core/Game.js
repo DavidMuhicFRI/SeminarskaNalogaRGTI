@@ -11,6 +11,7 @@ export class Game {
     this.canvas = canvas;
 
     this.cameraShakeInterval = null;
+    this.ready = false;
 
     this.turnTime = this.currentPlayer.turnTime;
     this.remainingTime = this.turnTime;
@@ -19,7 +20,6 @@ export class Game {
     this.bounceSound = new Audio('ballBounceSound.mp3');
     this.cheerSound = new Audio('applause.mp3');
     this.cheerSound.volume = 0.5;
-    // TODO: fix camera rotation: take starting eRotation and add to it
     this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
   }
 
@@ -35,10 +35,12 @@ export class Game {
     this.startPulsingAnimations();
     this.addTurnStartEventListener();
     this.resetBall();
+    this.ready = true;
   }
 
-  changePlayerTurn(){
+  async changePlayerTurn(){
     this.stopPulsingAnimations();
+    this.ready = false;
     this.currentPlayer.gainEnergy(this.currentPlayer.character.stats.energyGainTurn);
     this.currentPlayer = this.currentPlayer === this.player1 ? this.player2 : this.player1;
     if(this.currentPlayer.rest){
@@ -46,9 +48,10 @@ export class Game {
       this.endTurn();
       return;
     }
-    this.turnCamera();
+    await this.turnCamera();
     this.startPulsingAnimations();
     this.resetBall();
+    this.ready = true;
     setTimeout(() => {
       this.startTurn();
     }, 4000);
@@ -76,7 +79,7 @@ export class Game {
     this.startTurn();
   }
 
-  turnCamera(){
+  async turnCamera(){
     let transform = this.camera.getComponentOfType(Transform);
     if(this.currentPlayer === this.player2){
       this.eulerToRotation({ roll: -180, pitch: 0, yaw: 15 }, transform);
@@ -378,24 +381,6 @@ export class Game {
 
   getBallSpeed(){
     return Math.sqrt(this.ball.velocity[0] ** 2 + this.ball.velocity[1] ** 2 + this.ball.velocity[2] ** 2) / 2;
-  }
-  quaternionToEuler(q) {
-    let w = q[0];
-    let x = q[1];
-    let y = q[2];
-    let z = q[3];
-    // Compute Euler angles in radians
-    const roll = Math.atan2(2 * (w * x + y * z), 1 - 2 * (x * x + y * y)); // X-axis rotation
-    const pitch = Math.asin(2 * (w * y - z * x)); // Y-axis rotation
-    const yaw = Math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)); // Z-axis rotation
-
-    // Convert radians to degrees
-    const radToDeg = 180 / Math.PI;
-    return {
-      roll: roll * radToDeg,
-      pitch: pitch * radToDeg,
-      yaw: yaw * radToDeg,
-    };
   }
   eulerToQuaternion(euler) {
     const { roll, pitch, yaw } = euler;

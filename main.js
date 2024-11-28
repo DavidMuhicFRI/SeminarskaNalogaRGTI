@@ -9,40 +9,25 @@ import {
 import { Physics } from './Physics.js';
 import { Renderer } from "./renderers/Renderer.js";
 import { Light } from "./core/Light.js";
-import {FirstPersonController} from "./controllers/FirstPersonController.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
 let pageStatus = "intro";
-const intro = document.getElementById('intro');
 
-intro.addEventListener("click", async() => {
+document.getElementById('intro').addEventListener("click", async() => {
   await initCharacterPage();
   pageStatus = "main";
   $("#intro").hide();
-  showElement("characterPage");
-  showElement("introCanvas");
+  document.getElementById("characterPage").style.visibility = "visible";
+  document.getElementById("introCanvas").style.visibility = "visible";
 });
-
-//sets the visibility of an element to hidden
-function showElement(element){
-  document.getElementById(element).style.visibility = "visible";
-}
-//sets the opacity of an element to 1
-function elementAppear(element){
-  document.getElementById(element).style.opacity = '1';
-}
-//sets the opacity of an element to 0
-function elementDisappear(element){
-  document.getElementById(element).style.opacity = '0';
-}
 
 document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
-    elementAppear("introLogo");
+    document.getElementById("introLogo").style.opacity = '1';
     setTimeout(() => {
-      showElement("introText");
-      elementAppear("introText");
+      document.getElementById("introText").style.visibility = "visible";
+      document.getElementById("introLogo").style.opacity = '1';
     }, 4500);
   }, 0);
 });
@@ -65,13 +50,14 @@ let light;
 let game;
 let player1 = new Player(1);
 let player2 = new Player(2);
-let characterObjects = []; //array of character objects
-let rotatingCharacter; //the player object for character page purposes
+let characterObjects = []; //array of character objects for the character page
+let characterNames = ["Atlas", "Curve", "Nero", "Spring", "Tripp"]; //names of the characters
+let rotatingCharacter; //the rotating character object
 let constantRotation; //interval for the rotation
-let rotate = false; //if we are  rotating the model
+let characterGrabbed = false; //if we are  rotating the model
 let pageOrientation = "left"; //set to left if canvas is in canvasContainerLeft, right if in canvasContainerRight
 let characterSelected = [] //character selected by each player
-let interacted = false;
+let interacted = false; //if second player's character has been selected
 
 //DOMs for the character page
 let leftPage = document.getElementById("CPLeft");
@@ -101,6 +87,7 @@ gameSound.volume = 0.2;
 //functions for the character page
 function movePage() {
   if(!interacted){
+    //if the second player has not interacted, assign the first free character to them
     for(let i = 0; i < characterObjects.length; i++){
       if(characterSelected[0] !== characterObjects[i]){
         characterSelected[1] = characterObjects[i];
@@ -112,6 +99,7 @@ function movePage() {
   let page;
   let left;
   let right;
+  //move the page to the other side
   if(pageOrientation === "left"){
     page = leftPage;
     left = "-100vw";
@@ -123,8 +111,8 @@ function movePage() {
     right = "100vw";
     pageOrientation = "left";
   }
-  document.getElementById('CPLeft').style.left = left;
-  document.getElementById('CPRight').style.left = right;
+  leftPage.style.left = left;
+  rightPage.style.left = right;
   const checkPositionInterval = setInterval(() => {
     const pageRect = page.getBoundingClientRect();
     const pageMiddle = pageRect.left + pageRect.width / 2;
@@ -161,7 +149,7 @@ function turnButtonToReady(button){
 
 //rotation functions
 function constantlyRotate(){
-  if(pageStatus === "main" && !rotate){
+  if(pageStatus === "main" && !characterGrabbed){
     rotatePlayer(rotatingCharacter, 0.002);
   }
 }
@@ -189,10 +177,9 @@ function rotatePlayer(rotatingCharacter, angle){
   rotatingCharacter.transform.rotation = multiplyQuaternions(rotatingCharacter.transform.rotation, rotationQuat);
 }
 
-//character loading and character functions
+//character loading
 async function loadCharacters(){
   characterObjects = [];
-  let characterNames = ["Atlas", "Curve", "Nero", "Spring", "Tripp"];
   characterNames.forEach((name, index) => {
     characterObjects[index] = new Character(findObject(name + "Object"), name);
     characterObjects[index].applyScale();
@@ -222,17 +209,16 @@ async function loadCharacters(){
 function displayCharacters(){
   let side = pageOrientation === "left" ? 0 : 1;
   for(let i = 0; i < characterObjects.length; i++){
-    let transform = characterObjects[i].node.getComponentOfType(Transform);
     if(characterObjects[i].stats.name === characterSelected[side].stats.name){
-      transform.translation = [0, 0, 0];
+      characterObjects[i].transform.translation = [0, 0, 0];
       rotatingCharacter = characterObjects[i];
     }else{
-      transform.translation = [30, 0, 0];
+      characterObjects[i].transform.translation = [30, 0, 0];
     }
   }
 }
 
-//assigns next or previous character to the selected character
+//assigns next or previous character to the selected player
 function assignCharacter(direction){
   let side = pageOrientation === "left" ? 0 : 1;
   let otherSide = side === 0 ? 1 : 0;
@@ -255,6 +241,7 @@ function assignCharacter(direction){
   displayCharacters();
 }
 
+//change the stats of the displayed character
 function changeStats(side){
   if(side === 'left' || side === 'both'){
     document.getElementById("characterNameLeft").innerText = characterSelected[0].stats.name;
@@ -291,7 +278,7 @@ async function startGame(){
   loadingScreen();
   await initGame();
   $("#characterPage").hide();
-  showElement("game");
+  document.getElementById("game").style.visibility = "visible";
   $("#game").show(); //for 2nd and later showings
 }
 //exit game
@@ -364,7 +351,7 @@ charPreviousButtonRed.addEventListener('click', function() {
 });
 
 
-//init the systems
+//init for the character page
 async function initCharacterPage() {
   gameSound.pause();
   gameSound.currentTime = 0;
@@ -408,19 +395,19 @@ let dragEnd = [];
 
 //event listeners for the game
 document.addEventListener("pointerlockchange", () => {
-  rotate = document.pointerLockElement === canvas;
+  characterGrabbed = document.pointerLockElement === canvas;
 });
 canvas.addEventListener("mousedown", () => {
   if (pageStatus === "main") {
     canvas.requestPointerLock();
-  }else if(pageStatus === "game" && !ball.moving){
+  }else if(pageStatus === "game" && !ball.moving && game.ready){
+    canvas.requestPointerLock();
     dragEnd = dragStart;
     game.grabBall();
-    canvas.requestPointerLock();
   }
 });
 canvas.addEventListener("mousemove", (event) => {
-  if (rotate && pageStatus === "main") {
+  if (characterGrabbed && pageStatus === "main") {
     rotatePlayer(rotatingCharacter, event.movementX * 0.01); // Rotate player based on mouse movement
   }else if(pageStatus === "game" && ball.isGrabbed){
     dragEnd = [dragEnd[0] + event.movementX, dragEnd[1] + event.movementY];
@@ -430,7 +417,7 @@ canvas.addEventListener("mousemove", (event) => {
   }
 });
 canvas.addEventListener("mouseup", () => {
-  if(pageStatus === "game" && !ball.moving){
+  if(pageStatus === "game" && !ball.moving && ball.isGrabbed){
     if(Math.sqrt(Math.pow(dragEnd[0] - dragStart[0], 2) + Math.pow(dragEnd[1] - dragStart[1], 2)) < 85 || dragEnd[1] - dragStart[1] < 0){
       game.resetBall();
     }else{
@@ -448,7 +435,7 @@ async function initGame(){
   await gameSound.play();
 
   pageStatus = "game";
-  rotate = false;
+  characterGrabbed = false;
   canvas.id = "gameCanvas";
   document.getElementById("game").appendChild(canvas);
   clearInterval(constantRotation);
@@ -784,13 +771,6 @@ function setAABBs(){
         node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
     });
 }
-
-//TODO:
-// streljanje nasprotnika
-// power meter in adjustments metanju
-// drinking the cups and getting effects
-// instructions
-// sound effects
 
 
 
