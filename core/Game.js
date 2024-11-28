@@ -84,7 +84,7 @@ export class Game {
     let transform = this.camera.getComponentOfType(Transform);
     console.log(this.quaternionToEuler(transform.rotation));
     if(this.currentPlayer === this.player2){
-      this.eulerToRotation({ roll: -180, pitch: 0, yaw: 15.035 }, transform);
+      this.eulerToRotation({ roll: -180, pitch: 0, yaw: 15 }, transform);
       let cameraInterval = setInterval(() => {
         if(this.cameraRotation.pitch < 180){
           transform.translation[2] += (12.6 * 2) / 200;
@@ -98,7 +98,7 @@ export class Game {
         }
       }, 10);
     }else{
-      this.eulerToRotation({ roll: -180, pitch: 180, yaw: 15.035 }, transform);
+      this.eulerToRotation({ roll: -180, pitch: 180, yaw: 15 }, transform);
       let cameraInterval = setInterval(() => {
         if(this.cameraRotation.pitch > 0){
           transform.translation[2] -= (12.6 * 2) / 200;
