@@ -1,5 +1,6 @@
 import { Transform } from "./Transform.js";
 import { vec3 } from "../glm.js";
+import {Player} from "./Player";
 
 export class Ball {
   constructor(node) {
@@ -38,12 +39,15 @@ export class Ball {
     this.blinking = setInterval(() => this.blink(), 20);
   }
 
-  setStartVelocity(){
+  setStartVelocity(deformation){
+    if(!deformation){
+      deformation = 0;
+    }
     this.velocity = [0, 0, 0];
     let diffX = this.transform.translation[0] - this.startPosition[0];
     let diffY = this.transform.translation[1] - this.startPosition[1];
     let diffZ = this.transform.translation[2] - this.startPosition[2];
-    this.velocity[0] = -diffX * this.acceleration * 0.33;
+    this.velocity[0] = -diffX * this.acceleration * 0.33 + deformation;
     this.velocity[1] = -diffY * this.acceleration;
     this.velocity[2] = -diffZ * this.acceleration;
   }
