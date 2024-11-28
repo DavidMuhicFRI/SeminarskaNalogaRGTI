@@ -400,7 +400,7 @@ document.addEventListener("pointerlockchange", () => {
 canvas.addEventListener("mousedown", () => {
   if (pageStatus === "main") {
     canvas.requestPointerLock();
-  }else if(pageStatus === "game" && !ball.moving && game.ready){
+  }else if(pageStatus === "game" && !ball.moving && game.turnStarted){
     canvas.requestPointerLock();
     dragEnd = dragStart;
     game.grabBall();
