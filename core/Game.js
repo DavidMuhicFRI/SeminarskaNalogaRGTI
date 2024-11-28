@@ -36,6 +36,13 @@ export class Game {
     this.resetBall();
   }
 
+  clearEffects(){
+    let effects = document.getElementsByClassName("hurtDiv");
+    for (let effect of effects) {
+      effect.style.opacity = "0";
+    }
+  }
+
   changePlayerTurn(){
     this.stopPulsingAnimations();
     this.currentPlayer.gainEnergy(this.currentPlayer.character.stats.energyGainTurn);
@@ -56,6 +63,7 @@ export class Game {
     if(!this.turnStarted){
       this.startCountdown();
       this.activateCupEffects();
+      this.currentPlayer.setEffect();
       this.hideText();
       this.turnStarted = true;
     }
@@ -64,6 +72,7 @@ export class Game {
     this.turnStarted = false;
     this.changePlayerTurn();
     this.stopCupEffects();
+    this.clearEffects();
     this.currentPlayer.effectImpact *= 0.9;
     this.resetCountdown();
   }

@@ -12,7 +12,7 @@ export class Player {
     this.rest = false;
   }
 
-  setEnergy(amount){
+  setEnergy(){
     const abilityBar = this.side === 1 ? document.getElementById('abilityBarLeft') : document.getElementById('abilityBarRight');
     abilityBar.style.width = `${this.energy}%`;
   }
@@ -25,6 +25,13 @@ export class Player {
     this.energy -= amount;
     if(this.energy < 0) this.energy = 0;
     this.setEnergy();
+  }
+
+  setEffect() {
+    let effects = document.getElementsByClassName("hurtDiv");
+    for (let effect of effects) {
+      effect.style.opacity = `${1 - (this.currentHP / this.character.stats.health)}`;
+    }
   }
 
   setHP(minusOrPlus) {
