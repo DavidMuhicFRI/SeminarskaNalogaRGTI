@@ -332,6 +332,8 @@ export class Game {
     if(this.ball.effect === 'atlasEffect'){
       damage *= 1.5;
       this.otherPlayer().rest = true;
+    }else if(this.ball.effect === 'springEffect'){
+      damage *= 1.2;
     }
     otherPlayer.loseHP(damage);
     if(this.currentPlayer.character.stats.name === 'NERO'){
