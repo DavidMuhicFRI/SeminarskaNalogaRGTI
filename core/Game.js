@@ -18,7 +18,7 @@ export class Game {
     this.timerInterval = null;
     this.turnStarted = false;
     this.bounceSound = new Audio('ballBounceSound.mp3');
-    this.cupHitSound = new Audio('ballCupSound.mp3');
+    this.cupHitSound = new Audio('cupHitSound.mp3');
     // TODO: fix camera rotation: take starting eRotation and add to it
     this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
   }

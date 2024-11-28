@@ -93,7 +93,6 @@ let charPreviousButtonRed = document.getElementById("CPRightPreviousCharacter");
 const introSound = new Audio("introBackground.mp3");
 introSound.loop = true;
 introSound.volume = 0.4;
-introSound.playbackRate = 0.8;
 const gameSound = new Audio('gameBackground.mp3');
 gameSound.loop = true;
 gameSound.volume = 0.2;
