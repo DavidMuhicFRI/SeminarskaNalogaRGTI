@@ -11,7 +11,6 @@ export class Game {
     this.canvas = canvas;
 
     this.cameraShakeInterval = null;
-    this.ballShakeInterval = null;
 
     this.turnTime = this.currentPlayer.turnTime;
     this.remainingTime = this.turnTime;
@@ -32,20 +31,15 @@ export class Game {
     this.currentPlayer.setCountdown();
     this.player1.setStats();
     this.player2.setStats();
-    this.updatePlayerDivs();
     this.showText();
     this.startPulsingAnimations();
     this.addTurnStartEventListener();
     this.resetBall();
   }
-  updatePlayerDivs(){
-    this.player1.setEnergy();
-    this.player2.setEnergy();
-  }
 
   changePlayerTurn(){
     this.stopPulsingAnimations();
-    this.currentPlayer.gainEnergy(this.currentPlayer.character.stats.energyGain);
+    this.currentPlayer.gainEnergy(this.currentPlayer.character.stats.energyGainTurn);
     this.currentPlayer = this.currentPlayer === this.player1 ? this.player2 : this.player1;
     if(this.currentPlayer.rest){
       this.currentPlayer.rest = false;
@@ -290,14 +284,14 @@ export class Game {
   }
 
   handleCupHit(cup){
-    this.currentPlayer.gainEnergy(10);
+    this.currentPlayer.gainEnergy(this.currentPlayer.character.stats.energyGainCup);
     this.cheerSound.play().then(r => console.log(r));
+    if(this.currentPlayer.character.stats.name === 'NERO'){
+      this.otherPlayer().loseEnergy(6);
+    }
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
     this.currentPlayer.score++;
     this.otherPlayer().effectImpact += 1;
-    if(this.currentPlayer.character.stats.name === 'NERO'){
-      this.currentPlayer.energy += 33;
-    }
     if(this.currentPlayer.score === 6){
       console.log("Player won");
     }else{
@@ -305,10 +299,10 @@ export class Game {
     }
   }
 
-
   handlePlayerHit(){
     let otherPlayer = this.otherPlayer();
     let damage = this.getBallSpeed() * this.currentPlayer.character.stats.strength;
+    console.log("damage =" + damage);
     otherPlayer.loseHP(damage);
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.currentPlayer.gainHP(damage / 2);

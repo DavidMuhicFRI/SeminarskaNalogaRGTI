@@ -361,6 +361,12 @@ body, html {
   50% { filter: brightness(2); }
   100% { filter: brightness(1); }
 }
+@keyframes pulseBorder {
+  0% { border-color: yellow; }
+  50% { border-color: black; }
+  100% { border-color: yellow; }
+}
+
 #backToP1, #forwardToP2 {
   width: 7vw;
   height: 20vh;
@@ -424,12 +430,22 @@ body, html {
 .pulseScale {
   animation: pulseScale 1.5s ease-in-out infinite;
 }
-
 .pulseColor {
   animation: pulseColor 1.5s ease-in-out infinite;
 }
 .pulseColorCountdown {
   animation: pulseColorCountdown 1s ease-in-out infinite;
+}
+.pulseBorder {
+  animation: pulseBorder 1.5s ease-in-out infinite;
+}
+
+
+.headerBarContainer.loseHP {
+  box-shadow: 0 0 15px 12px rgba(255, 0, 0, 1);
+}
+.headerBarContainer.gainHP {
+  box-shadow: 0 0 15px 10px rgba(0, 255, 0, 1);
 }
 .headerBarContainer {
   position: absolute;
@@ -442,6 +458,7 @@ body, html {
   z-index: 3;
   text-align: center;
   background-color: rgba(255, 255, 255, 0.2);
+  transition: box-shadow 1s ease;
 }
 #headerBarContainerLeft {
   left: 8%;
@@ -468,9 +485,9 @@ body, html {
 }
 .abilityContainer {
   position: absolute;
-  top: 8.5vh;
+  top: 9vh;
   height: 2vh;
-  border: 0.7vh solid black;
+  border: 0.5vh solid black;
   border-radius: 5px;
   overflow: hidden;
   background-color: rgba(255, 255, 255, 0.4);
@@ -487,7 +504,8 @@ body, html {
   position: absolute;
   top: -0.3vh;
   height: 90%;
-  border-radius: 3px;
+  width: 0;
+  border-radius: 10px;
   border: 0.6vh solid black;
   transition: width 2s ease;
   z-index: 3;
