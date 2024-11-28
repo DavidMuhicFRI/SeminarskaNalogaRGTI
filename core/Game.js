@@ -310,10 +310,10 @@ export class Game {
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.otherPlayer().loseEnergy(6);
     }else if(this.otherPlayer().character.stats.name === 'TRIPP'){
-      this.otherPlayer().gainHP(5);
+      this.otherPlayer().gainHP(6);
       this.otherPlayer().effectImpact += 0.5;
     }else if(this.currentPlayer.character.stats.name === 'TRIPP') {
-      this.otherPlayer().loseHP(5);
+      this.otherPlayer().loseHP(8);
     }
     this.otherPlayer().effectImpact += 1;
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
