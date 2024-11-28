@@ -11,7 +11,6 @@ export class Game {
     this.canvas = canvas;
 
     this.cameraShakeInterval = null;
-    this.ready = false;
 
     this.turnTime = this.currentPlayer.turnTime;
     this.remainingTime = this.turnTime;
@@ -35,12 +34,10 @@ export class Game {
     this.startPulsingAnimations();
     this.addTurnStartEventListener();
     this.resetBall();
-    this.ready = true;
   }
 
-  async changePlayerTurn(){
+  changePlayerTurn(){
     this.stopPulsingAnimations();
-    this.ready = false;
     this.currentPlayer.gainEnergy(this.currentPlayer.character.stats.energyGainTurn);
     this.currentPlayer = this.currentPlayer === this.player1 ? this.player2 : this.player1;
     if(this.currentPlayer.rest){
@@ -48,10 +45,9 @@ export class Game {
       this.endTurn();
       return;
     }
-    await this.turnCamera();
+    this.turnCamera();
     this.startPulsingAnimations();
     this.resetBall();
-    this.ready = true;
     setTimeout(() => {
       this.startTurn();
     }, 4000);
@@ -79,7 +75,7 @@ export class Game {
     this.startTurn();
   }
 
-  async turnCamera(){
+  turnCamera(){
     let transform = this.camera.getComponentOfType(Transform);
     if(this.currentPlayer === this.player2){
       this.eulerToRotation({ roll: -180, pitch: 0, yaw: 15 }, transform);
