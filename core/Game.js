@@ -202,10 +202,13 @@ export class Game {
   }
   dragBall(event, dragStart, dragEnd){
     let force = dragEnd[1] - dragStart[1];
-    force = Math.min(force, 1000);
+    if(force >= 1000){
+      event.movementY = 0;
+      force = 1000;
+    }
     let powerBar = document.getElementById("powerBar");
     powerBar.style.width = 100 - force / 10 + "%";
-    let dragToughness = 0.5 / Math.pow(Math.abs(force + 1), 1.07);
+    let dragToughness = 0.5 / Math.pow(Math.abs(force + 1), 1.08);
     dragToughness = Math.min(dragToughness, 0.001);
     let ballTranslation = this.ball.transform.translation;
     if(this.currentPlayer === this.player1){
