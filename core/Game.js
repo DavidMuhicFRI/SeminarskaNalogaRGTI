@@ -207,7 +207,6 @@ export class Game {
     powerBar.style.width = 100 - force / 10 + "%";
     let dragToughness = 0.5 / Math.pow(Math.abs(force + 1), 1.07);
     dragToughness = Math.min(dragToughness, 0.001);
-    console.log(dragToughness);
     let ballTranslation = this.ball.transform.translation;
     if(this.currentPlayer === this.player1){
       ballTranslation[2] -= event.movementY * dragToughness;
