@@ -1,7 +1,6 @@
 import { vec3, mat4 } from './glm.js';
 import { getGlobalModelMatrix } from './core/SceneUtils.js';
 import { Transform, Ball, Game } from './core.js';
-import { FirstPersonController } from './controllers/FirstPersonController.js';
 
 export class Physics {
 
@@ -10,7 +9,6 @@ export class Physics {
         this.game = null;
     }
 
-    //update primerja vse dinamične objekte z vsemi statičnimi objekti
     update(t, dt) {
         this.scene.traverse(node => {
             if (node.isDynamic) {
@@ -118,6 +116,7 @@ export class Physics {
         this.game.handleBounce();
     }
 
+    //bounces the ball from the cup
     cupBounce(minDirection, ball, cup, cupBox, ballBox) {
       let ballTransform = ball.node.getComponentOfType(Transform).translation;
       let cupTransform = cup.getComponentOfType(Transform).translation;
@@ -142,10 +141,12 @@ export class Physics {
       }
     }
 
+    //bounces the ball from the player
     playerBounce(){
       this.game.handlePlayerHit();
     }
 
+    //bounces the ball from normal object
     normalBounce(minDirection, ball){
       let transform = ball.node.getComponentOfType(Transform);
       if (minDirection[0] !== 0) {
@@ -166,7 +167,8 @@ export class Physics {
       transform.translation = vec3.add(vec3.create(), transform.translation, minDirection);
     }
 
-  getNodeBName(node) {
+    //returns the name of the node
+    getNodeBName(node) {
     //return wall, cup, playerObject, table depending on keywork in node.name
     if (node.name.includes("Wall")) {
       return "wall";
@@ -179,8 +181,8 @@ export class Physics {
     }
   }
 
-  //returns the ball center distance from the center of the top of the cup
-  calculateRealDistance(objectBox, ballTransform, objectTransform){
+    //returns the ball center distance from the center of the top of the cup
+    calculateRealDistance(objectBox, ballTransform, objectTransform){
     let distance = [0, 0, 0];
     distance[1] = ballTransform[1] - objectBox.max[1];
     distance[0] = ballTransform[0] - objectTransform[0];
@@ -188,11 +190,13 @@ export class Physics {
     return distance;
   }
 
-  isBallInCup(holeWidth, distance, ballWidth){
+    //returns true if the ball is in the cup
+    isBallInCup(holeWidth, distance, ballWidth){
     return Math.abs(distance[0]) + ballWidth < holeWidth && Math.abs(distance[2]) + ballWidth < holeWidth;
   }
 
-  getEdgeBounceCons(distance, ball, cupWidth, inside){
+    //returns the bounce constant for the edge bounce depending on the distance from the edge
+    getEdgeBounceCons(distance, ball, cupWidth, inside){
     let wallWidth = 0.1;
     let edge = distance[0] < distance[2] ? 0 : 2;
     if(inside){
@@ -202,7 +206,8 @@ export class Physics {
     }
   }
 
-  edgeBounce(minDirection, ball,  ballTransform, cupBox, ballBox, cupWidth, distance){
+    //bounces the ball from the edge of the cup
+    edgeBounce(minDirection, ball,  ballTransform, cupBox, ballBox, cupWidth, distance){
     let wallWidth = 0.05;
     let edge = distance[0] < distance[2] ? 0 : 2;
     let direction;

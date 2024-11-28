@@ -2,10 +2,7 @@ import { ResizeSystem } from './systems/ResizeSystem.js';
 import { UpdateSystem } from './systems/UpdateSystem.js';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
 import {Camera, Model, Transform, Node, Ball, Character, Player, Game} from './core.js';
-import {
-    calculateAxisAlignedBoundingBox,
-    mergeAxisAlignedBoundingBoxes,
-} from './core/MeshUtils.js';
+import { calculateAxisAlignedBoundingBox, mergeAxisAlignedBoundingBoxes } from './core/MeshUtils.js';
 import { Physics } from './Physics.js';
 import { Renderer } from "./renderers/Renderer.js";
 import { Light } from "./core/Light.js";
