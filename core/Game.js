@@ -65,6 +65,7 @@ export class Game {
     this.turnStarted = false;
     this.changePlayerTurn();
     this.stopCupEffects();
+    this.currentPlayer.effectImpact *= 0.9;
     this.resetCountdown();
   }
   giveAnotherTurn(){

@@ -196,6 +196,7 @@ async function loadCharacters(){
   characterNames.forEach((name, index) => {
     characterObjects[index] = new Character(findObject(name + "Object"), name);
     characterObjects[index].applyScale();
+    rotatePlayer(characterObjects[index], Math.PI);
   });
   if(characterSelected.length === 0){
     //first time loading
