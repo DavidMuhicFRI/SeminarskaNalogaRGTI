@@ -182,13 +182,7 @@ export class Game {
   }
   throwBall(){
     this.ball.startPosition = this.currentPlayer === this.player1 ? [0, 7.5, -7.1] : [0, 7.5, 7.1];
-    if(this.currentPlayer.character.stats.name === "CURVE"){
-      let direction = Math.random() > 0.5 ? 1 : -1;
-      let deformation = Math.random() * direction * 0.3;
-      this.ball.setStartVelocity(deformation);
-    }else{
-      this.ball.setStartVelocity();
-    }
+    this.ball.setStartVelocity();
     this.ball.moving = true;
     this.ball.isGrabbed = false;
     document.getElementById("powerContainer").style.display = "none";
@@ -197,6 +191,7 @@ export class Game {
   grabBall(){
     this.ball.isGrabbed = true;
     this.ball.moving = false;
+    this.ball.thrower = this.currentPlayer;
     this.ball.transform.scale = [0.18, 0.18, 0.18];
     this.stopPulsingAnimations();
     document.getElementById("powerContainer").style.display = "block";

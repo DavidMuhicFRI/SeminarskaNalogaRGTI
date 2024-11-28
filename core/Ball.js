@@ -20,6 +20,7 @@ export class Ball {
     this.effect = null;
     this.blinking = false;
     this.shrinking = false;
+    this.thrower = null;
   }
 
   blink(){
@@ -39,9 +40,12 @@ export class Ball {
     this.blinking = setInterval(() => this.blink(), 20);
   }
 
-  setStartVelocity(deformation){
-    if(!deformation){
-      deformation = 0;
+  setStartVelocity(){
+    let direction = 0;
+    let deformation = 0;
+    if(this.thrower.character.stats.name === "CURVE"){
+      direction = Math.random() > 0.5 ? 1 : -1;
+      deformation = Math.random() * direction * 0.3;
     }
     this.velocity = [0, 0, 0];
     let diffX = this.transform.translation[0] - this.startPosition[0];
@@ -50,6 +54,7 @@ export class Ball {
     this.velocity[0] = -diffX * this.acceleration * 0.33 + deformation;
     this.velocity[1] = -diffY * this.acceleration;
     this.velocity[2] = -diffZ * this.acceleration;
+    vec3.scale(this.velocity, this.velocity, this.thrower.character.stats.strength);
   }
 
   update(t, dt) {
