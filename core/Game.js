@@ -241,14 +241,17 @@ export class Game {
     }
   }
   activateTrippAbility(){
-    this.currentPlayer.energy = 0;
-    this.currentPlayer.setEnergy();
+    this.otherPlayer().energy = 0;
+    this.currentPlayer.energy = this.otherPlayer().energy;
     let currentHP = this.currentPlayer.currentHP;
     this.currentPlayer.currentHP = this.otherPlayer().currentHP;
     this.otherPlayer().currentHP = currentHP;
-    let debuffs = this.currentPlayer.debuffs;
-    this.currentPlayer.debuffs = this.otherPlayer().debuffs;
-    this.otherPlayer().debuffs = debuffs;
+    //clamp hp to max
+    this.currentPlayer.currentHP = this.currentPlayer.currentHP > this.currentPlayer.character.stats.health ? this.currentPlayer.character.stats.health : this.currentPlayer.currentHP;
+    this.otherPlayer().currentHP = this.otherPlayer().currentHP > this.otherPlayer().character.stats.health ? this.otherPlayer().character.stats.health : this.otherPlayer().currentHP;
+    let effects = this.currentPlayer.effectImpact;
+    this.currentPlayer.effectImpact = this.otherPlayer().effectImpact;
+    this.otherPlayer().effectImpact = effects;
   }
   activateAtlasAbility(){
     this.currentPlayer.energy = 0;
