@@ -338,15 +338,33 @@ export class Game {
 
   shakeCamera(){
     let transform = this.camera.getComponentOfType(Transform);
-    let eRotation = this.quaternionToEuler(transform.rotation);
-    let minus = Math.random() > 0.5 ? -1 : 1;
-    let randomYawRotation = minus * Math.random() * 0.005 * this.currentPlayer.effectImpact;
-    let randomPitchRotation = minus * Math.random() * 0.005 * this.currentPlayer.effectImpact;
+    let pitchStart = this.currentPlayer === this.player1 ? 0 : 180;
+    let pitchThreshold = 45;
+    let pitchDiff = this.cameraRotation.pitch - pitchStart;
+    let pitchDirection;
+    if(pitchDiff > pitchThreshold){
+      pitchDirection = pitchDiff < 0 ? 1 : -1;
+    }else{
+      let decider = (pitchDiff / pitchThreshold) / 2;
+      pitchDirection = Math.random() > 0.5 + decider ? 1 : -1;
+    }
+    let yawStart = 15;
+    let yawThreshold = 30;
+    let yawDiff = this.cameraRotation.yaw - yawStart;
+    let yawDirection;
+    if(yawDiff > yawThreshold){
+      yawDirection = yawDiff < 0 ? 1 : -1;
+    }else{
+      let decider = (yawDiff / yawThreshold) / 2;
+      yawDirection = Math.random() > 0.5 + decider ? 1 : -1;
+    }
+    let randomYawRotation = yawDirection * Math.random() * 0.003 * this.currentPlayer.effectImpact;
+    let randomPitchRotation = pitchDirection * Math.random() * 0.003 * this.currentPlayer.effectImpact;
     for (let i = 0; i < 100; i++) {
       setTimeout(() => {
-        eRotation.yaw += randomYawRotation;
-        eRotation.pitch += randomPitchRotation;
-        this.eulerToRotation(eRotation, transform);
+        this.cameraRotation.yaw += randomYawRotation;
+        this.cameraRotation.pitch += randomPitchRotation;
+        this.eulerToRotation(this.cameraRotation, transform);
       }, i * 2);
     }
 
