@@ -1,6 +1,5 @@
 import { Transform } from "./Transform.js";
 import { vec3 } from "../glm.js";
-import { Player } from "./Player.js";
 
 export class Ball {
   constructor(node) {

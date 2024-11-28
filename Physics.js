@@ -1,6 +1,6 @@
-import { vec3, mat4 } from './glm.js';
+import { vec3 } from './glm.js';
 import { getGlobalModelMatrix } from './core/SceneUtils.js';
-import { Transform, Ball, Game } from './core.js';
+import { Transform, Ball } from './core.js';
 
 export class Physics {
 
@@ -9,7 +9,7 @@ export class Physics {
         this.game = null;
     }
 
-    update(t, dt) {
+    update() {
         this.scene.traverse(node => {
             if (node.isDynamic) {
                 this.scene.traverse(other => {
