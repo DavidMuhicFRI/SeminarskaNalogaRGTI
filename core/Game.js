@@ -258,6 +258,9 @@ export class Game {
     }
   }
   activateTrippAbility(){
+    if(this.ball.isGrabbed || this.ball.moving){
+      return;
+    }
     this.currentPlayer.loseEnergy(100);
     let effects = this.currentPlayer.effectImpact;
     this.currentPlayer.effectImpact = this.otherPlayer().effectImpact;
@@ -266,6 +269,9 @@ export class Game {
     this.activateCupEffects();
   }
   activateAtlasAbility(){
+    if (this.ball.moving) {
+      return;
+    }
     this.currentPlayer.loseEnergy(100);
     this.ball.effect = 'atlasEffect';
   }
@@ -290,6 +296,9 @@ export class Game {
     this.currentPlayer.gainHP(amount / 4);
   }
   activateSpringAbility(){
+    if(this.ball.isGrabbed || this.ball.moving){
+      return;
+    }
     this.currentPlayer.loseEnergy(100);
     this.ball.effect = 'springEffect';
     this.ball.bounciness = 1.5;
