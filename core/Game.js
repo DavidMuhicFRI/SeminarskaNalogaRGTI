@@ -9,6 +9,7 @@ export class Game {
     this.ball = ball;
     this.camera = camera;
     this.canvas = canvas;
+    this.gravity = 1;
 
     this.cameraShakeInterval = null;
 
@@ -191,7 +192,7 @@ export class Game {
   }
   throwBall(){
     this.ball.startPosition = this.currentPlayer === this.player1 ? [0, 7.5, -7.1] : [0, 7.5, 7.1];
-    this.ball.setStartVelocity();
+    this.ball.setStartVelocity(this.gravity);
     this.ball.moving = true;
     this.ball.isGrabbed = false;
     document.getElementById("powerContainer").style.display = "none";
@@ -313,10 +314,10 @@ export class Game {
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.otherPlayer().loseEnergy(6);
     }else if(this.otherPlayer().character.stats.name === 'TRIPP'){
-      this.otherPlayer().gainHP(5);
+      this.otherPlayer().gainHP(6);
       this.otherPlayer().effectImpact += 0.5;
     }else if(this.currentPlayer.character.stats.name === 'TRIPP') {
-      this.otherPlayer().loseHP(5);
+      this.otherPlayer().loseHP(8);
     }
     this.otherPlayer().effectImpact += 1;
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
@@ -353,7 +354,8 @@ export class Game {
     this.ball.bounces++;
     this.bounceSound.play().then(function(){});
     if(this.currentPlayer.character.stats.name === 'SPRING'){
-      this.currentPlayer.gainEnergy(5);
+      this.currentPlayer.gainEnergy(3);
+      this.currentPlayer.gainHP(1);
     }
     if(this.ball.effect === 'atlasEffect'){
       this.ball.effect = null;
