@@ -51,7 +51,6 @@ export class Game {
       return;
     }
     this.turnCamera();
-    console.log(this.quaternionToEuler(this.camera.getComponentOfType(Transform).rotation))
     this.startPulsingAnimations();
     this.resetBall();
     setTimeout(() => {
@@ -82,7 +81,6 @@ export class Game {
 
   turnCamera(){
     let transform = this.camera.getComponentOfType(Transform);
-    console.log(this.quaternionToEuler(transform.rotation));
     if(this.currentPlayer === this.player2){
       this.eulerToRotation({ roll: -180, pitch: 0, yaw: 15 }, transform);
       let cameraInterval = setInterval(() => {
@@ -208,7 +206,6 @@ export class Game {
   dragBall(event, dragStart, dragEnd){
     let force = dragEnd[1] - dragStart[1];
     let powerBar = document.getElementById("powerBar");
-    console.log(force / 7 + "%");
     powerBar.style.width = 100 - force / 10 + "%";
     let dragToughness = 0.01 / Math.pow(Math.abs(force + 1), 1/2.5);
     dragToughness = Math.min(dragToughness, 0.01);
@@ -271,7 +268,6 @@ export class Game {
     let dx = event.movementX;
     let direction = dx > 0 ? 1 : -1;
     let adjustment = Math.min(0.05, Math.abs(dx) * 0.01);
-    console.log(adjustment);
     if(this.currentPlayer === this.player1){
       this.ball.velocity[0] -= adjustment * direction;
     }else{
@@ -292,7 +288,7 @@ export class Game {
   }
 
   handleCupHit(cup){
-    this.cupHitSound.play().then(r => console.log(r));
+    this.cupHitSound.play().then(function(){});
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
     this.currentPlayer.score++;
     this.otherPlayer().effectImpact += 1;
@@ -322,7 +318,7 @@ export class Game {
   }
   handleBounce(){
     this.ball.bounces++;
-    this.bounceSound.play().then(r => console.log(r));
+    this.bounceSound.play().then(function(){});
     //TODO: add bouncing sound and display bounce count, add spring energy (and others)
   }
 

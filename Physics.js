@@ -139,7 +139,6 @@ export class Physics {
         }else{
           this.normalBounce(minDirection, ball);
         }
-        vec3.add(vec3.create(), ballTransform, minDirection);
       }
     }
 
@@ -205,7 +204,7 @@ export class Physics {
   }
 
   edgeBounce(minDirection, ball,  ballTransform, cupBox, ballBox, cupWidth, distance){
-    let wallWidth = 0.1;
+    let wallWidth = 0.05;
     let edge = distance[0] < distance[2] ? 0 : 2;
     let direction;
     let directionY = ball.velocity[1] > 0 ? 1 : -1;
@@ -227,5 +226,6 @@ export class Physics {
     }
     ball.velocity[edge] = (Math.abs(ball.velocity[edge]) * direction + this.getEdgeBounceCons(distance, ball, cupWidth, inside) * Math.abs(ball.velocity[1])) * ball.bounciness;
     ball.velocity[1] = directionY * ball.velocity[1] * ball.bounciness * (1 - this.getEdgeBounceCons(distance, ball, cupWidth, inside));
+    ball.transform.translation = vec3.add(vec3.create(), ball.transform.translation, minDirection);
   }
 }
