@@ -243,29 +243,20 @@ export class Game {
     }
   }
   activateTrippAbility(){
-    this.otherPlayer().energy = 0;
-    this.currentPlayer.energy = this.otherPlayer().energy;
-    let currentHP = this.currentPlayer.currentHP;
-    this.currentPlayer.currentHP = this.otherPlayer().currentHP;
-    this.otherPlayer().currentHP = currentHP;
-    //clamp hp to max
-    this.currentPlayer.currentHP = this.currentPlayer.currentHP > this.currentPlayer.character.stats.health ? this.currentPlayer.character.stats.health : this.currentPlayer.currentHP;
-    this.otherPlayer().currentHP = this.otherPlayer().currentHP > this.otherPlayer().character.stats.health ? this.otherPlayer().character.stats.health : this.otherPlayer().currentHP;
+    this.currentPlayer.loseEnergy(100);
     let effects = this.currentPlayer.effectImpact;
     this.currentPlayer.effectImpact = this.otherPlayer().effectImpact;
     this.otherPlayer().effectImpact = effects;
   }
   activateAtlasAbility(){
-    this.currentPlayer.energy = 0;
-    this.currentPlayer.setEnergy();
+    this.currentPlayer.loseEnergy(100);
     this.ball.effect = 'atlasEffect';
   }
   activateCurveAbility(event){
     if(!event){
       return;
     }
-    this.currentPlayer.energy -= 1;
-    this.currentPlayer.setEnergy();
+    this.currentPlayer.loseEnergy(1);
     let dx = event.movementX;
     let direction = dx > 0 ? 1 : -1;
     let adjustment = Math.min(0.05, Math.abs(dx) * 0.01);
@@ -276,14 +267,13 @@ export class Game {
     }
   }
   activateNeroAbility(){
-    this.currentPlayer.energy -= 1;
-    this.currentPlayer.setEnergy();
+    let amount = 1;
+    this.currentPlayer.loseEnergy(amount);
     this.currentPlayer.effectImpact *= 0.95;
-    this.currentPlayer.currentHP += 1;
+    this.currentPlayer.gainHP(amount / 2);
   }
   activateSpringAbility(){
-    this.currentPlayer.energy = 0;
-    this.currentPlayer.setEnergy();
+    this.currentPlayer.loseEnergy(100);
     this.ball.effect = 'springEffect';
     this.ball.bounciness = 1.5;
   }
@@ -321,7 +311,7 @@ export class Game {
   handleBounce(){
     this.ball.bounces++;
     this.bounceSound.play().then(function(){});
-    //TODO: add bouncing sound and display bounce count, add spring energy (and others)
+    //TODO display bounce count, add spring energy (and others)
   }
 
   activateCupEffects(){

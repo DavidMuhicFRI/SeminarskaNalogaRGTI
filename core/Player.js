@@ -12,7 +12,7 @@ export class Player {
     this.rest = false;
   }
 
-  setEnergy(){
+  setEnergy(amount){
     const abilityBar = this.side === 1 ? document.getElementById('abilityBarLeft') : document.getElementById('abilityBarRight');
     abilityBar.style.width = `${this.energy}%`;
   }
