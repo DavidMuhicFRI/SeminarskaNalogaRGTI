@@ -217,7 +217,11 @@ export class Physics {
     }else if(Math.abs(distance[edge]) > cupWidth){
       direction = distance[edge] > 0 ? 1 : -1;
       //if the ball is right of the centre, it should bounce right
-      ball.velocity[2] += 0.1;
+      if(distance[2] > 0){
+        ball.velocity[2] += 0.1;
+      }else{
+        ball.velocity[2] -= 0.1;
+      }
       inside = false;
     }else{
       //bouncing on the edge
