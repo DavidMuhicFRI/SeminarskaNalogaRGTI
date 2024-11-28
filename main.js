@@ -453,6 +453,7 @@ document.addEventListener("keydown", function(event){
   if(pageStatus === "game"){
     if(event.key === " "){
       game.activateAbility();
+      console.log(game.currentPlayer.energy)
       spacePressed = true;
     }
   }

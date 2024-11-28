@@ -290,10 +290,13 @@ export class Game {
     }
   }
   activateNeroAbility(){
+    let bars = document.getElementsByClassName("abilityBar");
     let amount = 1;
     this.currentPlayer.loseEnergy(amount);
     this.currentPlayer.effectImpact *= 0.98;
     this.currentPlayer.gainHP(amount / 4);
+    for(let bar of bars){
+    }
   }
   activateSpringAbility(){
     if(this.ball.isGrabbed || this.ball.moving){
