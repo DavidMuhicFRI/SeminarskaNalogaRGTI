@@ -436,6 +436,10 @@ export class Game {
   removeTurnStartEventListener() {
     document.body.removeEventListener('mousemove', this.startTurn.bind(this));
   }
+
+  gameOver(){
+    console.log("Game over");
+  }
   // TODO finish abilities
   // TODO end game
   // TODO instructions
