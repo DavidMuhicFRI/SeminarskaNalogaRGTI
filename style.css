@@ -99,6 +99,9 @@ body, html {
   border: 2px solid rgba(90, 90, 255, 1);
   visibility: hidden;
 }
+#introCanvas:hover {
+  cursor: grab;
+}
 .canvasContainer {
   width: 50%;
   height: 85%;

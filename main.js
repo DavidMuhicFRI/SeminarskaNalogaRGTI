@@ -147,7 +147,7 @@ function turnButtonToReady(button){
 //rotation functions
 function constantlyRotate(){
   if(pageStatus === "main" && !characterGrabbed){
-    rotatePlayer(rotatingCharacter, 0.002);
+    rotatePlayer(rotatingCharacter, 0.003);
   }
 }
 function createQuaternionFromAxisAngle(axis, angle) {
