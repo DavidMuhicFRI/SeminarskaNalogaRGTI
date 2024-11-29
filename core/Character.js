@@ -111,7 +111,7 @@ export class Character {
           abilityText: '(SOUL SWAP) Switches his dizziness with the enemy\'s',
           funFact: 'Fun-fact: smokes 3 packs a day',
           health: 75,
-          strength: 0.95,
+          strength: 0.96,
           energyGainTurn: 20,
           energyGainCup: 10,
           minCastEnergy: 100,
