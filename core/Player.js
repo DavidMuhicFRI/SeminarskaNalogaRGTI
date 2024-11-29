@@ -14,7 +14,15 @@ export class Player {
 
   setEnergy(){
     const abilityBar = this.side === 1 ? document.getElementById('abilityBarLeft') : document.getElementById('abilityBarRight');
+    const abilityIcon = this.side === 1 ? document.getElementById('leftAbilityIcon') : document.getElementById('rightAbilityIcon');
+    const abilityStar = this.side === 1 ? document.getElementById('leftAbilityStar') : document.getElementById('rightAbilityStar');
     abilityBar.style.width = `${this.energy}%`;
+    abilityIcon.style.filter = `grayScale(${100 - this.energy}%)`;
+    if(this.energy >= 100){
+      abilityStar.style.visibility = 'visible';
+    } else {
+      abilityStar.style.visibility = 'hidden';
+    }
   }
   gainEnergy(amount){
     this.energy += amount;
@@ -41,10 +49,11 @@ export class Player {
 
     if(minusOrPlus === -1) {
       HPContainer.classList.add('loseHP');
-    } else {
+      setTimeout(() => HPContainer.classList.remove('loseHP'), 500);
+    } else if(minusOrPlus === 1) {
       HPContainer.classList.add('gainHP');
+      setTimeout(() => HPContainer.classList.remove('gainHP'), 500);
     }
-    setTimeout(() => HPContainer.classList.remove('loseHP', 'gainHP'), 500);
   }
   gainHP(amount){
     this.currentHP += amount
@@ -61,6 +70,8 @@ export class Player {
     this.currentHP = this.character.stats.health;
     this.strength = this.character.stats.strength;
     this.turnTime = this.character.turnTime;
+    this.setEnergy();
+    this.setHP(0);
   }
 
   setCountdown() {

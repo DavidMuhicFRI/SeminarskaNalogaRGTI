@@ -28,6 +28,9 @@ export class Game {
     document.getElementById('leftBarHeader').style.width = '102%';
     document.getElementById('leftIconImg').src = this.player1.character.stats.iconImage;
     document.getElementById('rightIconImg').src = this.player2.character.stats.iconImage;
+    document.getElementById("sliderLeft").disabled = false;
+    document.getElementById("sliderRight").disabled = true
+    this.setSideDivs()
     this.currentPlayer.setCountdown();
     this.player1.setStats();
     this.player2.setStats();
@@ -35,6 +38,64 @@ export class Game {
     this.startPulsingAnimations();
     this.addTurnStartEventListener();
     this.resetBall();
+  }
+
+  setSideDivs() {
+    const leftStar = document.getElementById('leftAbilityStar');
+    const leftSlider = document.getElementById('sliderDivLeft');
+    const rightStar = document.getElementById('rightAbilityStar');
+    const rightSlider = document.getElementById('sliderDivRight');
+    const leftSliderInput = document.getElementById('sliderLeft');
+    const rightSliderInput = document.getElementById('sliderRight');
+
+    if (this.player1.character.stats.name === 'CURVE' || this.player1.character.stats.name === 'SPRING' || this.player1.character.stats.name === 'NERO') {
+      if (this.player1.character.stats.name === 'NERO') {
+        leftStar.style.display = 'none';
+      } else if (this.player1.character.stats.name === 'SPRING') {
+        leftSliderInput.addEventListener("input", () => {
+          this.ball.bounciness = 0.35 + leftSliderInput.value / 10;
+        });
+      } else {
+        leftStar.style.display = 'none';
+        leftSliderInput.addEventListener("input", () => {
+          this.gravity = 1 - (rightSliderInput.value - 5) / 20;
+        });
+      }
+    }
+    if (this.player2.character.stats.name === 'CURVE' || this.player2.character.stats.name === 'SPRING' || this.player2.character.stats.name === 'NERO') {
+      if (this.player2.character.stats.name === 'NERO') {
+        rightStar.style.display = 'none';
+      } else if (this.player2.character.stats.name === 'SPRING') {
+        rightSliderInput.addEventListener("input", () => {
+          this.ball.bounciness = 0.35 + rightSliderInput.value / 10;
+        });
+      } else {
+        rightStar.style.display = 'none';
+        rightSliderInput.addEventListener("input", () => {
+          this.gravity = 1 - (rightSliderInput.value - 5) / 20;
+        });
+      }
+    }
+    leftStar.src = this.player1.character.stats.starImage;
+    leftStar.style.animation = this.player1.character.stats.starImageAnimation;
+    rightStar.src = this.player2.character.stats.starImage;
+    rightStar.style.animation = this.player2.character.stats.starImageAnimation;
+
+    leftSlider.style.display = this.player1.character.stats.lever;
+    rightSlider.style.display = this.player2.character.stats.lever;
+  }
+
+
+  manageSliders() {
+    const leftSliderInput = document.getElementById('sliderLeft');
+    const rightSliderInput = document.getElementById('sliderRight');
+    if(this.currentPlayer === this.player1){
+      rightSliderInput.disabled = true;
+      leftSliderInput.disabled = false;
+    } else {
+      rightSliderInput.disabled = false;
+      leftSliderInput.disabled = true;
+    }
   }
 
   clearEffects(){
@@ -53,6 +114,7 @@ export class Game {
       this.endTurn();
       return;
     }
+    this.manageSliders();
     this.turnCamera();
     this.startPulsingAnimations();
     this.resetBall();
