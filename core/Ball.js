@@ -44,7 +44,7 @@ export class Ball {
     let deformation = 0;
     if(this.thrower.character.stats.name === "CURVE"){
       direction = Math.random() > 0.5 ? 1 : -1;
-      deformation = Math.random() * direction * 0.75;
+      deformation = Math.random() * direction * 0.6;
     }
     this.velocity = [0, 0, 0];
     let diffX = this.transform.translation[0] - this.startPosition[0];

@@ -147,7 +147,7 @@ function turnButtonToReady(button){
 //rotation functions
 function constantlyRotate(){
   if(pageStatus === "main" && !characterGrabbed){
-    rotatePlayer(rotatingCharacter, 0.002);
+    rotatePlayer(rotatingCharacter, 0.003);
   }
 }
 function createQuaternionFromAxisAngle(axis, angle) {
@@ -218,6 +218,10 @@ function displayCharacters(){
 //assigns next or previous character to the selected player
 function assignCharacter(direction){
   let side = pageOrientation === "left" ? 0 : 1;
+  let player = side === 0 ? player1 : player2;
+  if(player.ready){
+    return;
+  }
   let otherSide = side === 0 ? 1 : 0;
   let index = characterObjects.indexOf(characterSelected[side]);
   let rotation = characterSelected[side].transform.rotation;
