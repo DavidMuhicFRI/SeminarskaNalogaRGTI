@@ -23,7 +23,7 @@ export class Character {
           energyGainTurn: 13,
           energyGainCup: 10,
           minCastEnergy: 100,
-          scale: [0.85, 0.96, 0.85],
+          scale: [0.85, 0.95, 0.85],
           reference: 'AtlasObject',
           iconImage: 'atlasIcon.png',
           abilityImage: 'atlasAbility.png'
