@@ -70,6 +70,7 @@ export class Game {
     }
   }
   endTurn(){
+    console.log("Turn ended");
     this.turnStarted = false;
     this.changePlayerTurn();
     this.stopCupEffects();
@@ -280,7 +281,7 @@ export class Game {
     if(!event){
       return;
     }
-    this.currentPlayer.loseEnergy(1);
+    this.currentPlayer.loseEnergy(0.66);
     let dx = event.movementX;
     let direction = dx > 0 ? 1 : -1;
     let adjustment = Math.min(0.04, Math.abs(dx) * 0.01);
@@ -339,12 +340,12 @@ export class Game {
     }else if(this.ball.effect === 'springEffect'){
       damage *= 1.2;
     }
-    otherPlayer.loseHP(damage);
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.currentPlayer.gainHP(damage / 2);
     }else if(this.otherPlayer().character.stats.name === 'NERO'){
-      this.otherPlayer().loseHP(damage * 1.5);
+      damage *= 1.5;
     }
+    otherPlayer.loseHP(damage);
     if(otherPlayer.currentHP <= 0){
       this.gameOver();
     }
