@@ -26,7 +26,10 @@ export class Character {
           scale: [0.85, 0.95, 0.85],
           reference: 'AtlasObject',
           iconImage: 'atlasIcon.png',
-          abilityImage: 'atlasAbility.png'
+          abilityImage: 'atlasAbility.png',
+          starImage: 'abilityStarImgYellow.png',
+          starImageAnimation: 'rotate 5s linear infinite',
+          lever: 'none'
         }
         break;
       case 'Curve':
@@ -49,7 +52,10 @@ export class Character {
           scale: [1.05, 1.05, 1.05],
           reference: 'CurveObject',
           iconImage: 'curveIcon.png',
-          abilityImage: 'curveAbility.png'
+          abilityImage: 'curveAbility.png',
+          starImage: 'abilityStarImgRed.png',
+          starImageAnimation: 'none',
+          lever: 'flex'
         }
         break;
       case 'Nero':
@@ -72,7 +78,10 @@ export class Character {
           scale: [1.1, 1.1, 1.1],
           reference: 'NeroObject',
           iconImage: 'neroIcon.png',
-          abilityImage: 'neroAbility.png'
+          abilityImage: 'neroAbility.png',
+          starImage: 'abilityStarImgRed.png',
+          starImageAnimation: 'none',
+          lever: 'flex'
         }
         break;
       case 'Spring':
@@ -95,7 +104,10 @@ export class Character {
           scale: [1.1, 1.1, 1.1],
           reference: 'SpringObject',
           iconImage: 'springIcon.png',
-          abilityImage: 'springAbility.png'
+          abilityImage: 'springAbility.png',
+          starImage: 'abilityStarImgYellow.png',
+          starImageAnimation: 'rotate 5s linear infinite',
+          lever: 'none'
         }
         break;
       case 'Tripp':
@@ -118,7 +130,10 @@ export class Character {
           scale: [1.1, 1.1, 1.1],
           reference: 'TrippObject',
           iconImage: 'trippIcon.png',
-          abilityImage: 'trippAbility.png'
+          abilityImage: 'trippAbility.png',
+          starImage: 'abilityStarImgYellow.png',
+          starImageAnimation: 'rotate 5s linear infinite',
+          lever: 'none'
         }
         break;
     }

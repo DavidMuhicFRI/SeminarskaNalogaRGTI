@@ -364,6 +364,14 @@ body, html {
   50% { filter: brightness(2); }
   100% { filter: brightness(1); }
 }
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
 #backToP1, #forwardToP2 {
   width: 7vw;
@@ -406,6 +414,40 @@ body, html {
   font-weight: bold;
   cursor: pointer;
   z-index: 3;
+}
+
+.abilityDisplayDiv {
+  position: absolute;
+  top: 13vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 25vh;
+  width: 25vh;
+  z-index: 3;
+}
+#abilityDisplayDivLeft {
+  left: -1%;
+}
+#abilityDisplayDivRight {
+  right: -1%;
+}
+.abilityIcon {
+  position: relative;
+  width: 42%;
+  height: 42%;
+  border: 0.7vh solid black;
+  border-radius: 10px;
+  filter: grayscale(100%);
+}
+.abilityStar {
+  display: block;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 86%;
+  height: 86%;
+  animation: rotate 5s linear infinite;
+  visibility: hidden;
 }
 .iconImage2 {
   position: absolute;
@@ -463,25 +505,22 @@ body, html {
 .bar2 {
   position: absolute;
   height: 100%;
-  border-radius: 5px;
   transition: width 1s ease;
   z-index: 3;
 }
 #leftBarHeader {
-  width: 80%;
   background-color: rgba(20, 20, 240, 1);
-  left: -1%;
+  left: 0;
 }
 #rightBarHeader {
-  width: 30%;
   background-color: rgba(240, 20, 20, 1);
-  right: -1%;
+  right: 0;
 }
 .abilityContainer {
   position: absolute;
   top: 9vh;
   height: 2vh;
-  border: 0.5vh solid black;
+  border: 0.8vh solid black;
   border-radius: 5px;
   overflow: hidden;
   background-color: rgba(255, 255, 255, 0.4);
@@ -564,6 +603,69 @@ body, html {
   width: 100%;
   background: black;
   z-index: 3;
+}
+
+.sliderDiv {
+  display: flex;
+  position: absolute;
+  top: 45vh;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 15%;
+  height: 40%;
+  z-index: 3;
+}
+#sliderDivLeft {
+  left: -2%;
+}
+#sliderDivRight {
+  right: -2%;
+}
+#sliderLeft, #sliderRight {
+  -webkit-appearance: none;
+  width: 25vh;
+  height: 1.2vw;
+  background: linear-gradient(to right, green, yellow, red);
+  border: 0.5vh solid black;
+  border-radius: 10px;
+  cursor: pointer;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  margin-bottom: 3%;
+}
+#sliderValueLeft, #sliderValueRight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #333;
+  color: #fff;
+  padding: 3px 6px;
+  border: 0.5vh solid black;
+  border-radius: 5px;
+  font-size: 3vh;
+  white-space: nowrap;
+}
+
+/* Style for the thumb (lever) */
+#sliderLeft::-webkit-slider-thumb, #sliderRight::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 2vw;
+  height: 10vh;
+  background: radial-gradient(circle, #fff, #ccc);
+  border: 0.5vh solid black;
+  border-radius: 5px;
+  cursor: grab;
+  transition: transform 0.2s ease;
+}
+
+#sliderLeft::-webkit-slider-thumb:hover, #sliderRight::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+#sliderLeft::-webkit-slider-thumb:active, #sliderRight::-webkit-slider-thumb:active {
+  transform: scale(1.1);
+  background: radial-gradient(circle, #fff, #aaa);
 }
 
 .hurtDiv {
