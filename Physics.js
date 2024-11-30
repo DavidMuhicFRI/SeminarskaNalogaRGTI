@@ -238,7 +238,7 @@ export class Physics {
     ball.velocity[edge] = Math.abs(ball.velocity[edge]) * direction + spreadFactor * YFactor;
     ball.velocity[1] = YFactor * (1 - spreadFactor);
     //console.log(ball.velocity[1], "velocity and ", YFactor + (1 - spreadFactor));
-    ball.transform.translation = vec3.add(vec3.create(), transform.translation, minDirection);
+    //ball.transform.translation = vec3.add(vec3.create(), ball.transform.translation, minDirection);
     //console.log(ball.velocity, "out");
   }
 }
