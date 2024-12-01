@@ -161,7 +161,9 @@ export class Physics {
       }
       if (minDirection[1] !== 0) {
         ball.velocity[1] = -ball.velocity[1] * ball.bounciness;
-        if(ball.effect !== "springEffect" && ball.velocity[1] < 0.2 && ball.transform.translation[1] < 4.6){
+        console.log("height", ball.transform.translation[1]);
+        console.log("velocity", ball.velocity[1]);
+        if(ball.effect !== "springEffect" && ((ball.velocity[1] < 0.2 && ball.transform.translation[1] < 4.6) || (ball.velocity[1] < 8 && ball.transform.translation[1] < 0.4))){
           this.game.stopBall();
         }// Reverse Y direction if needed
         //console.log("from upDown")
