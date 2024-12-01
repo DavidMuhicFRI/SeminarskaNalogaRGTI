@@ -302,7 +302,6 @@ readyButton1.addEventListener('click', function() {
     if(player2.ready){
       //both players are ready, start the game
       startGame().then(() => {
-        console.log("Game started");
       });
     }else{
       //set player to ready, set the button to cancel and move the page
