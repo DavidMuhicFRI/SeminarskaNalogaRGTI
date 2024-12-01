@@ -20,6 +20,8 @@ export class Ball {
     this.blinking = false;
     this.shrinking = false;
     this.thrower = null;
+    this.lastBounceNode = null;
+    this.lastBounceType = null;
   }
 
   blink(){

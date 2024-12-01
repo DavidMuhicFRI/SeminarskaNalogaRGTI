@@ -136,7 +136,7 @@ export class Physics {
       }else{
         if(minDirection[1] !== 0){
           console.log("Edge bounce");
-          this.edgeBounce(minDirection, ball, ballTransform, cupBox, ballBox, cupWidth, distance);
+          this.edgeBounce(minDirection, ball, ballTransform, cupBox, cup, ballBox, cupWidth, distance);
         }else{
           console.log("Normal bounce from cup");
           this.normalBounce(minDirection, ball);
@@ -153,6 +153,8 @@ export class Physics {
     //bounces the ball from normal object
     normalBounce(minDirection, ball){
       let transform = ball.node.getComponentOfType(Transform);
+      ball.lastBounceNode = null;
+      ball.lastBounceType = null;
       if (minDirection[0] !== 0) {
         //console.log("from side")
         ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
@@ -211,7 +213,7 @@ export class Physics {
   }
 
     //bounces the ball from the edge of the cup
-    edgeBounce(minDirection, ball,  ballTransform, cupBox, ballBox, cupWidth, distance){
+    edgeBounce(minDirection, ball,  ballTransform, cupBox, cup, ballBox, cupWidth, distance){
     let wallWidth = 0.04;
     let edge = distance[0] < distance[2] ? 0 : 2;
     let direction;
@@ -232,6 +234,14 @@ export class Physics {
       this.normalBounce(minDirection, ball);
       return;
     }
+    if(ball.lastBounceNode === cup){
+      if(ball.lastBounceType === "edge"){
+        this.normalBounce(minDirection, ball);
+        return;
+      }
+    }
+    ball.lastBounceNode = cup;
+    ball.lastBounceType = "edge";
     let spreadFactor = this.getEdgeBounceCons(distance, ball, cupWidth, inside);
     spreadFactor = Math.min(spreadFactor, 1);
     let YFactor = Math.abs(ball.velocity[1]) * ball.bounciness;
