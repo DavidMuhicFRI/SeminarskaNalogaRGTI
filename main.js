@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
       document.getElementById("introText").style.visibility = "visible";
       document.getElementById("introText").style.opacity = '1';
-    }, 3500);
+    }, 2500);
   }, 0);
 });
 

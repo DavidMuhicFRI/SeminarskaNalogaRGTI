@@ -559,7 +559,7 @@ export class Game {
       if(this.instructionsProgress < Game.instructions.length - 1) {
         this.instructionsProgress++;
         if(this.instructionsProgress === Game.instructions.length - 1) {
-          document.getElementById("instructionsSkipButton").style.animation = 'pulseScale 1.5s infinite';
+          document.getElementById("instructionsSkipButton").style.animation = 'pulseScale 0.75s infinite';
         }
       }
     } else {
@@ -675,7 +675,7 @@ export class Game {
     },
     {
       text: "This is the ball. When it's your turn, you can click anywhere on the screen and drag backwards to generate power and sideways to change direction. " +
-        "Your goal is to either score a cup or the hit opponent with the ball. If you score a cup, you get another turn and if you hit the opponent, they lose HP. " +
+        "Your goal is to either score a cup or to hit opponent with the ball. If you score a cup, you get another turn and if you hit the opponent, they lose HP. " +
         "The ball doesn't bounce back from the opponent, but it does bounce from the cups.",
       borderWidth: '5%',
       borderHeight: '10%',
