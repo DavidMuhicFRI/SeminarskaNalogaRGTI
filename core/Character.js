@@ -81,7 +81,7 @@ export class Character {
           abilityImage: 'neroAbility.png',
           starImage: 'abilityStarImgRed.png',
           starImageAnimation: 'none',
-          lever: 'flex'
+          lever: 'none'
         }
         break;
       case 'Spring':
@@ -107,7 +107,7 @@ export class Character {
           abilityImage: 'springAbility.png',
           starImage: 'abilityStarImgYellow.png',
           starImageAnimation: 'rotate 5s linear infinite',
-          lever: 'none'
+          lever: 'flex'
         }
         break;
       case 'Tripp':
