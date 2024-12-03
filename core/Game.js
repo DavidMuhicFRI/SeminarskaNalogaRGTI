@@ -598,7 +598,7 @@ export class Game {
         clearInterval(this.wordInterval);
         this.wordInterval = null;
       }
-    }, 75);
+    }, 65);
   }
 
   static instructions = [
@@ -696,7 +696,9 @@ export class Game {
     }
   ];
 
-  // TODO finish abilities
-  // TODO end game
-  // TODO sounds
+  // TODO finish abilities?
+  // TODO fucking ball stays on cup -> fix dis shit
+  // TODO end game screen + reset
+  // TODO back button correct reset
+  // TODO button sounds, hurt sounds
 }
