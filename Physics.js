@@ -125,9 +125,11 @@ export class Physics {
       let wallWidth = 0.04;
       if (this.isBallInCup(cupWidth - wallWidth, distance, ball.radius)) {
         console.log("Ball in cup");
+        ball.inCup = true;
         if(ballTransform[1] <= cupBox.min[1] + 2 * ball.radius){
           ball.velocity = [0, 0, 0];
           this.game.handleCupHit(cup);
+          ball.inCup = false;
         }else{
           ballTransform[0] = cupTransform[0];
           ballTransform[2] = cupTransform[2];
@@ -171,6 +173,15 @@ export class Physics {
         //console.log("from straight")
       }
       transform.translation = vec3.add(vec3.create(), transform.translation, minDirection);
+      if(ball.effect === "springEffect"){
+        let rand = Math.random();
+        let modification = rand < 0.5 ? 1 : -1;
+        if(rand < 0.5){
+          ball.velocity[0] += Math.random() * modification;
+        }else{
+          ball.velocity[2] += Math.random() * modification;
+        }
+      }
     }
 
     //returns the name of the node

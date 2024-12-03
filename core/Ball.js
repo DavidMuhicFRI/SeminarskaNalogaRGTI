@@ -7,7 +7,7 @@ export class Ball {
     this.transform = node.getComponentOfType(Transform);
     this.velocity = [0, 0, 0];
     this.acceleration = 10;
-    this.maxSpeed = 100;
+    this.maxSpeed = 80;
     this.deceleration = 0.995;
     this.bounces = 0;
     this.bounciness = 0.85;
@@ -20,8 +20,7 @@ export class Ball {
     this.blinking = false;
     this.shrinking = false;
     this.thrower = null;
-    this.lastBounceNode = null;
-    this.lastBounceType = null;
+    this.inCup = false;
   }
 
   blink(){
@@ -59,6 +58,30 @@ export class Ball {
     vec3.scale(this.velocity, this.velocity, g);
   }
 
+  getBallBack(){
+    if(this.transform.translation[1] < -1.5){
+      this.transform.translation[1] = 0.4;
+      this.velocity[1] = this.velocity[1] < 0 ? (-1 * this.velocity[1]) : this.velocity[1];
+    }else if(this.transform.translation[1] > 20){
+      this.transform.translation[1] = 19.5;
+      this.velocity[1] = this.velocity[1] < 0 ? this.velocity[1] : (-1 * this.velocity[1]);
+    }
+    if(this.transform.translation[0] < -15.5) {
+      this.transform.translation[0] = -15.4;
+      this.velocity[0] = this.velocity[0] < 0 ? (-1 * this.velocity[0]) : this.velocity[0];
+    }else if(this.transform.translation[0] > 15.5){
+      this.transform.translation[0] = 15.4;
+      this.velocity[0] = this.velocity[0] < 0 ? this.velocity[0] : (-1 * this.velocity[0]);
+    }
+    if(this.transform.translation[2] < -26.5) {
+      this.transform.translation[2] = -26.4;
+      this.velocity[2] = this.velocity[2] < 0 ? (-1 * this.velocity[2]) : this.velocity[2];
+    }else if(this.transform.translation[2] > 26.5){
+      this.transform.translation[2] = 26.4;
+      this.velocity[2] = this.velocity[2] < 0 ? this.velocity[2] : (-1 * this.velocity[2]);
+    }
+  }
+
   update(t, dt) {
     if(!this.moving){
       return;
@@ -76,5 +99,6 @@ export class Ball {
     this.transform.translation[0] += this.velocity[0] * dt;
     this.transform.translation[1] += this.velocity[1] * dt;
     this.transform.translation[2] += this.velocity[2] * dt;
+    this.getBallBack();
   }
 }
