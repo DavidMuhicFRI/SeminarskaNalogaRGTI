@@ -7,7 +7,7 @@ export class Ball {
     this.transform = node.getComponentOfType(Transform);
     this.velocity = [0, 0, 0];
     this.acceleration = 10;
-    this.maxSpeed = 50;
+    this.maxSpeed = 100;
     this.deceleration = 0.995;
     this.bounces = 0;
     this.bounciness = 0.85;

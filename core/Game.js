@@ -379,7 +379,7 @@ export class Game {
     }
     this.currentPlayer.loseEnergy(100);
     this.ball.effect = 'springEffect';
-    this.ball.bounciness = 1.5;
+    this.ball.bounciness = 2;
   }
 
   handleCupHit(cup){
