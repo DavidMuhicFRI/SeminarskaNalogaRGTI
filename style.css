@@ -829,8 +829,48 @@ body, html {
   width: 100vw;
   height: 100vh;
   background-color: black;
-  visibility: hidden;
+  /*visibility: hidden;*/
   z-index: 990;
+  overflow: hidden;
 }
-
+#gameOverTitle{
+  position: absolute;
+  top: -35%;
+  left: 0;
+  width: 100%;
+}
+#gameOverExitButton{
+  position: absolute;
+  top: 90%;
+  left: 45%;
+  width: 10%;
+  height: 5%;
+  background-color: red;
+  font-size: 2.5vh;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 5px;
+  border: 0.5vh solid black;
+  cursor: pointer;
+}
+#gameOverPageSplit{
+  width: 65%;
+  height: 10%;
+  rotate: 90deg;
+  transform: translate(-50%, -50%);
+}
+#gameOverCharacterDivLeft{
+  position: absolute;
+  top: 20%;
+  left: 0;
+  width: 45%;
+  height: 65%;
+}
+#gameOverCharacterDivRight{
+  position: absolute;
+  top: 20%;
+  right: 0;
+  width: 45%;
+  height: 65%;
+}
 

@@ -252,6 +252,7 @@ export class Game {
     this.ball.moving = false;
     this.ball.isGrabbed = false;
     this.ball.effect = null;
+    this.ball.bounciness = 0.85;
     if(this.currentPlayer === this.player1) {
       this.ball.transform.translation = [0, 7.5, -7.1];
       this.ball.startPosition = [0, 7.5, -7.1];
@@ -433,7 +434,6 @@ export class Game {
     if(this.ball.effect === 'atlasEffect'){
       this.ball.effect = null;
     }
-    //TODO display bounce count, add spring energy (and others)
   }
 
   activateCupEffects(){
