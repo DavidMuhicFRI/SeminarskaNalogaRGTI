@@ -51,6 +51,8 @@ export class Game {
   }
 
   setSideDivs() {
+    const leftAbilityIcon = document.getElementById('leftAbilityIcon');
+    const rightAbilityIcon = document.getElementById('rightAbilityIcon');
     const leftStar = document.getElementById('leftAbilityStar');
     const leftSlider = document.getElementById('sliderDivLeft');
     const rightStar = document.getElementById('rightAbilityStar');
@@ -86,6 +88,8 @@ export class Game {
         });
       }
     }
+    leftAbilityIcon.src = this.player1.character.stats.abilityImage;
+    rightAbilityIcon.src = this.player2.character.stats.abilityImage;
     leftStar.src = this.player1.character.stats.starImage;
     leftStar.style.animation = this.player1.character.stats.starImageAnimation;
     rightStar.src = this.player2.character.stats.starImage;
@@ -700,5 +704,5 @@ export class Game {
   // TODO fucking ball stays on cup -> fix dis shit
   // TODO end game screen + reset
   // TODO back button correct reset
-  // TODO button sounds, hurt sounds
+  // TODO button sounds, hurt sounds implement
 }
