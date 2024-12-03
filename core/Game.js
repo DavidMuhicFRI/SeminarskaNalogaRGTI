@@ -252,6 +252,7 @@ export class Game {
     this.ball.moving = false;
     this.ball.isGrabbed = false;
     this.ball.effect = null;
+    this.ball.bounciness = 0.85;
     if(this.currentPlayer === this.player1) {
       this.ball.transform.translation = [0, 7.5, -7.1];
       this.ball.startPosition = [0, 7.5, -7.1];
@@ -378,7 +379,7 @@ export class Game {
     }
     this.currentPlayer.loseEnergy(100);
     this.ball.effect = 'springEffect';
-    this.ball.bounciness = 1.5;
+    this.ball.bounciness = 2;
   }
 
   handleCupHit(cup){
@@ -426,14 +427,13 @@ export class Game {
   handleBounce(){
     this.ball.bounces++;
     this.bounceSound.play().then(function(){});
-    if(this.currentPlayer.character.stats.name === 'SPRING'){
-      this.currentPlayer.gainEnergy(3);
-      this.currentPlayer.gainHP(1);
+    if(this.currentPlayer.character.stats.name === 'SPRING' && !this.ball.inCup && this.ball.effect !== 'springEffect' && this.ball.velocity[1] > 0.8){
+      this.currentPlayer.gainEnergy(1);
+      this.currentPlayer.gainHP(0.5);
     }
     if(this.ball.effect === 'atlasEffect'){
       this.ball.effect = null;
     }
-    //TODO display bounce count, add spring energy (and others)
   }
 
   activateCupEffects(){
