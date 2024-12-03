@@ -177,9 +177,9 @@ export class Physics {
         let rand = Math.random();
         let modification = rand < 0.5 ? 1 : -1;
         if(rand < 0.5){
-          ball.velocity[0] += Math.random() * modification;
+          ball.velocity[0] += Math.random() * modification * 3;
         }else{
-          ball.velocity[2] += Math.random() * modification;
+          ball.velocity[2] += Math.random() * modification * 3;
         }
       }
     }
