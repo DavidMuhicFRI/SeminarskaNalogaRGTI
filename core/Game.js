@@ -1,10 +1,11 @@
 import { Transform } from "./Transform.js";
 
 export class Game {
-  constructor(player1, player2, ball, camera, canvas){
+  constructor(player1, player2, ball, camera, canvas, gameNumber){
     this.player1 = player1;
     this.player2 = player2;
     this.currentPlayer = player1;
+    this.gameNumber = gameNumber;
 
     this.ball = ball;
     this.camera = camera;
@@ -21,6 +22,9 @@ export class Game {
     this.cheerSound = new Audio('cupHitSound.mp3');
     this.cheerSound.volume = 0.5;
     this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
+
+    this.instructionsProgress = 0;
+    this.wordInterval = null;
   }
 
   setUp(){
@@ -29,15 +33,21 @@ export class Game {
     document.getElementById('leftIconImg').src = this.player1.character.stats.iconImage;
     document.getElementById('rightIconImg').src = this.player2.character.stats.iconImage;
     document.getElementById("sliderLeft").disabled = false;
-    document.getElementById("sliderRight").disabled = true
+    document.getElementById("sliderRight").disabled = true;
     this.setSideDivs()
     this.currentPlayer.setCountdown();
     this.player1.setStats();
     this.player2.setStats();
     this.showText();
     this.startPulsingAnimations();
-    this.addTurnStartEventListener();
     this.resetBall();
+    if(this.gameNumber === 1) {
+      setTimeout(() => {
+        this.displayInstructionsDiv();
+      }, 1500);
+    } else {
+      this.addTurnStartEventListener();
+    }
   }
 
   setSideDivs() {
@@ -518,6 +528,7 @@ export class Game {
   addTurnStartEventListener() {
     this.removeTurnStartEventListener();
     document.body.addEventListener('mousemove', this.startTurn.bind(this), { once: true });
+    console.log("added event listener");
   }
   removeTurnStartEventListener() {
     document.body.removeEventListener('mousemove', this.startTurn.bind(this));
@@ -526,8 +537,168 @@ export class Game {
   gameOver(){
     console.log("Game over");
   }
-  // TODO finish abilities
-  // TODO end game
-  // TODO instructions
-  // TODO sounds
+
+  displayInstructionsDiv() {
+    let instructionsDiv = document.getElementById('instructions');
+    instructionsDiv.style.display = 'block';
+    this.updateInstructions();
+    document.getElementById('instructionsBackButton').addEventListener('click', () => {
+      this.updateInstructions(-1);
+    });
+    document.getElementById('instructionsNextButton').addEventListener('click', () => {
+      this.updateInstructions(1);
+    });
+    document.getElementById('instructionsSkipButton').addEventListener('click', () => {
+      instructionsDiv.style.display = 'none';
+      this.addTurnStartEventListener();
+    }, { once: true });
+  }
+
+  updateInstructions(direction){
+    if(direction === 1) {
+      if(this.instructionsProgress < Game.instructions.length - 1) {
+        this.instructionsProgress++;
+        if(this.instructionsProgress === Game.instructions.length - 1) {
+          document.getElementById("instructionsSkipButton").style.animation = 'pulseScale 0.75s infinite';
+        }
+      }
+    } else {
+      if(this.instructionsProgress > 0) {
+        this.instructionsProgress--;
+      }
+    }
+    this.displayInstructionsBorder();
+    this.displayInstructionsText();
+  }
+
+  displayInstructionsBorder() {
+    let borderDiv = document.getElementById("instructionsBorderDiv");
+    let instructions = Game.instructions[this.instructionsProgress];
+    borderDiv.style.width  = instructions.borderWidth;
+    borderDiv.style.height = instructions.borderHeight;
+    borderDiv.style.left = instructions.borderLeft;
+    borderDiv.style.top = instructions.borderTop;
+    borderDiv.style.borderRadius = instructions.borderRadius;
+    borderDiv.style.display = instructions.borderDisplay;
+  }
+
+  displayInstructionsText() {
+    const div = document.getElementById("instructionsTextContent");
+    const text = Game.instructions[this.instructionsProgress].text;
+    div.innerText = "";
+    const words = text.split(" ");
+    let index = 0;
+
+    if (this.wordInterval) clearInterval(this.wordInterval);
+    this.wordInterval = setInterval(() => {
+      if (index < words.length) {
+        div.innerText += (index === 0 ? "" : " ") + words[index];
+        index++;
+      } else {
+        clearInterval(this.wordInterval);
+        this.wordInterval = null;
+      }
+    }, 65);
+  }
+
+  static instructions = [
+    {
+      text: "WELCOME! If you are not here for the first time, you can skip this tutorial by clicking the skip button on the side. Otherwise, " +
+        "make sure you pay good attention to the instructions. You can navigate through the tutorial by clicking the next and back buttons.",
+      borderWidth: '0',
+      borderHeight: '0',
+      borderLeft: '0',
+      borderTop: '0',
+      borderRadius: '0',
+      borderDisplay: 'none',
+    },
+    {
+      text: "The first player to throw is always PLAYER1. The info for both players in located on separate sides, BLUE = PLAYER1, RED = PLAYER2. " +
+        "Every player has a character with unique stats and abilities, be careful as the character's throw strength varies.",
+      borderWidth: '0',
+      borderHeight: '0',
+      borderLeft: '0',
+      borderTop: '0',
+      borderRadius: '0',
+      borderDisplay: 'none',
+    },
+    {
+      text: "This is the game timer. It shows the time you have remaining before your turn ends. " +
+        "The turn ends when the timer hits 0, including if the ball is still in play.",
+      borderWidth: '6%',
+      borderHeight: '8%',
+      borderLeft: '46.5%',
+      borderTop: '5%',
+      borderRadius: '10px',
+      borderDisplay: 'block',
+    },
+    {
+      text: "This is the HP bar. It shows the current health of the player. If you lose all of your HP, you automatically lose the game. " +
+      "You can reduce your opponent's HP by hitting them with the ball. Some characters have abilities or passives that can affect HP.",
+      borderWidth: '28.5%',
+      borderHeight: '4.5%',
+      borderLeft: '21%',
+      borderTop: '3.5%',
+      borderRadius: '10px',
+      borderDisplay: 'block',
+    },
+    {
+      text: "This is the energy bar. It shows the current energy of the player. Energy is used to activate character's abilities. " +
+        "You gain energy each turn and by scoring cups. Some characters have abilities or passives that can affect energy.",
+      borderWidth: '26.5%',
+      borderHeight: '3%',
+      borderLeft: '21%',
+      borderTop: '8%',
+      borderRadius: '10px',
+      borderDisplay: 'block',
+    },
+    {
+      text: "This is the ability indicator. When the ability is ready to use, a star appears behind it. If the star is yellow, " +
+        "the ability will use up 100% of your energy and if the star is red, the ability will drain energy periodically with usage. " +
+        "Each character has a unique ability that can be activated by pressing SPACE.",
+      borderWidth: '8%',
+      borderHeight: '14%',
+      borderLeft: '15.5%',
+      borderTop: '13%',
+      borderRadius: '10px',
+      borderDisplay: 'block',
+    },
+    {
+      text: "This is the lever. When it's your turn, you can manually set the lever on your side by dragging it up or down. " +
+        "Some characters have passives that make them able to manipulate the lever and game variables with it, some don't.",
+      borderWidth: '7%',
+      borderHeight: '30%',
+      borderLeft: '76%',
+      borderTop: '28%',
+      borderRadius: '10px',
+      borderDisplay: 'block',
+    },
+    {
+      text: "This is the ball. When it's your turn, you can click anywhere on the screen and drag backwards to generate power and sideways to change direction. " +
+        "Your goal is to either score a cup or to hit opponent with the ball. If you score a cup, you get another turn and if you hit the opponent, they lose HP. " +
+        "The ball doesn't bounce back from the opponent, but it does bounce from the cups.",
+      borderWidth: '5%',
+      borderHeight: '10%',
+      borderLeft: '46.4%',
+      borderTop: '29%',
+      borderRadius: '50%',
+      borderDisplay: 'block',
+    },
+    {
+      text: "The more opponent's cups you hit and the lower their HP gets, the harder it will be for them to play. " +
+        "This is it for the introduction :). We hope you have fun and good luck scoring cups!!",
+      borderWidth: '0',
+      borderHeight: '0',
+      borderLeft: '0',
+      borderTop: '0',
+      borderRadius: '0',
+      borderDisplay: 'none',
+    }
+  ];
+
+  // TODO finish abilities?
+  // TODO fucking ball stays on cup -> fix dis shit
+  // TODO end game screen + reset
+  // TODO back button correct reset
+  // TODO button sounds, hurt sounds
 }

@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
       document.getElementById("introText").style.visibility = "visible";
       document.getElementById("introText").style.opacity = '1';
-    }, 3500);
+    }, 2500);
   }, 0);
 });
 
@@ -391,6 +391,7 @@ let spacePressed = false;
 let ball;
 let dragStart = [];
 let dragEnd = [];
+let gameNumber = 1;
 
 
 //event listeners for the game
@@ -446,7 +447,8 @@ async function initGame(){
   await init(false);
   initObjects(false);
   setPlayerObjects();
-  game = new Game(player1, player2, ball, camera, canvas);
+  game = new Game(player1, player2, ball, camera, canvas, gameNumber);
+  gameNumber++;
   physics.game = game;
   game.setUp();
   setAABBs();
