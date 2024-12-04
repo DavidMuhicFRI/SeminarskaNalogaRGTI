@@ -64,19 +64,19 @@ export class Game {
     const rightSlider = document.getElementById('sliderDivRight');
     const leftSliderInput = document.getElementById('sliderLeft');
     const rightSliderInput = document.getElementById('sliderRight');
+    leftSliderInput.value = 5;
+    rightSliderInput.value = 5;
     const leftSliderValue = document.getElementById("sliderValueLeft");
     const rightSliderValue = document.getElementById("sliderValueRight");
-    let gravityConstant = 1.10;
+    let gravityConstant = 1.20;
     let gravityModifier = 25;
     let springConstant = 0.5;
     let springModifier = 14;
     let originalGravity = 1;
     let originalBounciness = 0.85;
 
-    if (this.player1.character.stats.name === 'CURVE' || this.player1.character.stats.name === 'SPRING' || this.player1.character.stats.name === 'NERO') {
-      if (this.player1.character.stats.name === 'NERO') {
-        leftStar.style.display = 'none';
-      } else if (this.player1.character.stats.name === 'SPRING') {
+    if (this.player1.character.stats.name === 'CURVE' || this.player1.character.stats.name === 'SPRING') {
+      if (this.player1.character.stats.name === 'SPRING') {
         leftSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         leftSliderInput.addEventListener("input", () => {
           this.bounciness = springConstant + leftSliderInput.value / springModifier;
@@ -84,7 +84,6 @@ export class Game {
           leftSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         });
       } else {
-        leftStar.style.display = 'none';
         leftSliderValue.innerText = `Gravity: ${(originalGravity / this.gravity).toFixed(2)}x`;
         leftSliderInput.addEventListener("input", () => {
           this.gravity = gravityConstant - leftSliderInput.value / gravityModifier;
@@ -92,10 +91,9 @@ export class Game {
         });
       }
     }
-    if (this.player2.character.stats.name === 'CURVE' || this.player2.character.stats.name === 'SPRING' || this.player2.character.stats.name === 'NERO') {
-      if (this.player2.character.stats.name === 'NERO') {
-        rightStar.style.display = 'none';
-      } else if (this.player2.character.stats.name === 'SPRING') {
+
+    if (this.player2.character.stats.name === 'CURVE' || this.player2.character.stats.name === 'SPRING') {
+      if (this.player2.character.stats.name === 'SPRING') {
         rightSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         rightSliderInput.addEventListener("input", () => {
           this.bounciness = springConstant + rightSliderInput.value / springModifier;
@@ -103,7 +101,6 @@ export class Game {
           rightSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         });
       } else {
-        rightStar.style.display = 'none';
         rightSliderValue.innerText = `Gravity: ${(originalGravity / this.gravity).toFixed(2)}x`;
         rightSliderInput.addEventListener("input", () => {
           this.gravity = gravityConstant - rightSliderInput.value / gravityModifier;

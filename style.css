@@ -445,10 +445,8 @@ body, html {
 .abilityStar {
   display: block;
   position: absolute;
-  transform: translate(-50%, -50%);
   width: 86%;
   height: 86%;
-  animation: rotate 5s linear infinite;
   visibility: hidden;
 }
 .iconImage2 {
