@@ -585,7 +585,7 @@ export class Game {
       this.buttonSound.play().then();
       setTimeout(() => {
         this.addTurnStartEventListener();
-      }, 1000);
+      }, 500);
     }, { once: true });
   }
 
