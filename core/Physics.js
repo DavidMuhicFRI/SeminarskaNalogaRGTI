@@ -113,6 +113,7 @@ export class Physics {
             this.normalBounce(minDirection, ball);
             break;
         }
+        ball.lastBounceNode = b;
         this.game.handleBounce();
     }
 
@@ -225,6 +226,14 @@ export class Physics {
 
     //bounces the ball from the edge of the cup
     edgeBounce(minDirection, ball,  ballTransform, cupBox, cup, ballBox, cupWidth, distance){
+      let color = ball.lastBounceNode.name.includes("R") ? "R" : "B";
+      let otherCupName = ball.lastBounceNode.name.includes("Cup2") ? `Cup${color}3` : `Cup${color}2`;
+      if(ball.lastBounce === "edge" && (ball.lastBounceNode === cup || ball.lastBounceNode.name === otherCupName)){
+        ball.velocity[1] = -3;
+        this.normalBounce(minDirection, ball);
+      }else{
+        ball.lastBounce = "edge";
+      }
     let wallWidth = 0.04;
     let edge = distance[0] < distance[2] ? 0 : 2;
     let direction;
@@ -257,7 +266,7 @@ export class Physics {
     spreadFactor = Math.min(spreadFactor, 1);
     let YFactor = Math.abs(ball.velocity[1]) * ball.bounciness;
     ball.velocity[edge] = Math.abs(ball.velocity[edge]) * direction + spreadFactor * YFactor;
-    ball.velocity[1] = YFactor * (1 - spreadFactor);
+    ball.velocity[1] = YFactor * (1 - spreadFactor * 0.5);
     //console.log(ball.velocity[1], "velocity and ", YFactor + (1 - spreadFactor));
     //ball.transform.translation = vec3.add(vec3.create(), ball.transform.translation, minDirection);
     //console.log(ball.velocity, "out");

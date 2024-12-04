@@ -21,6 +21,8 @@ export class Ball {
     this.shrinking = false;
     this.thrower = null;
     this.inCup = false;
+    this.lastBounce = null;
+    this.lastBounceNode = null;
   }
 
   //making the ball bigger and smaller accordingly

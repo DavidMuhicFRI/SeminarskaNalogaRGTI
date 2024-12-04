@@ -628,7 +628,7 @@ async function initializeTheLight(intro){
     }));
     light.addComponent(new Light({
       color: [250, 245, 220],
-      intensity: 1.6,
+      intensity: 1.4,
       attenuation: [0, 0.1, 0.03],
       ambientOff: 0.01,
       ambientOn: 0.04,
@@ -722,10 +722,10 @@ async function init(intro){
 
 /////////////////////////////////////////////////////////////////////////////LOADING THE OBJECTS/////////////////////////////////////////////////
 
-function findObject(name){
+function findObject(name) {
   let object = null;
   scene.traverse(node => {
-    if(node.name === name){
+    if (node.name === name) {
       object = node;
     }
   });
