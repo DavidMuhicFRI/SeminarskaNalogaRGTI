@@ -278,7 +278,7 @@ async function exitGame(){
   game = null;
   player1 = new Player(1);
   player2 = new Player(2);
-  canvas.style.filter = "blur(0px)";
+  canvas.style.filter = "none";
   $("#characterPage").show();
   $("#game").hide();
 }
