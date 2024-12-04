@@ -558,7 +558,14 @@ export class Game {
   }
 
   setGameOverPage(){
-
+    const winner = this.currentPlayer === this.player1 ? 'Left' : 'Right';
+    const loser = winner === 'Left' ? 'Right' : 'Left';
+    document.getElementById("gameOverWinnerPlaceholder" + winner).src = `winnerText.png`;
+    document.getElementById("gameOverWinnerPlaceholder" + loser).src = `loserText.png`;
+    document.getElementById(`gameOverCrown${winner}`).style.visibility = 'visible';
+    document.getElementById(`gameOverCrown${loser}`).style.visibility = 'hidden';
+    document.getElementById("gameOverCharacterImgLeft").src = this.player1.character.stats.iconImage;
+    document.getElementById("gameOverCharacterImgRight").src = this.player2.character.stats.iconImage;
   }
 
   displayInstructionsDiv() {
@@ -576,7 +583,9 @@ export class Game {
     document.getElementById('instructionsSkipButton').addEventListener('click', () => {
       instructionsDiv.style.display = 'none';
       this.buttonSound.play().then();
-      this.addTurnStartEventListener();
+      setTimeout(() => {
+        this.addTurnStartEventListener();
+      }, 1000);
     }, { once: true });
   }
 
