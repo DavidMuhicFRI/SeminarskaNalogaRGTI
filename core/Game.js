@@ -11,6 +11,7 @@ export class Game {
     this.camera = camera;
     this.canvas = canvas;
     this.gravity = 1;
+    this.bounciness = 0.85;
 
     this.cameraShakeInterval = null;
 
@@ -27,6 +28,7 @@ export class Game {
     this.wordInterval = null;
   }
 
+  //initial setup
   setUp(){
     document.getElementById('rightBarHeader').style.width = '102%';
     document.getElementById('leftBarHeader').style.width = '102%';
@@ -50,6 +52,7 @@ export class Game {
     }
   }
 
+  //sets the ability images and sliders depending on picked characters
   setSideDivs() {
     const leftAbilityIcon = document.getElementById('leftAbilityIcon');
     const rightAbilityIcon = document.getElementById('rightAbilityIcon');
@@ -99,7 +102,7 @@ export class Game {
     rightSlider.style.display = this.player2.character.stats.lever;
   }
 
-
+  //manages the sliders depending on the current player
   manageSliders() {
     const leftSliderInput = document.getElementById('sliderLeft');
     const rightSliderInput = document.getElementById('sliderRight');
@@ -112,6 +115,7 @@ export class Game {
     }
   }
 
+  //clears the effects
   clearEffects(){
     let effects = document.getElementsByClassName("hurtDiv");
     for (let effect of effects) {
@@ -165,12 +169,12 @@ export class Game {
   turnCamera(){
     let transform = this.camera.getComponentOfType(Transform);
     if(this.currentPlayer === this.player2){
-      this.eulerToRotation({ roll: -180, pitch: 0, yaw: 15 }, transform);
+      this.eulerToRotation({ roll: -180, pitch: 0, yaw: 15 });
       let cameraInterval = setInterval(() => {
         if(this.cameraRotation.pitch < 180){
           transform.translation[2] += (12.6 * 2) / 200;
           this.cameraRotation.pitch += 0.9;
-          this.eulerToRotation(this.cameraRotation, transform);
+          this.eulerToRotation(this.cameraRotation);
         }else{
           this.showText();
           this.addTurnStartEventListener();
@@ -179,12 +183,12 @@ export class Game {
         }
       }, 10);
     }else{
-      this.eulerToRotation({ roll: -180, pitch: 180, yaw: 15 }, transform);
+      this.eulerToRotation({ roll: -180, pitch: 180, yaw: 15 });
       let cameraInterval = setInterval(() => {
         if(this.cameraRotation.pitch > 0){
           transform.translation[2] -= (12.6 * 2) / 200;
           this.cameraRotation.pitch -= 0.9;
-          this.eulerToRotation(this.cameraRotation, transform);
+          this.eulerToRotation(this.cameraRotation);
         }else{
           this.showText();
           this.addTurnStartEventListener();
@@ -256,7 +260,7 @@ export class Game {
     this.ball.moving = false;
     this.ball.isGrabbed = false;
     this.ball.effect = null;
-    this.ball.bounciness = 0.85;
+    this.ball.bounciness = this.bounciness;
     if(this.currentPlayer === this.player1) {
       this.ball.transform.translation = [0, 7.5, -7.1];
       this.ball.startPosition = [0, 7.5, -7.1];
@@ -355,7 +359,7 @@ export class Game {
     this.ball.effect = 'atlasEffect';
   }
   activateCurveAbility(event){
-    if(!event){
+    if(!event || this.currentPlayer.energy < 1){
       return;
     }
     this.currentPlayer.loseEnergy(0.66);
@@ -369,16 +373,14 @@ export class Game {
     }
   }
   activateNeroAbility(){
-    let bars = document.getElementsByClassName("abilityBar");
-    let amount = 1;
-    this.currentPlayer.loseEnergy(amount);
+    this.currentPlayer.loseEnergy(1);
     this.currentPlayer.effectImpact *= 0.98;
-    this.currentPlayer.gainHP(amount / 4);
-    for(let bar of bars){
-    }
+    this.currentPlayer.gainHP(1 / 4);
+    this.stopCupEffects();
+    this.activateCupEffects();
   }
   activateSpringAbility(){
-    if(this.ball.isGrabbed || this.ball.moving){
+    if(this.ball.moving){
       return;
     }
     this.currentPlayer.loseEnergy(100);
@@ -388,7 +390,7 @@ export class Game {
 
   handleCupHit(cup){
     this.currentPlayer.gainEnergy(this.currentPlayer.character.stats.energyGainCup);
-    this.cheerSound.play().then(r => console.log(r));
+    this.cheerSound.play().then();
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.otherPlayer().loseEnergy(6);
     }else if(this.otherPlayer().character.stats.name === 'TRIPP'){
@@ -407,30 +409,28 @@ export class Game {
       this.giveAnotherTurn();
     }
   }
-
   handlePlayerHit(){
-    let otherPlayer = this.otherPlayer();
     let damage = this.getBallSpeed() * this.currentPlayer.character.stats.strength;
     if(this.ball.effect === 'atlasEffect'){
       damage *= 1.5;
       this.otherPlayer().rest = true;
     }else if(this.ball.effect === 'springEffect'){
-      damage *= 1.2;
+      damage *= 1.4;
     }
-    if(this.currentPlayer.character.stats.name === 'NERO'){
-      this.currentPlayer.gainHP(damage / 2);
-    }else if(this.otherPlayer().character.stats.name === 'NERO'){
+    if(this.otherPlayer().character.stats.name === 'NERO'){
       damage *= 1.5;
+    }else if(this.currentPlayer.character.stats.name === 'NERO'){
+      this.currentPlayer.gainHP(damage / 2);
     }
-    otherPlayer.loseHP(damage);
-    if(otherPlayer.currentHP <= 0){
+    this.otherPlayer().loseHP(damage);
+    if(this.otherPlayer().currentHP <= 0){
       this.gameOver();
     }
     this.endTurn();
   }
   handleBounce(){
     this.ball.bounces++;
-    this.bounceSound.play().then(function(){});
+    this.bounceSound.play().then();
     if(this.currentPlayer.character.stats.name === 'SPRING' && !this.ball.inCup && this.ball.effect !== 'springEffect' && this.ball.velocity[1] > 0.8){
       this.currentPlayer.gainEnergy(1);
       this.currentPlayer.gainHP(0.5);
@@ -441,17 +441,15 @@ export class Game {
   }
 
   activateCupEffects(){
-    this.canvas.style.filter = `blur(${this.currentPlayer.effectImpact / 2}px)`;
+    this.canvas.style.filter = `blur(${this.currentPlayer.effectImpact / 7}vh)`;
     this.clearCameraShakeInterval();
     this.setCameraShakeInterval();
   }
-
   setCameraShakeInterval(){
     this.cameraShakeInterval = setInterval(() => {
       this.shakeCamera();
     }, 200);
   }
-
   stopCupEffects(){
     this.canvas.style.filter = 'blur(0px)';
     this.clearCameraShakeInterval();
@@ -485,7 +483,7 @@ export class Game {
       setTimeout(() => {
         this.cameraRotation.yaw += randomYawRotation;
         this.cameraRotation.pitch += randomPitchRotation;
-        this.eulerToRotation(this.cameraRotation, transform);
+        this.eulerToRotation(this.cameraRotation);
       }, i * 2);
     }
 
@@ -499,34 +497,19 @@ export class Game {
   getBallSpeed(){
     return Math.sqrt(this.ball.velocity[0] ** 2 + this.ball.velocity[1] ** 2 + this.ball.velocity[2] ** 2) / 2;
   }
-  eulerToQuaternion(euler) {
-    const { roll, pitch, yaw } = euler;
+  eulerToRotation(euler) {
+    const cy = Math.cos(euler.yaw * (Math.PI / 180) * 0.5); // Cosine of half yaw
+    const sy = Math.sin(euler.yaw * (Math.PI / 180) * 0.5); // Sine of half yaw
+    const cp = Math.cos(euler.pitch * (Math.PI / 180) * 0.5); // Cosine of half pitch
+    const sp = Math.sin(euler.pitch * (Math.PI / 180) * 0.5); // Sine of half pitch
+    const cr = Math.cos(euler.roll * (Math.PI / 180) * 0.5); // Cosine of half roll
+    const sr = Math.sin(euler.roll * (Math.PI / 180) * 0.5); // Sine of half roll
 
-    // Convert degrees to radians
-    const degToRad = Math.PI / 180;
-    const r = roll * degToRad;
-    const p = pitch * degToRad;
-    const y = yaw * degToRad;
-
-    // Compute quaternion components
-    const cy = Math.cos(y * 0.5); // Cosine of half yaw
-    const sy = Math.sin(y * 0.5); // Sine of half yaw
-    const cp = Math.cos(p * 0.5); // Cosine of half pitch
-    const sp = Math.sin(p * 0.5); // Sine of half pitch
-    const cr = Math.cos(r * 0.5); // Cosine of half roll
-    const sr = Math.sin(r * 0.5); // Sine of half roll
-
-    return {
-      w: cr * cp * cy + sr * sp * sy,
-      x: sr * cp * cy - cr * sp * sy,
-      y: cr * sp * cy + sr * cp * sy,
-      z: cr * cp * sy - sr * sp * cy,
-    };
-  }
-  eulerToRotation(euler, transform) {
-    const { roll, pitch, yaw } = euler;
-    const rotation = this.eulerToQuaternion({ roll, pitch, yaw });
-    transform.rotation = [rotation.w, rotation.x, rotation.y, rotation.z];
+    let w = cr * cp * cy + sr * sp * sy;
+    let x = sr * cp * cy - cr * sp * sy;
+    let y = cr * sp * cy + sr * cp * sy;
+    let z = cr * cp * sy - sr * sp * cy;
+    this.camera.getComponentOfType(Transform).rotation = [w, x, y, z];
   }
 
   addTurnStartEventListener() {
@@ -573,7 +556,8 @@ export class Game {
       if(this.instructionsProgress < Game.instructions.length - 1) {
         this.instructionsProgress++;
         if(this.instructionsProgress === Game.instructions.length - 1) {
-          document.getElementById("instructionsSkipButton").style.animation = 'pulseScale 0.75s infinite';
+          document.getElementById('instructions').style.display = 'none';
+          this.addTurnStartEventListener();
         }
       }
     } else {

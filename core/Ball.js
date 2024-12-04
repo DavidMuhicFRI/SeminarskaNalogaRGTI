@@ -23,6 +23,7 @@ export class Ball {
     this.inCup = false;
   }
 
+  //making the ball bigger and smaller accordingly
   blink(){
     if(!this.isGrabbed && !this.moving){
       if(this.transform.scale[0] < 0.22 && !this.shrinking){
@@ -33,6 +34,7 @@ export class Ball {
     }
   }
 
+  //setting the interval for blink
   setBlinkingInterval(){
     if(this.blinking){
       clearInterval(this.blinking);
@@ -40,6 +42,7 @@ export class Ball {
     this.blinking = setInterval(() => this.blink(), 20);
   }
 
+  //sets the ball's start velocity
   setStartVelocity(g){
     let direction = 0;
     let deformation = 0;
@@ -58,6 +61,7 @@ export class Ball {
     vec3.scale(this.velocity, this.velocity, g);
   }
 
+  //preventing the ball to go off the map
   getBallBack(){
     if(this.transform.translation[1] < -1.5){
       this.transform.translation[1] = 0.4;
@@ -82,6 +86,7 @@ export class Ball {
     }
   }
 
+  //updating the ball's position
   update(t, dt) {
     if(!this.moving){
       return;
