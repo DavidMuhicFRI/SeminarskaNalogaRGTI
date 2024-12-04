@@ -63,18 +63,28 @@ export class Game {
     const rightSlider = document.getElementById('sliderDivRight');
     const leftSliderInput = document.getElementById('sliderLeft');
     const rightSliderInput = document.getElementById('sliderRight');
+    const leftSliderValue = document.getElementById("sliderValueLeft");
+    const rightSliderValue = document.getElementById("sliderValueRight");
+    let gravityConstant = 1.25;
+    let gravityModifier = 15;
+    let springConstant = 0.42;
+    let springModifier = 20;
 
     if (this.player1.character.stats.name === 'CURVE' || this.player1.character.stats.name === 'SPRING' || this.player1.character.stats.name === 'NERO') {
       if (this.player1.character.stats.name === 'NERO') {
         leftStar.style.display = 'none';
       } else if (this.player1.character.stats.name === 'SPRING') {
+        leftSliderValue.innerText = this.ball.bounciness.toFixed(2);
         leftSliderInput.addEventListener("input", () => {
-          this.ball.bounciness = 0.35 + leftSliderInput.value / 10;
+          this.ball.bounciness = springConstant + leftSliderInput.value / springModifier;
+          leftSliderValue.innerText =  this.ball.bounciness.toFixed(2);
         });
       } else {
         leftStar.style.display = 'none';
+        leftSliderValue.innerText = this.gravity.toFixed(2);
         leftSliderInput.addEventListener("input", () => {
-          this.gravity = 1 - (rightSliderInput.value - 5) / 20;
+          this.gravity = gravityConstant - leftSliderInput.value / gravityModifier;
+          leftSliderValue.innerText =  this.gravity.toFixed(2);
         });
       }
     }
@@ -82,13 +92,17 @@ export class Game {
       if (this.player2.character.stats.name === 'NERO') {
         rightStar.style.display = 'none';
       } else if (this.player2.character.stats.name === 'SPRING') {
+        rightSliderValue.innerText = this.ball.bounciness.toFixed(2);
         rightSliderInput.addEventListener("input", () => {
-          this.ball.bounciness = 0.35 + rightSliderInput.value / 10;
+          this.ball.bounciness = springConstant + rightSliderInput.value / springModifier;
+          rightSliderValue.innerText =  this.ball.bounciness.toFixed(2);
         });
       } else {
         rightStar.style.display = 'none';
+        rightSliderValue.innerText = this.gravity.toFixed(2);
         rightSliderInput.addEventListener("input", () => {
-          this.gravity = 1 - (rightSliderInput.value - 5) / 20;
+          this.gravity = gravityConstant - rightSliderInput.value / gravityModifier;
+          rightSliderValue.innerText =  this.gravity.toFixed(2);
         });
       }
     }
@@ -560,15 +574,16 @@ export class Game {
     if(direction === 1) {
       if(this.instructionsProgress < Game.instructions.length - 1) {
         this.instructionsProgress++;
-        if(this.instructionsProgress === Game.instructions.length - 1) {
-          document.getElementById('instructions').style.display = 'none';
-          this.addTurnStartEventListener();
-        }
       }
     } else {
       if(this.instructionsProgress > 0) {
         this.instructionsProgress--;
       }
+    }
+    if(this.instructionsProgress === Game.instructions.length - 1) {
+      document.getElementById('instructionsSkipButton').style.animation = 'pulseScale 0.75s infinite';
+    } else {
+      document.getElementById('instructionsSkipButton').style.animation = 'none';
     }
     this.displayInstructionsBorder();
     this.displayInstructionsText();
