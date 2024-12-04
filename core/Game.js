@@ -701,7 +701,6 @@ export class Game {
 
   // TODO finish abilities?
   // TODO fucking ball stays on cup -> fix dis shit
-  // TODO end game screen setup + reset
-  // TODO back button correct reset
-  // TODO button sounds, hurt sounds implement
+  // TODO end game screen setup + reset, back button reset
+  // TODO hurt sounds
 }
