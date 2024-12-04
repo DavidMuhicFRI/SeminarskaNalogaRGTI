@@ -99,37 +99,26 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
         cl = light.color * exp(-pow( 1.25/light.fi * acos(dot(-L,D)), 8));
     }
 
-    let diffuseLight = lambert * attenuation * cl * light.intensity * 1.2;
-    let specularLight = phong * attenuation * cl * light.intensity * 1.2;
-    let ambientLight = light.ambient * light.color / d * 1.1;
+    let diffuseLight = lambert * attenuation * cl * light.intensity;
+    let specularLight = phong * attenuation * cl * light.intensity * 1.3;
+    let ambientLight = light.ambient * light.color / d * 1.2;
 
-    var shadowXY = vec2(input.shadowPos.x/input.shadowPos.w * 0.5 + 0.5, input.shadowPos.y/input.shadowPos.w * -0.5 + 0.5);
     var visibility = 0.0;
-    let oneOverShadowDepthTextureSize = 1.0 / 2048;
+    var shadowXY = vec2(input.shadowPos.x/input.shadowPos.w * 0.5 + 0.5, input.shadowPos.y/input.shadowPos.w * -0.5 + 0.5);
     for (var y = -1; y <= 1; y++) {
         for (var x = -1; x <= 1; x++) {
-            let offset = vec2<f32>(vec2(x, y)) * oneOverShadowDepthTextureSize;
-
-            visibility += textureSampleCompare(
-                shadowMap, shadowSampler,
-                shadowXY + offset, (input.shadowPos.z - 0.005) / input.shadowPos.w
-            );
+            let offset = vec2<f32>(vec2(x, y)) * (1.0 / 2048);
+            visibility += textureSampleCompare(shadowMap, shadowSampler, shadowXY + offset, (input.shadowPos.z - 0.005) / input.shadowPos.w);
         }
     }
     visibility /= 3.0;
-    visibility = min(visibility + 0.1, 2.0);
+    visibility = min(visibility, 2.0);
 
     let shadowPos = input.shadowPos / input.shadowPos.w;
-
     if(shadowPos.x < -1.0 || shadowPos.x > 1.0 || shadowPos.y < -1.0 || shadowPos.y > 1.0 || shadowPos.z < 0.0 || shadowPos.z > 1.0){
         visibility = 0.0;
     }
 
-    const gamma = 1.8;
-    let albedo = pow(textureSample(uTexture, uSampler, input.texcoords).rgb, vec3(gamma));
-    let finalColor = albedo * (diffuseLight * visibility + ambientLight) + specularLight * visibility;
-
-    output.color = pow(vec4(finalColor, 1), vec4(1 / gamma));
-
+    output.color = vec4(textureSample(uTexture, uSampler, input.texcoords).rgb * (diffuseLight * visibility + ambientLight), 1.0);
     return output;
 }
