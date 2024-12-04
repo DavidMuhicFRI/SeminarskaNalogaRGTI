@@ -878,8 +878,9 @@ body, html {
   left: 60%;
 }
 .winnerPlaceholder {
-  height: 12vh;
+  height: 13vh;
   margin-bottom: 8%;
+  animation: pulseScale 1.5s ease-in-out infinite;
 }
 #gameOverWinnerPlaceholderRight {
   margin-left: -20%;
@@ -888,28 +889,16 @@ body, html {
   margin-left: -10%;
 }
 .crownPlaceholder {
-  height: 8%;
-  width: 12%;
-  margin: 0 0 2% -20%;
-  visibility: hidden;
+  height: 10%;
+  width: 15%;
+  margin-left: -20%;
+  visibility: visible;
 }
 .gameOverCharacterIcon {
-  height: 22vh;
-  width: 22vh;
-  border: 0.5vh solid black;
-  border-radius: 10px;
+  height: 30vh;
+  width: 30vh;
+  border: 1vh solid black;
+  border-radius: 13px;
   margin: 0 0 2% -20%;
-}
-.gameOverStats {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-evenly;
-  height: 60%;
-  width: 70%;
-  color: black;
-  margin-left: 8%;
-  font-size: 4.5vh;
-  font-weight: bold;
 }
 
