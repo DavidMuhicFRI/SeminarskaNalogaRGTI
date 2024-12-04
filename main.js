@@ -282,6 +282,7 @@ async function exitGame(){
   $("#characterPage").show();
   $("#game").hide();
 }
+window.exitGame = exitGame;
 
 
 //button event listeners

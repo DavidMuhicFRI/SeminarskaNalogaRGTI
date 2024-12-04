@@ -459,7 +459,7 @@ export class Game {
     this.bounceSound.play().then();
     if(this.currentPlayer.character.stats.name === 'SPRING' && !this.ball.inCup && this.ball.effect !== 'springEffect' && this.ball.velocity[1] > 0.8){
       this.currentPlayer.gainEnergy(1);
-      this.currentPlayer.gainHP(0.5);
+      this.currentPlayer.gainHP(0.33);
     }
     if(this.ball.effect === 'atlasEffect'){
       this.ball.effect = null;
@@ -552,9 +552,7 @@ export class Game {
     document.getElementById("gameOverExitButton").addEventListener("click", async () => {
       this.buttonSound.play().then();
       gameOverDiv.style.display = 'none';
-      await initCharacterPage();
-      $("#characterPage").show();
-      $("#game").hide();
+      await window.exitGame();
     }, {once : true});
     //works, now reset is needed
   }
