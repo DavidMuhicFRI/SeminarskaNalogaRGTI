@@ -284,6 +284,7 @@ export class Game {
       this.ball.startPosition = [0, 7.5, 7.1];
     }
     this.ball.transform.scale = [0.18, 0.18, 0.18];
+    this.ball.radius = 0.18;
     this.ball.setBlinkingInterval();
     document.getElementById("powerContainer").style.display = "none";
   }
@@ -299,9 +300,11 @@ export class Game {
     this.ball.isGrabbed = true;
     this.ball.moving = false;
     this.ball.thrower = this.currentPlayer;
-    this.ball.transform.scale = [0.18, 0.18, 0.18];
     this.stopPulsingAnimations();
     document.getElementById("powerContainer").style.display = "block";
+    if(this.ball.effect === null){
+      this.ball.transform.scale = [0.18, 0.18, 0.18];
+    }
   }
   stopBall(){
     this.resetBall();
@@ -372,6 +375,8 @@ export class Game {
     }
     this.currentPlayer.loseEnergy(100);
     this.ball.effect = 'atlasEffect';
+    this.ball.scale = [0.25, 0.25, 0.25];
+    this.ball.radius = 0.25;
   }
   activateCurveAbility(event){
     if(!event || this.currentPlayer.energy < 1){
@@ -401,6 +406,8 @@ export class Game {
     this.currentPlayer.loseEnergy(100);
     this.ball.effect = 'springEffect';
     this.ball.bounciness = 2;
+    this.ball.transform.scale = [0.14, 0.14, 0.14];
+    this.ball.radius = 0.14;
   }
 
   handleCupHit(cup){
