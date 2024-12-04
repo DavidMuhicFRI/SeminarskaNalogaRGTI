@@ -229,7 +229,7 @@ export class Physics {
       let color = ball.lastBounceNode.name.includes("R") ? "R" : "B";
       let otherCupName = ball.lastBounceNode.name.includes("Cup2") ? `Cup${color}3` : `Cup${color}2`;
       if(ball.lastBounce === "edge" && (ball.lastBounceNode === cup || ball.lastBounceNode.name === otherCupName)){
-        ball.velocity[1] = -3;
+        ball.velocity[1] = -5;
         this.normalBounce(minDirection, ball);
       }else{
         ball.lastBounce = "edge";
