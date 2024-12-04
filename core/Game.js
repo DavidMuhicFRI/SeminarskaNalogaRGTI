@@ -441,7 +441,7 @@ export class Game {
   }
 
   activateCupEffects(){
-    this.canvas.style.filter = `blur(${this.currentPlayer.effectImpact / 2}px)`;
+    this.canvas.style.filter = `blur(${this.currentPlayer.effectImpact / 7}vh)`;
     this.clearCameraShakeInterval();
     this.setCameraShakeInterval();
   }
@@ -563,7 +563,8 @@ export class Game {
       if(this.instructionsProgress < Game.instructions.length - 1) {
         this.instructionsProgress++;
         if(this.instructionsProgress === Game.instructions.length - 1) {
-          document.getElementById("instructionsSkipButton").style.animation = 'pulseScale 0.75s infinite';
+          document.getElementById('instructions').style.display = 'none';
+          this.addTurnStartEventListener();
         }
       }
     } else {
