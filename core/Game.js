@@ -437,7 +437,7 @@ export class Game {
       damage *= 1.5;
       this.otherPlayer().rest = true;
     }else if(this.ball.effect === 'springEffect'){
-      damage *= 1.4;
+      damage *= 1.3;
     }
     if(this.otherPlayer().character.stats.name === 'NERO'){
       damage *= 1.5;
@@ -463,7 +463,7 @@ export class Game {
   }
 
   activateCupEffects(){
-    this.canvas.style.filter = `blur(${this.currentPlayer.effectImpact / 7}vh)`;
+    this.canvas.style.filter = `blur(${this.currentPlayer.effectImpact / 10}vh)`;
     this.clearCameraShakeInterval();
     this.setCameraShakeInterval();
   }
@@ -545,9 +545,12 @@ export class Game {
     this.setGameOverPage();
     let gameOverDiv = document.getElementById("gameOverDiv");
     gameOverDiv.style.display = 'block';
-    document.getElementById("gameOverExitButton").addEventListener("click", () => {
+    document.getElementById("gameOverExitButton").addEventListener("click", async () => {
       this.buttonSound.play().then();
       gameOverDiv.style.display = 'none';
+      await initCharacterPage();
+      $("#characterPage").show();
+      $("#game").hide();
     }, {once : true});
     //works, now reset is needed
   }

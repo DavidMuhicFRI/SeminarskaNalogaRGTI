@@ -273,6 +273,11 @@ async function startGame(){
 //exits the game
 async function exitGame(){
   await initCharacterPage();
+  clearInterval(game.timerInterval);
+  game = null;
+  player1 = new Player(1);
+  player2 = new Player(2);
+  canvas.style.filter = "blur(0px)";
   $("#characterPage").show();
   $("#game").hide();
 }
@@ -380,6 +385,7 @@ async function initCharacterPage() {
   }
   constantRotation = setInterval(constantlyRotate, 5);
 }
+window.initCharacterPage = initCharacterPage;
 
 
 /////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
@@ -402,6 +408,9 @@ document.addEventListener("keydown", function(event){
       console.log(game.currentPlayer.energy)
       spacePressed = true;
     }
+  }
+  if(event.key === "l"){
+    console.log(camera.getComponentOfType(Transform).translation, camera.getComponentOfType(Transform).rotation);
   }
 });
 document.addEventListener("keyup", function(event){
@@ -582,25 +591,19 @@ async function initializeTheScene(){
 
 function initializeTheCamera(intro){
   if(intro){
-    if(!camera){
-      camera = new Node();
-      camera.name = 'Camera';
-      camera.addComponent(new Camera({
-        aspect: canvas.width / canvas.height,
-        fovy: Math.PI / 3,
-        near: 0.1,
-        far: 100,
-      }));
-      camera.addComponent(new Transform({
-        translation: [0, 10, 10],
-        rotation: [-0.2, 0, 0, 1],
-      }));
-      scene.addChild(camera);
-    }else{
-      let cameraTransform = camera.getComponentOfType(Transform);
-      cameraTransform.translation = [0, 10, 10];
-      cameraTransform.rotation = [-0.2, 0, 0, 1];
-    }
+    camera = new Node();
+    camera.name = 'Camera';
+    camera.addComponent(new Camera({
+      aspect: canvas.width / canvas.height,
+      fovy: Math.PI / 3,
+      near: 0.1,
+      far: 100,
+    }));
+    camera.addComponent(new Transform({
+      translation: [0, 10, 10],
+      rotation: [-0.2, 0, 0, 1],
+    }));
+    scene.addChild(camera);
   }else{
     let cameraTransform = camera.getComponentOfType(Transform);
     cameraTransform.translation = [0, 9, -12.6];
@@ -615,42 +618,25 @@ function initializeTheCamera(intro){
 
 async function initializeTheLight(intro){
   if(intro){
-    if(!light){
-      light = new Node();
-      light.name = 'Light';
-      light.addComponent(new Transform({
-        translation: [0.2, 13, 9],
-        rotation: [-0.5, 0.1, 0, 1],
-      }));
-      light.addComponent(new Light({
-        color: [250, 245, 220],
-        intensity: 1,
-        attenuation: [0, 0.1, 0.03],
-        ambientOff: 0.01,
-        ambientOn: 0.04,
-        fi: 3,
-        fovy: Math.PI / 1.2,
-        aspect: 1,
-        near: 1,
-        far: 200,
-      }));
-      scene.addChild(light);
-    }else{
-      let lightTransform = light.getComponentOfType(Transform);
-      lightTransform.translation = [0.2, 13, 9];
-      lightTransform.rotation = [-0.5, 0.1, 0, 1];
-      let lightComponent = light.getComponentOfType(Light);
-      lightComponent.color = [250, 245, 220];
-      lightComponent.intensity = 1;
-      lightComponent.attenuation = [0, 0.1, 0.03];
-      lightComponent.ambientOff = 0.01;
-      lightComponent.ambientOn = 0.04;
-      lightComponent.fi = 3;
-      lightComponent.fovy = Math.PI / 1.2;
-      lightComponent.aspect = 1;
-      lightComponent.near = 1;
-      lightComponent.far = 200;
-    }
+    light = new Node();
+    light.name = 'Light';
+    light.addComponent(new Transform({
+      translation: [0.2, 13, 9],
+      rotation: [-0.5, 0.1, 0, 1],
+    }));
+    light.addComponent(new Light({
+      color: [250, 245, 220],
+      intensity: 1,
+      attenuation: [0, 0.1, 0.03],
+      ambientOff: 0.01,
+      ambientOn: 0.04,
+      fi: 3,
+      fovy: Math.PI / 1.2,
+      aspect: 1,
+      near: 1,
+      far: 200,
+    }));
+    scene.addChild(light);
   }else{
     let lightTransform = light.getComponentOfType(Transform);
     lightTransform.translation = [0, 16.5, 0];
