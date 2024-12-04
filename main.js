@@ -79,6 +79,7 @@ introSound.volume = 0.4;
 const gameSound = new Audio('gameBackground.mp3');
 gameSound.loop = true;
 gameSound.volume = 0.1;
+const buttonSound = new Audio('buttonSound.mp3');
 
 
 //functions for the character page
@@ -279,9 +280,11 @@ async function exitGame(){
 
 //button event listeners
 gameBackButton.addEventListener('click', async function() {
+  buttonSound.play().then();
   await exitGame();
 });
 readyButton1.addEventListener('click', function() {
+  buttonSound.play().then();
   if(player1.ready){
     //button is cancel, set it to ready and unready the player
     turnButtonToReady(readyButton1);
@@ -300,6 +303,7 @@ readyButton1.addEventListener('click', function() {
   }
 });
 readyButton2.addEventListener('click', function() {
+  buttonSound.play().then();
   if(player2.ready){
     turnButtonToReady(readyButton2);
     player2.ready = false;
@@ -314,24 +318,30 @@ readyButton2.addEventListener('click', function() {
   }
 });
 forwardToP2.addEventListener('click', function() {
+  buttonSound.play().then();
   movePage();
 });
 backToP1.addEventListener('click', function() {
+  buttonSound.play().then();
   movePage();
 });
 charNextButtonBlue.addEventListener('click', function() {
+  buttonSound.play().then();
   assignCharacter("next");
   changeStats('left');
 });
 charPreviousButtonBlue.addEventListener('click', function() {
+  buttonSound.play().then();
   assignCharacter("previous");
   changeStats('left');
 });
 charNextButtonRed.addEventListener('click', function() {
+  buttonSound.play().then();
   assignCharacter("next");
   changeStats('right');
 });
 charPreviousButtonRed.addEventListener('click', function() {
+  buttonSound.play().then();
   assignCharacter("previous");
   changeStats('right');
 });

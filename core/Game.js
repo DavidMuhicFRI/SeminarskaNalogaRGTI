@@ -21,6 +21,7 @@ export class Game {
     this.turnStarted = false;
     this.bounceSound = new Audio('ballBounceSound.mp3');
     this.cheerSound = new Audio('cupHitSound.mp3');
+    this.buttonSound = new Audio('buttonSound.mp3');
     this.cheerSound.volume = 0.5;
     this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
 
@@ -526,6 +527,7 @@ export class Game {
     let gameOverDiv = document.getElementById("gameOverDiv");
     gameOverDiv.style.display = 'block';
     document.getElementById("gameOverExitButton").addEventListener("click", () => {
+      this.buttonSound.play().then();
       gameOverDiv.style.display = 'none';
     }, {once : true});
     //works, now reset is needed
@@ -541,12 +543,15 @@ export class Game {
     this.updateInstructions();
     document.getElementById('instructionsBackButton').addEventListener('click', () => {
       this.updateInstructions(-1);
+      this.buttonSound.play().then();
     });
     document.getElementById('instructionsNextButton').addEventListener('click', () => {
       this.updateInstructions(1);
+      this.buttonSound.play().then();
     });
     document.getElementById('instructionsSkipButton').addEventListener('click', () => {
       instructionsDiv.style.display = 'none';
+      this.buttonSound.play().then();
       this.addTurnStartEventListener();
     }, { once: true });
   }
