@@ -355,7 +355,7 @@ export class Game {
     this.ball.effect = 'atlasEffect';
   }
   activateCurveAbility(event){
-    if(!event){
+    if(!event || this.currentPlayer.energy < 1){
       return;
     }
     this.currentPlayer.loseEnergy(0.66);
@@ -369,13 +369,12 @@ export class Game {
     }
   }
   activateNeroAbility(){
-    let bars = document.getElementsByClassName("abilityBar");
     let amount = 1;
     this.currentPlayer.loseEnergy(amount);
     this.currentPlayer.effectImpact *= 0.98;
     this.currentPlayer.gainHP(amount / 4);
-    for(let bar of bars){
-    }
+    this.stopCupEffects();
+    this.activateCupEffects();
   }
   activateSpringAbility(){
     if(this.ball.isGrabbed || this.ball.moving){
