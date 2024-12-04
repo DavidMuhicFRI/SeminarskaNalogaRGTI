@@ -54,26 +54,25 @@ struct MaterialUniforms {
 }
 
 @group(0) @binding(0) var<uniform> camera : CameraUniforms;
+@group(0) @binding(1) var shadowMap: texture_depth_2d;
+@group(0) @binding(2) var shadowSampler: sampler_comparison;
+
 @group(1) @binding(0) var<uniform> light : LightUniforms;
+
 @group(2) @binding(0) var<uniform> model : ModelUniforms;
+
 @group(3) @binding(0) var<uniform> material : MaterialUniforms;
 @group(3) @binding(1) var uTexture : texture_2d<f32>;
 @group(3) @binding(2) var uSampler : sampler;
 
-@group(0) @binding(1) var shadowMap: texture_depth_2d;
-@group(0) @binding(2) var shadowSampler: sampler_comparison;
-
 @vertex
 fn vertex(input : VertexInput) -> VertexOutput {
     var output : VertexOutput;
-    output.clipPosition = camera.projectionMatrix * camera.viewMatrix * model.modelMatrix * vec4(input.position, 1);
-    output.position = (model.modelMatrix * vec4(input.position, 1)).xyz;
+    output.clipPosition = camera.projectionMatrix * camera.viewMatrix * model.modelMatrix * vec4(input.position, 1.0);
+    output.position = (model.modelMatrix * vec4(input.position, 1.0)).xyz;
     output.texcoords = input.texcoords;
     output.normal = model.normalMatrix * input.normal;
-
-    var posFromLight = light.lightProjectionMatrix * light.lightViewMatrix * model.modelMatrix * vec4(input.position, 1);
-    output.shadowPos =  posFromLight;
-
+    output.shadowPos =  light.lightProjectionMatrix * light.lightViewMatrix * model.modelMatrix * vec4(input.position, 1.0);
     return output;
 }
 
@@ -81,26 +80,22 @@ fn vertex(input : VertexInput) -> VertexOutput {
 fn fragment(input : FragmentInput) -> FragmentOutput {
     var output : FragmentOutput;
 
-    let surfacePosition = input.position;
-    let d = distance(surfacePosition, light.position);
-    let attenuation = 1 / dot(light.attenuation, vec3(1, d, d * d));
+    let d = distance(input.position, light.position);
+    let attenuation = 1 / dot(light.attenuation, vec3(1.0, d, d * d));
 
     let N = normalize(input.normal);
-    let L = normalize(light.position - surfacePosition);
-    let V = normalize(camera.position - surfacePosition);
+    let L = normalize(light.position - input.position);
+    let V = normalize(camera.position - input.position);
     let R = normalize(reflect(-L, N));
     let D = normalize(light.direction);
 
     let lambert = max(dot(N, L), 0) * material.diffuse;
     let phong = pow(max(dot(V, R), 0), material.shininess) * material.specular;
 
-    var cl = vec3f(0,0,0);
-
+    var cl = vec3f(0, 0, 0);
     if(dot(-L,D) <= cos(light.fi)){
-        cl = vec3f(0,0,0);
-    }
-    else {
-        //cl = light.color * pow(dot(-L,light.direction), 200);
+        cl = vec3f(0, 0, 0);
+    }else {
         cl = light.color * exp(-pow( 1.25/light.fi * acos(dot(-L,D)), 8));
     }
 
@@ -108,10 +103,7 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
     let specularLight = phong * attenuation * cl * light.intensity * 1.2;
     let ambientLight = light.ambient * light.color / d * 1.1;
 
-
     var shadowXY = vec2(input.shadowPos.x/input.shadowPos.w * 0.5 + 0.5, input.shadowPos.y/input.shadowPos.w * -0.5 + 0.5);
-
-
     var visibility = 0.0;
     let oneOverShadowDepthTextureSize = 1.0 / 2048;
     for (var y = -1; y <= 1; y++) {

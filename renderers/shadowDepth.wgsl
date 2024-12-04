@@ -30,7 +30,6 @@ struct ModelUniforms {
 @vertex
 fn vertex(input : VertexInput) -> VertexOutput {
     var output : VertexOutput;
-    var depthPos =  light.lightProjectionMatrix * light.lightViewMatrix * model.modelMatrix * vec4f(input.position, 1.0);
-    output.position = depthPos;
+    output.position = light.lightProjectionMatrix * light.lightViewMatrix * model.modelMatrix * vec4f(input.position, 1.0);
     return output;
 }
