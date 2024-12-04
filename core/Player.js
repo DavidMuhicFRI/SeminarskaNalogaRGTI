@@ -18,11 +18,21 @@ export class Player {
     const abilityIcon = this.side === 1 ? document.getElementById('leftAbilityIcon') : document.getElementById('rightAbilityIcon');
     const abilityStar = this.side === 1 ? document.getElementById('leftAbilityStar') : document.getElementById('rightAbilityStar');
     abilityBar.style.width = `${this.energy}%`;
-    abilityIcon.style.filter = `grayScale(${100 - this.energy}%)`;
-    if(this.energy >= 100){
-      abilityStar.style.visibility = 'visible';
+    if(this.character.stats.name === "ATLAS" || this.character.stats.name === "SPRING" || this.character.stats.name === "TRIPP"){
+      if(this.energy >= 100){
+        abilityStar.style.visibility = 'visible';
+      } else {
+        abilityStar.style.visibility = 'hidden';
+      }
+      abilityIcon.style.filter = `grayScale(${100 - this.energy}%)`;
     } else {
-      abilityStar.style.visibility = 'hidden';
+      if(this.energy >= this.character.stats.minCastEnergy){
+        abilityStar.style.visibility = 'visible';
+        abilityIcon.style.filter = `grayScale(0%)`;
+      } else {
+        abilityStar.style.visibility = 'hidden';
+        abilityIcon.style.filter = `grayScale(100%)`;
+      }
     }
   }
   //increases energy

@@ -64,19 +64,19 @@ export class Game {
     const rightSlider = document.getElementById('sliderDivRight');
     const leftSliderInput = document.getElementById('sliderLeft');
     const rightSliderInput = document.getElementById('sliderRight');
+    leftSliderInput.value = 5;
+    rightSliderInput.value = 5;
     const leftSliderValue = document.getElementById("sliderValueLeft");
     const rightSliderValue = document.getElementById("sliderValueRight");
-    let gravityConstant = 1.10;
+    let gravityConstant = 1.20;
     let gravityModifier = 25;
     let springConstant = 0.5;
     let springModifier = 14;
     let originalGravity = 1;
     let originalBounciness = 0.85;
 
-    if (this.player1.character.stats.name === 'CURVE' || this.player1.character.stats.name === 'SPRING' || this.player1.character.stats.name === 'NERO') {
-      if (this.player1.character.stats.name === 'NERO') {
-        leftStar.style.display = 'none';
-      } else if (this.player1.character.stats.name === 'SPRING') {
+    if (this.player1.character.stats.name === 'CURVE' || this.player1.character.stats.name === 'SPRING') {
+      if (this.player1.character.stats.name === 'SPRING') {
         leftSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         leftSliderInput.addEventListener("input", () => {
           this.bounciness = springConstant + leftSliderInput.value / springModifier;
@@ -84,7 +84,6 @@ export class Game {
           leftSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         });
       } else {
-        leftStar.style.display = 'none';
         leftSliderValue.innerText = `Gravity: ${(originalGravity / this.gravity).toFixed(2)}x`;
         leftSliderInput.addEventListener("input", () => {
           this.gravity = gravityConstant - leftSliderInput.value / gravityModifier;
@@ -92,10 +91,9 @@ export class Game {
         });
       }
     }
-    if (this.player2.character.stats.name === 'CURVE' || this.player2.character.stats.name === 'SPRING' || this.player2.character.stats.name === 'NERO') {
-      if (this.player2.character.stats.name === 'NERO') {
-        rightStar.style.display = 'none';
-      } else if (this.player2.character.stats.name === 'SPRING') {
+
+    if (this.player2.character.stats.name === 'CURVE' || this.player2.character.stats.name === 'SPRING') {
+      if (this.player2.character.stats.name === 'SPRING') {
         rightSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         rightSliderInput.addEventListener("input", () => {
           this.bounciness = springConstant + rightSliderInput.value / springModifier;
@@ -103,7 +101,6 @@ export class Game {
           rightSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         });
       } else {
-        rightStar.style.display = 'none';
         rightSliderValue.innerText = `Gravity: ${(originalGravity / this.gravity).toFixed(2)}x`;
         rightSliderInput.addEventListener("input", () => {
           this.gravity = gravityConstant - rightSliderInput.value / gravityModifier;
@@ -689,7 +686,7 @@ export class Game {
         "Each character has a unique ability that can be activated by pressing SPACE.",
       borderWidth: '8%',
       borderHeight: '14%',
-      borderLeft: '15.5%',
+      borderLeft: '16%',
       borderTop: '13%',
       borderRadius: '10px',
       borderDisplay: 'block',
@@ -697,9 +694,9 @@ export class Game {
     {
       text: "This is the lever. When it's your turn, you can manually set the lever on your side by dragging it up or down. " +
         "Some characters have passives that make them able to manipulate the lever and game variables with it, some don't.",
-      borderWidth: '7%',
+      borderWidth: '8%',
       borderHeight: '30%',
-      borderLeft: '76%',
+      borderLeft: '75%',
       borderTop: '28%',
       borderRadius: '10px',
       borderDisplay: 'block',
@@ -710,8 +707,8 @@ export class Game {
         "The ball doesn't bounce back from the opponent, but it does bounce from the cups.",
       borderWidth: '5%',
       borderHeight: '10%',
-      borderLeft: '46.4%',
-      borderTop: '29%',
+      borderLeft: '47%',
+      borderTop: '30%',
       borderRadius: '50%',
       borderDisplay: 'block',
     },
