@@ -478,7 +478,6 @@ export class Game {
   }
 
   shakeCamera(){
-    let transform = this.camera.getComponentOfType(Transform);
     let pitchStart = this.currentPlayer === this.player1 ? 0 : 180;
     let pitchThreshold = 45;
     let pitchDiff = this.cameraRotation.pitch - pitchStart;
