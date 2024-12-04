@@ -289,6 +289,7 @@ export class Game {
       this.ball.startPosition = [0, 7.5, 7.1];
     }
     this.ball.transform.scale = [0.18, 0.18, 0.18];
+    this.ball.radius = 0.18;
     this.ball.setBlinkingInterval();
     document.getElementById("powerContainer").style.display = "none";
   }
@@ -304,9 +305,11 @@ export class Game {
     this.ball.isGrabbed = true;
     this.ball.moving = false;
     this.ball.thrower = this.currentPlayer;
-    this.ball.transform.scale = [0.18, 0.18, 0.18];
     this.stopPulsingAnimations();
     document.getElementById("powerContainer").style.display = "block";
+    if(this.ball.effect === null){
+      this.ball.transform.scale = [0.18, 0.18, 0.18];
+    }
   }
   stopBall(){
     this.resetBall();
@@ -377,6 +380,8 @@ export class Game {
     }
     this.currentPlayer.loseEnergy(100);
     this.ball.effect = 'atlasEffect';
+    this.ball.scale = [0.25, 0.25, 0.25];
+    this.ball.radius = 0.25;
   }
   activateCurveAbility(event){
     if(!event || this.currentPlayer.energy < 1){
@@ -406,6 +411,8 @@ export class Game {
     this.currentPlayer.loseEnergy(100);
     this.ball.effect = 'springEffect';
     this.ball.bounciness = 2;
+    this.ball.transform.scale = [0.14, 0.14, 0.14];
+    this.ball.radius = 0.14;
   }
 
   handleCupHit(cup){
@@ -435,7 +442,7 @@ export class Game {
       damage *= 1.5;
       this.otherPlayer().rest = true;
     }else if(this.ball.effect === 'springEffect'){
-      damage *= 1.4;
+      damage *= 1.3;
     }
     console.log(this.otherPlayer().character.stats.name);
     this.otherPlayer().character.stats.hurtSound.play().then();
@@ -463,7 +470,7 @@ export class Game {
   }
 
   activateCupEffects(){
-    this.canvas.style.filter = `blur(${this.currentPlayer.effectImpact / 7}vh)`;
+    this.canvas.style.filter = `blur(${this.currentPlayer.effectImpact / 10}vh)`;
     this.clearCameraShakeInterval();
     this.setCameraShakeInterval();
   }
@@ -478,7 +485,6 @@ export class Game {
   }
 
   shakeCamera(){
-    let transform = this.camera.getComponentOfType(Transform);
     let pitchStart = this.currentPlayer === this.player1 ? 0 : 180;
     let pitchThreshold = 45;
     let pitchDiff = this.cameraRotation.pitch - pitchStart;
@@ -546,9 +552,12 @@ export class Game {
     this.setGameOverPage();
     let gameOverDiv = document.getElementById("gameOverDiv");
     gameOverDiv.style.display = 'block';
-    document.getElementById("gameOverExitButton").addEventListener("click", () => {
+    document.getElementById("gameOverExitButton").addEventListener("click", async () => {
       this.buttonSound.play().then();
       gameOverDiv.style.display = 'none';
+      await initCharacterPage();
+      $("#characterPage").show();
+      $("#game").hide();
     }, {once : true});
     //works, now reset is needed
   }

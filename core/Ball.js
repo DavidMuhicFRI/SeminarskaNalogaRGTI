@@ -26,11 +26,11 @@ export class Ball {
   //making the ball bigger and smaller accordingly
   blink(){
     if(!this.isGrabbed && !this.moving){
-      if(this.transform.scale[0] < 0.22 && !this.shrinking){
+      if(this.transform.scale[0] < this.radius + 0.04 && !this.shrinking){
         this.transform.scale = this.transform.scale.map(x => x + 0.002);
-      }else if(this.transform.scale[0] > 0.15 && this.shrinking){
+      }else if(this.transform.scale[0] > this.radius - 0.04 && this.shrinking){
         this.transform.scale = this.transform.scale.map(x => x - 0.002);
-      }else this.shrinking = this.transform.scale[0] >= 0.22;
+      }else this.shrinking = this.transform.scale[0] >= this.radius + 0.04;
     }
   }
 
