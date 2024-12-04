@@ -548,9 +548,7 @@ export class Game {
     document.getElementById("gameOverExitButton").addEventListener("click", async () => {
       this.buttonSound.play().then();
       gameOverDiv.style.display = 'none';
-      await initCharacterPage();
-      $("#characterPage").show();
-      $("#game").hide();
+      await window.exitGame();
     }, {once : true});
     //works, now reset is needed
   }
