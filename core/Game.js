@@ -11,6 +11,7 @@ export class Game {
     this.camera = camera;
     this.canvas = canvas;
     this.gravity = 1;
+    this.bounciness = 0.85;
 
     this.cameraShakeInterval = null;
 
@@ -98,7 +99,6 @@ export class Game {
     leftSlider.style.display = this.player1.character.stats.lever;
     rightSlider.style.display = this.player2.character.stats.lever;
   }
-
 
   manageSliders() {
     const leftSliderInput = document.getElementById('sliderLeft');
@@ -256,7 +256,7 @@ export class Game {
     this.ball.moving = false;
     this.ball.isGrabbed = false;
     this.ball.effect = null;
-    this.ball.bounciness = 0.85;
+    this.ball.bounciness = this.bounciness;
     if(this.currentPlayer === this.player1) {
       this.ball.transform.translation = [0, 7.5, -7.1];
       this.ball.startPosition = [0, 7.5, -7.1];
@@ -369,15 +369,14 @@ export class Game {
     }
   }
   activateNeroAbility(){
-    let amount = 1;
-    this.currentPlayer.loseEnergy(amount);
+    this.currentPlayer.loseEnergy(1);
     this.currentPlayer.effectImpact *= 0.98;
-    this.currentPlayer.gainHP(amount / 4);
+    this.currentPlayer.gainHP(1 / 4);
     this.stopCupEffects();
     this.activateCupEffects();
   }
   activateSpringAbility(){
-    if(this.ball.isGrabbed || this.ball.moving){
+    if(this.ball.moving){
       return;
     }
     this.currentPlayer.loseEnergy(100);
@@ -387,7 +386,7 @@ export class Game {
 
   handleCupHit(cup){
     this.currentPlayer.gainEnergy(this.currentPlayer.character.stats.energyGainCup);
-    this.cheerSound.play().then(r => console.log(r));
+    this.cheerSound.play().then();
     if(this.currentPlayer.character.stats.name === 'NERO'){
       this.otherPlayer().loseEnergy(6);
     }else if(this.otherPlayer().character.stats.name === 'TRIPP'){
@@ -406,30 +405,28 @@ export class Game {
       this.giveAnotherTurn();
     }
   }
-
   handlePlayerHit(){
-    let otherPlayer = this.otherPlayer();
     let damage = this.getBallSpeed() * this.currentPlayer.character.stats.strength;
     if(this.ball.effect === 'atlasEffect'){
       damage *= 1.5;
       this.otherPlayer().rest = true;
     }else if(this.ball.effect === 'springEffect'){
-      damage *= 1.2;
+      damage *= 1.4;
     }
-    if(this.currentPlayer.character.stats.name === 'NERO'){
-      this.currentPlayer.gainHP(damage / 2);
-    }else if(this.otherPlayer().character.stats.name === 'NERO'){
+    if(this.otherPlayer().character.stats.name === 'NERO'){
       damage *= 1.5;
+    }else if(this.currentPlayer.character.stats.name === 'NERO'){
+      this.currentPlayer.gainHP(damage / 2);
     }
-    otherPlayer.loseHP(damage);
-    if(otherPlayer.currentHP <= 0){
+    this.otherPlayer().loseHP(damage);
+    if(this.otherPlayer().currentHP <= 0){
       this.gameOver();
     }
     this.endTurn();
   }
   handleBounce(){
     this.ball.bounces++;
-    this.bounceSound.play().then(function(){});
+    this.bounceSound.play().then();
     if(this.currentPlayer.character.stats.name === 'SPRING' && !this.ball.inCup && this.ball.effect !== 'springEffect' && this.ball.velocity[1] > 0.8){
       this.currentPlayer.gainEnergy(1);
       this.currentPlayer.gainHP(0.5);
@@ -444,13 +441,11 @@ export class Game {
     this.clearCameraShakeInterval();
     this.setCameraShakeInterval();
   }
-
   setCameraShakeInterval(){
     this.cameraShakeInterval = setInterval(() => {
       this.shakeCamera();
     }, 200);
   }
-
   stopCupEffects(){
     this.canvas.style.filter = 'blur(0px)';
     this.clearCameraShakeInterval();
