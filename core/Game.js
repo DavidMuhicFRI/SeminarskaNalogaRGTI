@@ -539,7 +539,17 @@ export class Game {
   }
 
   gameOver(){
-    console.log("Game over");
+    this.setGameOverPage();
+    let gameOverDiv = document.getElementById("gameOverDiv");
+    gameOverDiv.style.display = 'block';
+    document.getElementById("gameOverExitButton").addEventListener("click", () => {
+      gameOverDiv.style.display = 'none';
+    }, {once : true});
+    //works, now reset is needed
+  }
+
+  setGameOverPage(){
+
   }
 
   displayInstructionsDiv() {
@@ -702,7 +712,7 @@ export class Game {
 
   // TODO finish abilities?
   // TODO fucking ball stays on cup -> fix dis shit
-  // TODO end game screen + reset
+  // TODO end game screen setup + reset
   // TODO back button correct reset
   // TODO button sounds, hurt sounds implement
 }

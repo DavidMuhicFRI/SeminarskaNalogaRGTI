@@ -826,51 +826,89 @@ body, html {
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
+  visibility: visible;
+  overflow: hidden;
+  z-index: 6;
+  display: none;
+}
+#gameOverBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: black;
-  visibility: hidden;
-  z-index: 990;
-  overflow: hidden;
 }
-#gameOverTitle{
+#gameOverExitButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
-  top: -35%;
-  left: 0;
-  width: 100%;
-}
-#gameOverExitButton{
-  position: absolute;
-  top: 90%;
-  left: 45%;
-  width: 10%;
-  height: 5%;
+  top: 85%;
+  left: 42.5%;
+  width: 15%;
+  height: 8%;
+  color: black;
   background-color: red;
-  font-size: 2.5vh;
+  font-size: 3.5vh;
   font-weight: bold;
-  text-align: center;
   border-radius: 5px;
-  border: 0.5vh solid black;
+  border: 1vh solid black;
   cursor: pointer;
 }
-#gameOverPageSplit{
-  width: 65%;
-  height: 10%;
-  rotate: 90deg;
-  transform: translate(-50%, -50%);
+#gameOverExitButton:hover {
+  transform: scale(1.1);
 }
-#gameOverCharacterDivLeft{
+.gameOverCharacterDiv {
   position: absolute;
-  top: 20%;
+  top: 5%;
+  width: 50%;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+#gameOverCharacterDivLeft {
   left: 0;
-  width: 45%;
-  height: 65%;
 }
 #gameOverCharacterDivRight{
-  position: absolute;
-  top: 20%;
-  right: 0;
-  width: 45%;
-  height: 65%;
+  left: 60%;
+}
+.winnerPlaceholder {
+  height: 12vh;
+  margin-bottom: 8%;
+}
+#gameOverWinnerPlaceholderRight {
+  margin-left: -20%;
+}
+#gameOverWinnerPlaceholderLeft {
+  margin-left: -10%;
+}
+.crownPlaceholder {
+  height: 8%;
+  width: 12%;
+  margin: 0 0 2% -20%;
+  visibility: hidden;
+}
+.gameOverCharacterIcon {
+  height: 22vh;
+  width: 22vh;
+  border: 0.5vh solid black;
+  border-radius: 10px;
+  margin: 0 0 2% -20%;
+}
+.gameOverStats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  height: 60%;
+  width: 70%;
+  color: black;
+  margin-left: 8%;
+  font-size: 4.5vh;
+  font-weight: bold;
 }
 
