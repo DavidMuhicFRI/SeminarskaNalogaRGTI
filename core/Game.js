@@ -21,8 +21,9 @@ export class Game {
     this.turnStarted = false;
     this.bounceSound = new Audio('ballBounceSound.mp3');
     this.cheerSound = new Audio('cupHitSound.mp3');
-    this.buttonSound = new Audio('buttonSound.mp3');
     this.cheerSound.volume = 0.5;
+    this.buttonSound = new Audio('buttonSound.mp3');
+    this.buttonSound.volume = 0.15;
     this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
 
     this.instructionsProgress = 0;
@@ -65,26 +66,29 @@ export class Game {
     const rightSliderInput = document.getElementById('sliderRight');
     const leftSliderValue = document.getElementById("sliderValueLeft");
     const rightSliderValue = document.getElementById("sliderValueRight");
-    let gravityConstant = 1.25;
-    let gravityModifier = 15;
-    let springConstant = 0.42;
-    let springModifier = 20;
+    let gravityConstant = 1.10;
+    let gravityModifier = 25;
+    let springConstant = 0.5;
+    let springModifier = 14;
+    let originalGravity = 1;
+    let originalBounciness = 0.85;
 
     if (this.player1.character.stats.name === 'CURVE' || this.player1.character.stats.name === 'SPRING' || this.player1.character.stats.name === 'NERO') {
       if (this.player1.character.stats.name === 'NERO') {
         leftStar.style.display = 'none';
       } else if (this.player1.character.stats.name === 'SPRING') {
-        leftSliderValue.innerText = this.ball.bounciness.toFixed(2);
+        leftSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         leftSliderInput.addEventListener("input", () => {
-          this.ball.bounciness = springConstant + leftSliderInput.value / springModifier;
-          leftSliderValue.innerText =  this.ball.bounciness.toFixed(2);
+          this.bounciness = springConstant + leftSliderInput.value / springModifier;
+          this.ball.bounciness = this.bounciness;
+          leftSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         });
       } else {
         leftStar.style.display = 'none';
-        leftSliderValue.innerText = this.gravity.toFixed(2);
+        leftSliderValue.innerText = `Gravity: ${(originalGravity / this.gravity).toFixed(2)}x`;
         leftSliderInput.addEventListener("input", () => {
           this.gravity = gravityConstant - leftSliderInput.value / gravityModifier;
-          leftSliderValue.innerText =  this.gravity.toFixed(2);
+          leftSliderValue.innerText = `Gravity: ${(originalGravity / this.gravity).toFixed(2)}x`;
         });
       }
     }
@@ -92,17 +96,18 @@ export class Game {
       if (this.player2.character.stats.name === 'NERO') {
         rightStar.style.display = 'none';
       } else if (this.player2.character.stats.name === 'SPRING') {
-        rightSliderValue.innerText = this.ball.bounciness.toFixed(2);
+        rightSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         rightSliderInput.addEventListener("input", () => {
-          this.ball.bounciness = springConstant + rightSliderInput.value / springModifier;
-          rightSliderValue.innerText =  this.ball.bounciness.toFixed(2);
+          this.bounciness = springConstant + rightSliderInput.value / springModifier;
+          this.ball.bounciness = this.bounciness;
+          rightSliderValue.innerText = `Bounce: ${(this.bounciness / originalBounciness).toFixed(2)}x`;
         });
       } else {
         rightStar.style.display = 'none';
-        rightSliderValue.innerText = this.gravity.toFixed(2);
+        rightSliderValue.innerText = `Gravity: ${(originalGravity / this.gravity).toFixed(2)}x`;
         rightSliderInput.addEventListener("input", () => {
           this.gravity = gravityConstant - rightSliderInput.value / gravityModifier;
-          rightSliderValue.innerText =  this.gravity.toFixed(2);
+          rightSliderValue.innerText = `Gravity: ${(originalGravity / this.gravity).toFixed(2)}x`;
         });
       }
     }
@@ -432,6 +437,8 @@ export class Game {
     }else if(this.ball.effect === 'springEffect'){
       damage *= 1.4;
     }
+    console.log(this.otherPlayer().character.stats.name);
+    this.otherPlayer().character.stats.hurtSound.play().then();
     if(this.otherPlayer().character.stats.name === 'NERO'){
       damage *= 1.5;
     }else if(this.currentPlayer.character.stats.name === 'NERO'){
@@ -713,8 +720,6 @@ export class Game {
     }
   ];
 
-  // TODO finish abilities?
   // TODO fucking ball stays on cup -> fix dis shit
   // TODO end game screen setup + reset, back button reset
-  // TODO hurt sounds
 }

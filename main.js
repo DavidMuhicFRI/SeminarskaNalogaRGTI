@@ -80,6 +80,7 @@ const gameSound = new Audio('gameBackground.mp3');
 gameSound.loop = true;
 gameSound.volume = 0.1;
 const buttonSound = new Audio('buttonSound.mp3');
+buttonSound.volume = 0.15;
 
 
 //functions for the character page
