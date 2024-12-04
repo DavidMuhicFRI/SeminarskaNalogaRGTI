@@ -20,7 +20,7 @@ export class Character {
           funFact: 'Fun-fact: he thought he entered a bodybuilding competition',
           health: 100,
           strength: 1.15,
-          energyGainTurn: 13,
+          energyGainTurn: 14,
           energyGainCup: 10,
           minCastEnergy: 100,
           scale: [0.85, 0.95, 0.85],
