@@ -2,7 +2,7 @@ import { vec3, vec4, mat3, mat4 } from '../glm.js';
 
 import * as WebGPU from '../WebGPU.js';
 
-import { Camera, Transform } from '../core.js';
+import { Camera } from '../core.js';
 import { BaseRenderer } from './BaseRenderer.js';
 
 import {
@@ -124,7 +124,7 @@ export class Renderer extends BaseRenderer {
         this.modelBindGroupLayout = this.device.createBindGroupLayout(modelBindGroupLayout);
 
         this.shadowPipeline = await this.device.createRenderPipelineAsync({
-            label: 'Shadow Pipline',
+            label: 'Shadow Pipeline',
             layout: this.device.createPipelineLayout({
                 bindGroupLayouts: [
                     this.lightBindGroupLayout,
@@ -169,7 +169,7 @@ export class Renderer extends BaseRenderer {
         });
 
         this.pipelinePerFragment = await this.device.createRenderPipelineAsync({
-            label: "Render pipeline",
+            label: "Render Pipeline",
             vertex: {
                 module: moduleRender,
                 entryPoint: 'vertex',
@@ -192,7 +192,7 @@ export class Renderer extends BaseRenderer {
     }
 
     recreateDepthTexture() {
-        //this.depthTexture?.destroy();
+        this.depthTexture?.destroy();
         this.depthTexture = this.device.createTexture({
             format: 'depth32float',
             size: [this.canvas.width, this.canvas.height],
@@ -357,9 +357,6 @@ export class Renderer extends BaseRenderer {
         const viewMatrix = getGlobalViewMatrix(camera);
         const projectionMatrix = getProjectionMatrix(camera);
         const cameraPosition = mat4.getTranslation(vec3.create(), getGlobalModelMatrix(camera));
-
-        //console.log(cameraPosition);
-
         const { cameraUniformBuffer, cameraBindGroup } = this.prepareCamera(cameraComponent);
         this.device.queue.writeBuffer(cameraUniformBuffer, 0, viewMatrix);
         this.device.queue.writeBuffer(cameraUniformBuffer, 64, projectionMatrix);

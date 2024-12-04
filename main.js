@@ -623,12 +623,12 @@ async function initializeTheLight(intro){
     light = new Node();
     light.name = 'Light';
     light.addComponent(new Transform({
-      translation: [0.2, 13, 9],
+      translation: [0.2, 13, 10],
       rotation: [-0.5, 0.1, 0, 1],
     }));
     light.addComponent(new Light({
       color: [250, 245, 220],
-      intensity: 1,
+      intensity: 1.2,
       attenuation: [0, 0.1, 0.03],
       ambientOff: 0.01,
       ambientOn: 0.04,
