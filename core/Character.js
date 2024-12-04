@@ -29,7 +29,8 @@ export class Character {
           abilityImage: 'atlasAbility.webp',
           starImage: 'abilityStarImgYellow.png',
           starImageAnimation: 'rotate 5s linear infinite',
-          lever: 'none'
+          lever: 'none',
+          hurtSound: new Audio('atlasHurt.mp3')
         }
         break;
       case 'Curve':
@@ -55,7 +56,8 @@ export class Character {
           abilityImage: 'curveAbility.webp',
           starImage: 'abilityStarImgRed.png',
           starImageAnimation: 'none',
-          lever: 'flex'
+          lever: 'flex',
+          hurtSound: new Audio('curveHurt.mp3')
         }
         break;
       case 'Nero':
@@ -81,7 +83,8 @@ export class Character {
           abilityImage: 'neroAbility.webp',
           starImage: 'abilityStarImgRed.png',
           starImageAnimation: 'none',
-          lever: 'none'
+          lever: 'none',
+          hurtSound: new Audio('neroHurt.mp3')
         }
         break;
       case 'Spring':
@@ -107,7 +110,8 @@ export class Character {
           abilityImage: 'springAbility.webp',
           starImage: 'abilityStarImgYellow.png',
           starImageAnimation: 'rotate 5s linear infinite',
-          lever: 'flex'
+          lever: 'flex',
+          hurtSound: new Audio('springHurt.mp3')
         }
         break;
       case 'Tripp':
@@ -133,7 +137,8 @@ export class Character {
           abilityImage: 'trippAbility.webp',
           starImage: 'abilityStarImgYellow.png',
           starImageAnimation: 'rotate 5s linear infinite',
-          lever: 'none'
+          lever: 'none',
+          hurtSound: new Audio('trippHurt.mp3')
         }
         break;
     }

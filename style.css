@@ -429,10 +429,10 @@ body, html {
   z-index: 3;
 }
 #abilityDisplayDivLeft {
-  left: -1%;
+  left: 1%;
 }
 #abilityDisplayDivRight {
-  right: -1%;
+  right: 1%;
 }
 .abilityIcon {
   position: relative;
@@ -619,10 +619,10 @@ body, html {
   z-index: 3;
 }
 #sliderDivLeft {
-  left: -2%;
+  left: 0;
 }
 #sliderDivRight {
-  right: -2%;
+  right: 0;
 }
 #sliderLeft, #sliderRight {
   -webkit-appearance: none;
@@ -634,18 +634,19 @@ body, html {
   cursor: pointer;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
-  margin-bottom: 3%;
 }
-#sliderValueLeft, #sliderValueRight {
+.sliderValue {
   display: flex;
   justify-content: center;
   align-items: center;
   background: #333;
   color: #fff;
-  padding: 3px 6px;
+  width: 10vw;
+  height: 3vh;
+  padding: 1px 1px;
   border: 0.5vh solid black;
   border-radius: 5px;
-  font-size: 3vh;
+  font-size: 2vh;
   white-space: nowrap;
 }
 
