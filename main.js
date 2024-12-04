@@ -758,6 +758,3 @@ function setAABBs(){
         node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
     });
 }
-
-
-

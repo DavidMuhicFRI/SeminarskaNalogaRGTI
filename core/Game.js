@@ -733,6 +733,4 @@ export class Game {
     }
   ];
 
-  // TODO fucking ball stays on cup -> fix dis shit
-  // TODO end game screen setup + reset, back button reset
 }
