@@ -1,6 +1,6 @@
-import { vec3 } from './glm.js';
-import { getGlobalModelMatrix } from './core/SceneUtils.js';
-import { Transform, Ball } from './core.js';
+import { vec3 } from '../glm.js';
+import { getGlobalModelMatrix } from './SceneUtils.js';
+import { Transform, Ball } from '../core.js';
 
 export class Physics {
 

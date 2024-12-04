@@ -3,9 +3,8 @@ import { UpdateSystem } from './systems/UpdateSystem.js';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
 import {Camera, Model, Transform, Node, Ball, Character, Player, Game} from './core.js';
 import { calculateAxisAlignedBoundingBox, mergeAxisAlignedBoundingBoxes } from './core/MeshUtils.js';
-import { Physics } from './Physics.js';
+import { Physics, Light } from './core.js';
 import { Renderer } from "./renderers/Renderer.js";
-import { Light } from "./core/Light.js";
 
 /////////////////////////////////////////////////////////////////////////////INTRO/////////////////////////////////////////////////////////////
 
@@ -306,9 +305,7 @@ readyButton2.addEventListener('click', function() {
     player2.ready = false;
   } else {
     if(player1.ready){
-      startGame().then(() => {
-        console.log("Game started");
-      });
+      startGame().then(() => {});
     }else{
       player2.ready = true;
       turnButtonToCancel(readyButton2, player2.ready);
