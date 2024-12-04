@@ -82,15 +82,12 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
 
     let d = distance(input.position, light.position);
     let attenuation = 1 / dot(light.attenuation, vec3(1.0, d, d * d));
-
     let N = normalize(input.normal);
     let L = normalize(light.position - input.position);
     let V = normalize(camera.position - input.position);
     let R = normalize(reflect(-L, N));
     let D = normalize(light.direction);
-
     let lambert = max(dot(N, L), 0) * material.diffuse;
-    let phong = pow(max(dot(V, R), 0), material.shininess) * material.specular;
 
     var cl = vec3f(0, 0, 0);
     if(dot(-L,D) <= cos(light.fi)){
@@ -98,10 +95,6 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
     }else {
         cl = light.color * exp(-pow( 1.25/light.fi * acos(dot(-L,D)), 8));
     }
-
-    let diffuseLight = lambert * attenuation * cl * light.intensity;
-    let specularLight = phong * attenuation * cl * light.intensity * 1.3;
-    let ambientLight = light.ambient * light.color / d * 1.2;
 
     var visibility = 0.0;
     var shadowXY = vec2(input.shadowPos.x/input.shadowPos.w * 0.5 + 0.5, input.shadowPos.y/input.shadowPos.w * -0.5 + 0.5);
@@ -119,6 +112,9 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
         visibility = 0.0;
     }
 
-    output.color = vec4(textureSample(uTexture, uSampler, input.texcoords).rgb * (diffuseLight * visibility + ambientLight), 1.0);
+    let diffuseLight = lambert * attenuation * cl * light.intensity;
+    let ambientLight = light.ambient * light.color / d;
+
+    output.color = vec4(textureSample(uTexture, uSampler, input.texcoords).rgb * (diffuseLight * visibility + ambientLight * 1.3), 1.0);
     return output;
 }
