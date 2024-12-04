@@ -515,7 +515,6 @@ export class Game {
   addTurnStartEventListener() {
     this.removeTurnStartEventListener();
     document.body.addEventListener('mousemove', this.startTurn.bind(this), { once: true });
-    console.log("added event listener");
   }
   removeTurnStartEventListener() {
     document.body.removeEventListener('mousemove', this.startTurn.bind(this));
