@@ -12,6 +12,7 @@ export class Player {
     this.rest = false;
   }
 
+  //sets the energy bar
   setEnergy(){
     const abilityBar = this.side === 1 ? document.getElementById('abilityBarLeft') : document.getElementById('abilityBarRight');
     const abilityIcon = this.side === 1 ? document.getElementById('leftAbilityIcon') : document.getElementById('rightAbilityIcon');
@@ -24,17 +25,20 @@ export class Player {
       abilityStar.style.visibility = 'hidden';
     }
   }
+  //increases energy
   gainEnergy(amount){
     this.energy += amount;
     if(this.energy > 100) this.energy = 100;
     this.setEnergy();
   }
+  //decreases energy
   loseEnergy(amount){
     this.energy -= amount;
     if(this.energy < 0) this.energy = 0;
     this.setEnergy();
   }
 
+  //sets an effect depending on character HP
   setEffect() {
     let effects = document.getElementsByClassName("hurtDiv");
     for (let effect of effects) {
@@ -42,6 +46,7 @@ export class Player {
     }
   }
 
+  //sets the HP bar
   setHP(minusOrPlus) {
     const HPBar = this.side === 1 ? document.getElementById('leftBarHeader') : document.getElementById('rightBarHeader');
     const HPContainer = this.side === 1 ? document.getElementById('headerBarContainerLeft') : document.getElementById('headerBarContainerRight');
@@ -55,17 +60,20 @@ export class Player {
       setTimeout(() => HPContainer.classList.remove('gainHP'), 500);
     }
   }
+  //increases current HP
   gainHP(amount){
     this.currentHP += amount
     if(this.currentHP > 100) this.currentHP = 100;
     this.setHP(1);
   }
+  //decreases current HP
   loseHP(amount){
     this.currentHP -= amount
     if(this.currentHP < 0) this.currentHP = 0;
     this.setHP(-1);
   }
 
+  //sets the character's stats in the beggining of the game
   setStats(){
     this.currentHP = this.character.stats.health;
     this.strength = this.character.stats.strength;
@@ -74,6 +82,7 @@ export class Player {
     this.setHP(0);
   }
 
+  //sets the countdown timer
   setCountdown() {
     document.getElementById('countdown').innerText = this.character.turnTime;
   }

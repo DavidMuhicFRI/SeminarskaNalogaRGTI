@@ -49,9 +49,9 @@ let player1 = new Player(1);
 let player2 = new Player(2);
 let characterObjects = []; //array of character objects for the character page
 let characterNames = ["Atlas", "Curve", "Nero", "Spring", "Tripp"]; //names of the characters
-let rotatingCharacter; //the rotating character object
+let rotatingCharacter; //the constantly rotating character object
 let constantRotation; //interval for the rotation
-let characterGrabbed = false; //if we are  rotating the model
+let characterGrabbed = false; //if we are "grabbing" the character
 let pageOrientation = "left"; //set to left if canvas is in canvasContainerLeft, right if in canvasContainerRight
 let characterSelected = [] //character selected by each player
 let interacted = false; //if second player's character has been selected
@@ -73,6 +73,7 @@ let charPreviousButtonBlue = document.getElementById("CPLeftPreviousCharacter");
 let charNextButtonRed = document.getElementById("CPRightNextCharacter");
 let charPreviousButtonRed = document.getElementById("CPRightPreviousCharacter");
 
+//sounds for the character page
 const introSound = new Audio("introBackground.mp3");
 introSound.loop = true;
 introSound.volume = 0.4;
@@ -150,32 +151,18 @@ function constantlyRotate(){
     rotatePlayer(rotatingCharacter, 0.003);
   }
 }
-function createQuaternionFromAxisAngle(axis, angle) {
-  const halfAngle = angle / 2;
-  const sinHalfAngle = Math.sin(halfAngle);
-
-  return [
-    axis[0] * sinHalfAngle,  // X component
-    axis[1] * sinHalfAngle,  // Y component
-    axis[2] * sinHalfAngle,  // Z component
-    Math.cos(halfAngle)      // W component
-  ];
-}
-function multiplyQuaternions(q1, q2) {
-  return [
-    q1[3] * q2[0] + q1[0] * q2[3] + q1[1] * q2[2] - q1[2] * q2[1], // X component
-    q1[3] * q2[1] - q1[0] * q2[2] + q1[1] * q2[3] + q1[2] * q2[0], // Y component
-    q1[3] * q2[2] + q1[0] * q2[1] - q1[1] * q2[0] + q1[2] * q2[3], // Z component
-    q1[3] * q2[3] - q1[0] * q2[0] - q1[1] * q2[1] - q1[2] * q2[2]  // W component
-  ];
-}
 function rotatePlayer(rotatingCharacter, angle){
-  const rotationQuat = createQuaternionFromAxisAngle([0, 1, 0], angle);
-  rotatingCharacter.transform.rotation = multiplyQuaternions(rotatingCharacter.transform.rotation, rotationQuat);
+  let q1 = rotatingCharacter.transform.rotation;
+  rotatingCharacter.transform.rotation = [
+    q1[0] * Math.cos(angle / 2) - q1[2] * Math.sin(angle / 2), // X
+    q1[3] * Math.sin(angle / 2) + q1[1] * Math.cos(angle / 2), // Y
+    q1[0] * Math.sin(angle / 2) + q1[2] * Math.cos(angle / 2), // Z
+    q1[3] * Math.cos(angle / 2) - q1[1] * Math.sin(angle / 2)  // W
+  ];
 }
 
-//character loading
-async function loadCharacters(){
+//character select scene loading
+async function iniCharacterPageScene(){
   characterObjects = [];
   characterNames.forEach((name, index) => {
     characterObjects[index] = new Character(findObject(name + "Object"), name);
@@ -202,7 +189,7 @@ async function loadCharacters(){
   displayCharacters();
 }
 
-//display the characters depending on pageOrientation
+//displays the characters depending on pageOrientation
 function displayCharacters(){
   let side = pageOrientation === "left" ? 0 : 1;
   for(let i = 0; i < characterObjects.length; i++){
@@ -242,7 +229,7 @@ function assignCharacter(direction){
   displayCharacters();
 }
 
-//change the stats of the displayed character
+//changes the stats of the displayed character
 function changeStats(side){
   if(side === 'left' || side === 'both'){
     document.getElementById("characterNameLeft").innerText = characterSelected[0].stats.name;
@@ -274,7 +261,8 @@ function changeStats(side){
   }
 }
 
-//starting and exiting the game
+
+//starts the game
 async function startGame(){
   loadingScreen();
   await initGame();
@@ -282,16 +270,17 @@ async function startGame(){
   document.getElementById("game").style.visibility = "visible";
   $("#game").show(); //for 2nd and later showings
 }
-//exit game
-async function cancelGame(){
+//exits the game
+async function exitGame(){
   await initCharacterPage();
   $("#characterPage").show();
   $("#game").hide();
 }
 
+
 //button event listeners
 gameBackButton.addEventListener('click', async function() {
-  await cancelGame();
+  await exitGame();
 });
 readyButton1.addEventListener('click', function() {
   if(player1.ready){
@@ -357,6 +346,7 @@ async function initCharacterPage() {
   gameSound.currentTime = 0;
   introSound.currentTime = 0;
   await introSound.play();
+
   pageStatus = "main";
   canvas.id = "introCanvas";
   let container;
@@ -375,7 +365,7 @@ async function initCharacterPage() {
 
   await init(true);
   await initObjects(true);
-  await loadCharacters();
+  await iniCharacterPageScene();
   if(pageOrientation === "left"){
     changeStats('left');
   }else{
@@ -387,9 +377,9 @@ async function initCharacterPage() {
 
 /////////////////////////////////////////////////////////////////////////////GAME/////////////////////////////////////////////////////////////
 
-let spacePressed = false;
-let ball;
-let dragStart = [];
+let spacePressed = false; //if space is pressed
+let ball; //the ball component
+let dragStart = []; //for ball dragging purposes
 let dragEnd = [];
 let gameNumber = 1;
 
@@ -397,6 +387,22 @@ let gameNumber = 1;
 //event listeners for the game
 document.addEventListener("pointerlockchange", () => {
   characterGrabbed = document.pointerLockElement === canvas;
+});
+document.addEventListener("keydown", function(event){
+  if(pageStatus === "game"){
+    if(event.key === " "){
+      game.activateAbility();
+      console.log(game.currentPlayer.energy)
+      spacePressed = true;
+    }
+  }
+});
+document.addEventListener("keyup", function(event){
+  if(pageStatus === "game"){
+    if(event.key === " "){
+      spacePressed = false;
+    }
+  }
 });
 canvas.addEventListener("mousedown", () => {
   if (pageStatus === "main") {
@@ -428,7 +434,8 @@ canvas.addEventListener("mouseup", () => {
   document.exitPointerLock();
 });
 
-//game functions
+
+//starts the game
 async function initGame(){
   introSound.pause();
   introSound.currentTime = 0;
@@ -454,25 +461,8 @@ async function initGame(){
   setAABBs();
 }
 
-document.addEventListener("keydown", function(event){
-  if(pageStatus === "game"){
-    if(event.key === " "){
-      game.activateAbility();
-      console.log(game.currentPlayer.energy)
-      spacePressed = true;
-    }
-  }
-});
-document.addEventListener("keyup", function(event){
-  if(pageStatus === "game"){
-    if(event.key === " "){
-      spacePressed = false;
-    }
-  }
-});
 
-
-//setting player characters and moving others
+//sets player characters and moves others
 function setPlayerObjects(){
   for(let i = 0; i < characterObjects.length; i++){
     let object = findObject(characterObjects[i].stats.reference);
@@ -486,6 +476,7 @@ function setPlayerObjects(){
 }
 
 let originalTransforms = [];
+//loads all the objects and saves their original transforms for future use
 function initObjects(intro){
   if(intro){
     ball = loadObject("Ball", "dynamic");
@@ -538,9 +529,7 @@ function initObjects(intro){
   }
 }
 
-
-// ================================================================ LOADING SCREEN ==================================================
-
+//masks the game loading
 function loadingScreen(){
   let loadingScreen = document.getElementById("loadingScreen");
   loadingScreen.style.display = "block";
