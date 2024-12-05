@@ -290,7 +290,7 @@ export class Renderer extends BaseRenderer {
         this.shadowPass.setPipeline(this.shadowPipeline);
 
         const { lightUniformBuffer, lightBindGroup } = this.prepareLight(light.getComponentOfType(Light));
-        this.queueLight(light, lightUniformBuffer);
+        this.queueLight(light, lightUniformBuffer, true);
         this.shadowPass.setBindGroup(0, lightBindGroup);
 
         this.renderShadows(scene);
@@ -323,7 +323,7 @@ export class Renderer extends BaseRenderer {
         this.device.queue.writeBuffer(cameraUniformBuffer, 64, projectionMatrix);
         this.renderPass.setBindGroup(0, cameraBindGroup);
 
-        this.queueLight(light, lightUniformBuffer);
+        this.queueLight(light, lightUniformBuffer, false);
         this.renderPass.setBindGroup(1, lightBindGroup);
 
         this.renderNode(scene);
@@ -331,16 +331,21 @@ export class Renderer extends BaseRenderer {
         this.device.queue.submit([encoder.finish()]);
     }
 
-    queueLight(light, lightUniformBuffer){
-      let direction = vec4.transformQuat(vec4.create(), vec4.set(vec4.create(),0,0,-1,1), getGlobalRotation(light));
+    queueLight(light, lightUniformBuffer, shadow){
       const lightComp = light.getComponentOfType(Light);
-      this.device.queue.writeBuffer(lightUniformBuffer, 0, getGlobalViewMatrix(light)); //viewMatrix
-      this.device.queue.writeBuffer(lightUniformBuffer, 64, lightComp.perspectiveMatrix); //projectionMatrix
-      this.device.queue.writeBuffer(lightUniformBuffer, 128, vec3.scale(vec3.create(), lightComp.color, 1 / 255)); //color
-      this.device.queue.writeBuffer(lightUniformBuffer, 144, mat4.getTranslation(vec3.create(), getGlobalModelMatrix(light))); //position
-      this.device.queue.writeBuffer(lightUniformBuffer, 160, vec3.clone(lightComp.attenuation)); //attenuation
-      this.device.queue.writeBuffer(lightUniformBuffer, 176, vec3.fromValues(direction[0], direction[1], direction[2])); //direction
-      this.device.queue.writeBuffer(lightUniformBuffer, 188, new Float32Array([lightComp.intensity, lightComp.ambient, lightComp.fi])); //intensity, ambient, fi
+      if(shadow){
+        this.device.queue.writeBuffer(lightUniformBuffer, 0, getGlobalViewMatrix(light)); //viewMatrix
+        this.device.queue.writeBuffer(lightUniformBuffer, 64, lightComp.perspectiveMatrix); //projectionMatrix
+      }else{
+        let direction = vec4.transformQuat(vec4.create(), vec4.set(vec4.create(),0,0,-1,1), getGlobalRotation(light));
+        this.device.queue.writeBuffer(lightUniformBuffer, 0, getGlobalViewMatrix(light)); //viewMatrix
+        this.device.queue.writeBuffer(lightUniformBuffer, 64, lightComp.perspectiveMatrix); //projectionMatrix
+        this.device.queue.writeBuffer(lightUniformBuffer, 128, vec3.scale(vec3.create(), lightComp.color, 1 / 255)); //color
+        this.device.queue.writeBuffer(lightUniformBuffer, 144, mat4.getTranslation(vec3.create(), getGlobalModelMatrix(light))); //position
+        this.device.queue.writeBuffer(lightUniformBuffer, 160, vec3.clone(lightComp.attenuation)); //attenuation
+        this.device.queue.writeBuffer(lightUniformBuffer, 176, vec3.fromValues(direction[0], direction[1], direction[2])); //direction
+        this.device.queue.writeBuffer(lightUniformBuffer, 188, new Float32Array([lightComp.intensity, lightComp.ambient, lightComp.fi])); //intensity, ambient, fi
+      }
     }
 
     renderNode(node, modelMatrix = mat4.create()) {
