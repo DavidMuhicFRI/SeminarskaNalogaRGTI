@@ -230,7 +230,7 @@ export class Renderer extends BaseRenderer {
         }
 
         const lightUniformBuffer = this.device.createBuffer({
-            size: 208,
+            size: 220,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
         });
 
@@ -349,8 +349,7 @@ export class Renderer extends BaseRenderer {
     }
 
     renderNode(node, modelMatrix = mat4.create()) {
-        const localMatrix = getLocalModelMatrix(node);
-        modelMatrix = mat4.multiply(mat4.create(), modelMatrix, localMatrix);
+        modelMatrix = mat4.multiply(mat4.create(), modelMatrix, getLocalModelMatrix(node));
         const { modelUniformBuffer, modelBindGroup } = this.prepareNode(node);
         const normalMatrix = mat4.normalFromMat4(mat4.create(), modelMatrix);
         this.device.queue.writeBuffer(modelUniformBuffer, 0, modelMatrix);
@@ -375,24 +374,24 @@ export class Renderer extends BaseRenderer {
         }
     }
 
-  renderShadows(node, modelMatrix = mat4.create()) {
-    modelMatrix = mat4.multiply(mat4.create(), modelMatrix, getLocalModelMatrix(node));
-    const { modelUniformBuffer, modelBindGroup } = this.prepareNode(node);
-    this.device.queue.writeBuffer(modelUniformBuffer, 0, modelMatrix);
-    this.shadowPass.setBindGroup(1, modelBindGroup);
+    renderShadows(node, modelMatrix = mat4.create()) {
+      modelMatrix = mat4.multiply(mat4.create(), modelMatrix, getLocalModelMatrix(node));
+      const { modelUniformBuffer, modelBindGroup } = this.prepareNode(node);
+      this.device.queue.writeBuffer(modelUniformBuffer, 0, modelMatrix);
+      this.shadowPass.setBindGroup(1, modelBindGroup);
 
-    for (const model of getModels(node)) {
-      for (const primitive of model.primitives) {
-        const { vertexBuffer, indexBuffer } = this.prepareMesh(primitive.mesh, vertexLayout);
-        this.shadowPass.setVertexBuffer(0, vertexBuffer);
-        this.shadowPass.setIndexBuffer(indexBuffer, 'uint32');
-        this.shadowPass.drawIndexed(primitive.mesh.indices.length);
+      for (const model of getModels(node)) {
+        for (const primitive of model.primitives) {
+          const { vertexBuffer, indexBuffer } = this.prepareMesh(primitive.mesh, vertexLayout);
+          this.shadowPass.setVertexBuffer(0, vertexBuffer);
+          this.shadowPass.setIndexBuffer(indexBuffer, 'uint32');
+          this.shadowPass.drawIndexed(primitive.mesh.indices.length);
+        }
+      }
+
+      for (const child of node.children) {
+        this.renderShadows(child, modelMatrix);
       }
     }
-
-    for (const child of node.children) {
-      this.renderShadows(child, modelMatrix);
-    }
-  }
 
 }
