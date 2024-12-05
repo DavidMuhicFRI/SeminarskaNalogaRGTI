@@ -362,6 +362,7 @@ export class Renderer extends BaseRenderer {
             const { materialUniformBuffer, materialBindGroup } = this.prepareMaterial(primitive.material);
             this.device.queue.writeBuffer(materialUniformBuffer, 0, new Float32Array([primitive.material.baseFactor]));
             this.renderPass.setBindGroup(3, materialBindGroup);
+
             const { vertexBuffer, indexBuffer } = this.prepareMesh(primitive.mesh, vertexLayout);
             this.renderPass.setVertexBuffer(0, vertexBuffer);
             this.renderPass.setIndexBuffer(indexBuffer, 'uint32');
@@ -377,9 +378,7 @@ export class Renderer extends BaseRenderer {
   renderShadows(node, modelMatrix = mat4.create()) {
     modelMatrix = mat4.multiply(mat4.create(), modelMatrix, getLocalModelMatrix(node));
     const { modelUniformBuffer, modelBindGroup } = this.prepareNode(node);
-    const normalMatrix = mat4.normalFromMat4(mat3.create(), modelMatrix);
     this.device.queue.writeBuffer(modelUniformBuffer, 0, modelMatrix);
-    this.device.queue.writeBuffer(modelUniformBuffer, 64, normalMatrix);
     this.shadowPass.setBindGroup(1, modelBindGroup);
 
     for (const model of getModels(node)) {
