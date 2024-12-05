@@ -51,13 +51,13 @@ struct MaterialUniforms {
 
 
 @group(0) @binding(0) var<uniform> camera : CameraUniforms;
-@group(3) @binding(3) var shadowMap: texture_depth_2d;
-@group(3) @binding(4) var shadowSampler: sampler_comparison;
 @group(1) @binding(0) var<uniform> light : LightUniforms;
 @group(2) @binding(0) var<uniform> model : ModelUniforms;
 @group(3) @binding(0) var<uniform> material : MaterialUniforms;
 @group(3) @binding(1) var uTexture : texture_2d<f32>;
 @group(3) @binding(2) var uSampler : sampler;
+@group(3) @binding(3) var shadowMap: texture_depth_2d;
+@group(3) @binding(4) var shadowSampler: sampler_comparison;
 
 
 @vertex
