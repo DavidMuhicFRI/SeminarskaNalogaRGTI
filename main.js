@@ -76,9 +76,6 @@ let charPreviousButtonRed = document.getElementById("CPRightPreviousCharacter");
 const introSound = new Audio("introBackground.mp3");
 introSound.loop = true;
 introSound.volume = 0.4;
-const gameSound = new Audio('gameBackground.mp3');
-gameSound.loop = true;
-gameSound.volume = 0.1;
 const buttonSound = new Audio('buttonSound.mp3');
 buttonSound.volume = 0.15;
 
@@ -275,6 +272,8 @@ async function startGame(){
 async function exitGame(){
   await initCharacterPage();
   clearInterval(game.timerInterval);
+  game.gameSound.pause();
+  game.gameSound.currentTime = 0;
   game = null;
   player1 = new Player(1);
   player2 = new Player(2);
@@ -356,8 +355,6 @@ charPreviousButtonRed.addEventListener('click', function() {
 
 //init for the character page
 async function initCharacterPage() {
-  gameSound.pause();
-  gameSound.currentTime = 0;
   introSound.currentTime = 0;
   await introSound.play();
 
@@ -457,8 +454,6 @@ canvas.addEventListener("mouseup", () => {
 async function initGame(){
   introSound.pause();
   introSound.currentTime = 0;
-  gameSound.currentTime = 0;
-  await gameSound.play();
 
   pageStatus = "game";
   characterGrabbed = false;

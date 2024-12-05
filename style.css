@@ -856,6 +856,7 @@ body, html {
   border-radius: 5px;
   border: 1vh solid black;
   cursor: pointer;
+  animation: pulseScale 1.5s ease-in-out infinite;
 }
 #gameOverExitButton:hover {
   transform: scale(1.1);
