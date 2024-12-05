@@ -53,17 +53,16 @@ struct MaterialUniforms {
     shininess : f32,
 }
 
+
 @group(0) @binding(0) var<uniform> camera : CameraUniforms;
 @group(0) @binding(1) var shadowMap: texture_depth_2d;
 @group(0) @binding(2) var shadowSampler: sampler_comparison;
-
 @group(1) @binding(0) var<uniform> light : LightUniforms;
-
 @group(2) @binding(0) var<uniform> model : ModelUniforms;
-
 @group(3) @binding(0) var<uniform> material : MaterialUniforms;
 @group(3) @binding(1) var uTexture : texture_2d<f32>;
 @group(3) @binding(2) var uSampler : sampler;
+
 
 @vertex
 fn vertex(input : VertexInput) -> VertexOutput {
@@ -75,6 +74,7 @@ fn vertex(input : VertexInput) -> VertexOutput {
     output.shadowPos =  light.lightProjectionMatrix * light.lightViewMatrix * model.modelMatrix * vec4(input.position, 1.0);
     return output;
 }
+
 
 @fragment
 fn fragment(input : FragmentInput) -> FragmentOutput {
@@ -100,7 +100,7 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
     var s = vec2(input.shadowPos.x/input.shadowPos.w * 0.5 + 0.5, input.shadowPos.y/input.shadowPos.w * -0.5 + 0.5);
     for (var y = -1; y <= 1; y++) {
         for (var x = -1; x <= 1; x++) {
-            v += textureSampleCompare(shadowMap, shadowSampler, s + vec2<f32>(vec2(x, y)) * (1.0 / 2048), (input.shadowPos.z - 0.005) / input.shadowPos.w);
+            v += textureSampleCompare(shadowMap, shadowSampler, s + vec2<f32>(vec2(x, y)) * (1.0 / 2048), (input.shadowPos.z - 0.01) / input.shadowPos.w);
         }
     }
 
