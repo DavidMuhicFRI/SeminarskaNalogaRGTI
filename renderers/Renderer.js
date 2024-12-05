@@ -39,6 +39,37 @@ const vertexLayout = {
     ],
 };
 
+const materialLayout = {
+  entries: [
+    {
+      binding: 0,
+      visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+      buffer: {},
+    },
+    {
+      binding: 1,
+      visibility: GPUShaderStage.FRAGMENT,
+      texture: {},
+    },
+    {
+      binding: 2,
+      visibility: GPUShaderStage.FRAGMENT,
+      sampler: {},
+    },
+  ],
+};
+
+const modelLayout = {
+  entries: [
+    {
+      binding: 0,
+      visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+      buffer: {},
+    },
+  ],
+};
+
+
 const cameraLayout = {
     entries: [
         {
@@ -73,56 +104,20 @@ const lightLayout = {
     ],
 };
 
-const modelLayout = {
-    entries: [
-        {
-            binding: 0,
-            visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-            buffer: {},
-        },
-    ],
-};
-
-const materialLayout = {
-    entries: [
-        {
-            binding: 0,
-            visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-            buffer: {},
-        },
-        {
-            binding: 1,
-            visibility: GPUShaderStage.FRAGMENT,
-            texture: {},
-        },
-        {
-            binding: 2,
-            visibility: GPUShaderStage.FRAGMENT,
-            sampler: {},
-        },
-    ],
-};
-
 export class Renderer extends BaseRenderer {
-
     constructor(canvas) {
         super(canvas);
     }
 
     async initialize() {
         await super.initialize();
-        this.cameraLayout = this.device.createBindGroupLayout(cameraLayout);
-        this.lightLayout = this.device.createBindGroupLayout(lightLayout);
-        this.modelLayout = this.device.createBindGroupLayout(modelLayout);
-        this.materialLayout = this.device.createBindGroupLayout(materialLayout);
-
         const shadowShader = await fetch(new URL('shadowShader.wgsl', import.meta.url)).then(response => response.text());
 
         this.shadowPipeline = await this.device.createRenderPipelineAsync({
             layout: this.device.createPipelineLayout({
                 bindGroupLayouts: [
-                    this.lightLayout,
-                    this.modelLayout,
+                    this.device.createBindGroupLayout(lightLayout),
+                    this.device.createBindGroupLayout(modelLayout),
                 ],
             }),
             vertex: {
@@ -145,16 +140,16 @@ export class Renderer extends BaseRenderer {
         this.shadowTextureView = this.shadowTexture.createView();
         this.shadowSampler = this.device.createSampler({ compare: 'less' })
 
-
+        //renderShader
         const renderShader = await fetch(new URL('renderShader.wgsl', import.meta.url)).then(response => response.text());
 
         this.renderPipeline = await this.device.createRenderPipelineAsync({
             layout: this.device.createPipelineLayout({
               bindGroupLayouts: [
-                this.cameraLayout,
-                this.lightLayout,
-                this.modelLayout,
-                this.materialLayout,
+                this.device.createBindGroupLayout(cameraLayout),
+                this.device.createBindGroupLayout(lightLayout),
+                this.device.createBindGroupLayout(modelLayout),
+                this.device.createBindGroupLayout(materialLayout),
               ],
             }),
             vertex: {
@@ -196,7 +191,7 @@ export class Renderer extends BaseRenderer {
         });
 
         const modelBindGroup = this.device.createBindGroup({
-            layout: this.modelLayout,
+            layout: this.device.createBindGroupLayout(modelLayout),
             entries: [
                 { binding: 0, resource: { buffer: modelUniformBuffer } },
             ],
@@ -213,12 +208,12 @@ export class Renderer extends BaseRenderer {
         }
 
         const cameraUniformBuffer = this.device.createBuffer({
-            size: 140,
+            size: 128,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
         });
 
         const cameraBindGroup = this.device.createBindGroup({
-            layout: this.cameraLayout,
+            layout: this.device.createBindGroupLayout(cameraLayout),
             entries: [
                 { binding: 0, resource: { buffer: cameraUniformBuffer } },
                 { binding: 1, resource: this.shadowTextureView },
@@ -242,7 +237,7 @@ export class Renderer extends BaseRenderer {
         });
 
         const lightBindGroup = this.device.createBindGroup({
-            layout: this.lightLayout,
+            layout: this.device.createBindGroupLayout(lightLayout),
             entries: [
                 { binding: 0, resource: { buffer: lightUniformBuffer } },
             ],
@@ -264,7 +259,7 @@ export class Renderer extends BaseRenderer {
         });
 
         const materialBindGroup = this.device.createBindGroup({
-            layout: this.materialLayout,
+            layout: this.device.createBindGroupLayout(materialLayout),
             entries: [
                 { binding: 0, resource: { buffer: materialUniformBuffer } },
                 { binding: 1, resource: this.prepareImage(material.baseTexture.image).gpuTexture.createView() },
@@ -294,26 +289,13 @@ export class Renderer extends BaseRenderer {
         });
         this.shadowPass.setPipeline(this.shadowPipeline);
 
-        const lightComp = light.getComponentOfType(Light);
-        const lightViewMatrix = getGlobalViewMatrix(light);
-        const lightProjectionMatrix = lightComp.perspectiveMatrix;
-        const lightColor = vec3.scale(vec3.create(), lightComp.color, 1 / 255);
-        const lightPosition = mat4.getTranslation(vec3.create(), getGlobalModelMatrix(light));
-        let lightDirection = vec4.transformQuat(vec4.create(), vec4.set(vec4.create(),0,0,-1,1), getGlobalRotation(light));
-        lightDirection = vec3.fromValues(lightDirection[0], lightDirection[1], lightDirection[2]);
-        const lightAttenuation = vec3.clone(lightComp.attenuation);
-        const { lightUniformBuffer, lightBindGroup } = this.prepareLight(lightComp);
-        this.device.queue.writeBuffer(lightUniformBuffer, 0, lightViewMatrix);
-        this.device.queue.writeBuffer(lightUniformBuffer, 64, lightProjectionMatrix);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128, lightColor);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128+16, lightPosition);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128+32, lightAttenuation);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128+48, lightDirection);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128+60, new Float32Array([lightComp.intensity, lightComp.ambient, lightComp.fi]));
+        const { lightUniformBuffer, lightBindGroup } = this.prepareLight(light.getComponentOfType(Light));
+        this.queueLight(light, lightUniformBuffer);
         this.shadowPass.setBindGroup(0, lightBindGroup);
 
         this.renderShadows(scene);
         this.shadowPass.end();
+
 
         this.renderPass = encoder.beginRenderPass({
             colorAttachments: [
@@ -336,25 +318,29 @@ export class Renderer extends BaseRenderer {
         const cameraComponent = camera.getComponentOfType(Camera);
         const viewMatrix = getGlobalViewMatrix(camera);
         const projectionMatrix = getProjectionMatrix(camera);
-        const cameraPosition = mat4.getTranslation(vec3.create(), getGlobalModelMatrix(camera));
         const { cameraUniformBuffer, cameraBindGroup } = this.prepareCamera(cameraComponent);
         this.device.queue.writeBuffer(cameraUniformBuffer, 0, viewMatrix);
         this.device.queue.writeBuffer(cameraUniformBuffer, 64, projectionMatrix);
-        this.device.queue.writeBuffer(cameraUniformBuffer, 128, cameraPosition);
         this.renderPass.setBindGroup(0, cameraBindGroup);
 
-        this.device.queue.writeBuffer(lightUniformBuffer, 0, lightViewMatrix);
-        this.device.queue.writeBuffer(lightUniformBuffer, 64, lightProjectionMatrix);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128, lightColor);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128+16, lightPosition);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128+32, lightAttenuation);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128+48, lightDirection);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128+60, new Float32Array([lightComp.intensity, lightComp.ambient, lightComp.fi]));
+        this.queueLight(light, lightUniformBuffer);
         this.renderPass.setBindGroup(1, lightBindGroup);
 
         this.renderNode(scene);
         this.renderPass.end();
         this.device.queue.submit([encoder.finish()]);
+    }
+
+    queueLight(light, lightUniformBuffer){
+      let direction = vec4.transformQuat(vec4.create(), vec4.set(vec4.create(),0,0,-1,1), getGlobalRotation(light));
+      const lightComp = light.getComponentOfType(Light);
+      this.device.queue.writeBuffer(lightUniformBuffer, 0, getGlobalViewMatrix(light)); //viewMatrix
+      this.device.queue.writeBuffer(lightUniformBuffer, 64, lightComp.perspectiveMatrix); //projectionMatrix
+      this.device.queue.writeBuffer(lightUniformBuffer, 128, vec3.scale(vec3.create(), lightComp.color, 1 / 255)); //color
+      this.device.queue.writeBuffer(lightUniformBuffer, 144, mat4.getTranslation(vec3.create(), getGlobalModelMatrix(light))); //position
+      this.device.queue.writeBuffer(lightUniformBuffer, 160, vec3.clone(lightComp.attenuation)); //attenuation
+      this.device.queue.writeBuffer(lightUniformBuffer, 176, vec3.fromValues(direction[0], direction[1], direction[2])); //direction
+      this.device.queue.writeBuffer(lightUniformBuffer, 188, new Float32Array([lightComp.intensity, lightComp.ambient, lightComp.fi])); //intensity, ambient, fi
     }
 
     renderNode(node, modelMatrix = mat4.create()) {

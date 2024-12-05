@@ -226,13 +226,15 @@ export class Physics {
 
     //bounces the ball from the edge of the cup
     edgeBounce(minDirection, ball,  ballTransform, cupBox, cup, ballBox, cupWidth, distance){
-      let color = ball.lastBounceNode.name.includes("R") ? "R" : "B";
-      let otherCupName = ball.lastBounceNode.name.includes("Cup2") ? `Cup${color}3` : `Cup${color}2`;
-      if(ball.lastBounce === "edge" && (ball.lastBounceNode === cup || ball.lastBounceNode.name === otherCupName)){
-        ball.velocity[1] = -5;
-        this.normalBounce(minDirection, ball);
-      }else{
-        ball.lastBounce = "edge";
+      if(ball.lastBounceNode !== null){
+        let color = ball.lastBounceNode.name.includes("R") ? "R" : "B";
+        let otherCupName = ball.lastBounceNode.name.includes("Cup2") ? `Cup${color}3` : `Cup${color}2`;
+        if(ball.lastBounce === "edge" && (ball.lastBounceNode === cup || ball.lastBounceNode.name === otherCupName)){
+          ball.velocity[1] = -5;
+          this.normalBounce(minDirection, ball);
+        }else{
+          ball.lastBounce = "edge";
+        }
       }
     let wallWidth = 0.04;
     let edge = distance[0] < distance[2] ? 0 : 2;
