@@ -56,6 +56,20 @@ const materialLayout = {
       visibility: GPUShaderStage.FRAGMENT,
       sampler: {},
     },
+    {
+      binding: 3,
+      visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+      texture: {
+        sampleType: 'depth',
+      },
+    },
+    {
+      binding: 4,
+      visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+      sampler: {
+        type: 'comparison',
+      },
+    },
   ],
 };
 
@@ -76,20 +90,6 @@ const cameraLayout = {
             binding: 0,
             visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
             buffer: {},
-        },
-        {
-            binding: 1,
-            visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-            texture: {
-                sampleType: 'depth',
-            },
-        },
-        {
-            binding: 2,
-            visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-            sampler: {
-                type: 'comparison',
-            },
         },
     ],
 };
@@ -216,8 +216,6 @@ export class Renderer extends BaseRenderer {
             layout: this.device.createBindGroupLayout(cameraLayout),
             entries: [
                 { binding: 0, resource: { buffer: cameraUniformBuffer } },
-                { binding: 1, resource: this.shadowTextureView },
-                { binding: 2, resource: this.shadowSampler },
             ],
         });
 
@@ -264,6 +262,8 @@ export class Renderer extends BaseRenderer {
                 { binding: 0, resource: { buffer: materialUniformBuffer } },
                 { binding: 1, resource: this.prepareImage(material.baseTexture.image).gpuTexture.createView() },
                 { binding: 2, resource: this.prepareSampler(material.baseTexture.sampler).gpuSampler },
+                { binding: 3, resource: this.shadowTextureView },
+                { binding: 4, resource: this.shadowSampler },
             ],
         });
 
