@@ -19,11 +19,17 @@ export class Game {
     this.remainingTime = this.turnTime;
     this.timerInterval = null;
     this.turnStarted = false;
+    this.gameSound = new Audio('gameBackground.mp3');
+    this.gameSound.loop = true;
+    this.gameSound.volume = 0.1;
     this.bounceSound = new Audio('ballBounceSound.mp3');
     this.cheerSound = new Audio('cupHitSound.mp3');
     this.cheerSound.volume = 0.5;
     this.buttonSound = new Audio('buttonSound.mp3');
     this.buttonSound.volume = 0.15;
+    this.gameOverSound = new Audio('gameOverSound.mp3');
+    this.cheerSound.volume = 0.5;
+
     this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
 
     this.instructionsProgress = 0;
@@ -32,6 +38,8 @@ export class Game {
 
   //initial setup
   setUp(){
+    this.gameSound.currentTime = 0;
+    this.gameSound.play().then();
     document.getElementById('rightBarHeader').style.width = '102%';
     document.getElementById('leftBarHeader').style.width = '102%';
     document.getElementById('leftIconImg').src = this.player1.character.stats.iconImage;
@@ -546,15 +554,19 @@ export class Game {
   }
 
   gameOver(){
+    this.gameSound.pause();
+    this.gameSound.currentTime = 0;
+    this.gameOverSound.play().then();
     this.setGameOverPage();
     let gameOverDiv = document.getElementById("gameOverDiv");
     gameOverDiv.style.display = 'block';
     document.getElementById("gameOverExitButton").addEventListener("click", async () => {
       this.buttonSound.play().then();
+      this.gameOverSound.pause();
+      this.gameOverSound.currentTime = 0;
       gameOverDiv.style.display = 'none';
       await window.exitGame();
     }, {once : true});
-    //works, now reset is needed
   }
 
   setGameOverPage(){
