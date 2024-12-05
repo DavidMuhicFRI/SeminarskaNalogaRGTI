@@ -13,11 +13,6 @@ import {
     getModels,
     getGlobalRotation,
 } from '../core/SceneUtils.js';
-
-import {
-    createVertexBuffer,
-} from '../core/VertexUtils.js';
-
 import { Light } from '../core/Light.js';
 
 const vertexLayout = {
