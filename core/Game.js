@@ -595,9 +595,7 @@ export class Game {
     document.getElementById('instructionsSkipButton').addEventListener('click', () => {
       instructionsDiv.style.display = 'none';
       this.buttonSound.play().then();
-      setTimeout(() => {
-        this.addTurnStartEventListener();
-      }, 500);
+      this.addTurnStartEventListener();
     }, { once: true });
   }
 

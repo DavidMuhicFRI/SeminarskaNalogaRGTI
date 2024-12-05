@@ -272,6 +272,8 @@ async function startGame(){
 async function exitGame(){
   await initCharacterPage();
   clearInterval(game.timerInterval);
+  game.gameSound.pause();
+  game.gameSound.currentTime = 0;
   game = null;
   player1 = new Player(1);
   player2 = new Player(2);
