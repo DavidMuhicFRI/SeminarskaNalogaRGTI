@@ -84,7 +84,6 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
     let a = 1 / dot(light.attenuation, vec3(1.0, d, d * d));
     let N = normalize(input.normal);
     let L = normalize(light.position - input.position);
-    let V = normalize(camera.position - input.position);
     let R = normalize(reflect(-L, N));
     let D = normalize(light.direction);
     let l = max(dot(N, L), 0) * material.diffuse;
