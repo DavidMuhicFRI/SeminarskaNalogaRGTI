@@ -187,7 +187,6 @@ export class Renderer extends BaseRenderer {
             },
             layout,
         });
-
         this.recreateDepthTexture();
     }
 
@@ -228,7 +227,7 @@ export class Renderer extends BaseRenderer {
         }
 
         const cameraUniformBuffer = this.device.createBuffer({
-            size: 144,
+            size: 140,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
         });
 
@@ -252,7 +251,7 @@ export class Renderer extends BaseRenderer {
         }
 
         const lightUniformBuffer = this.device.createBuffer({
-            size: 64 + 64 + 64 + 16,
+            size: 208,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
         });
 
@@ -301,7 +300,6 @@ export class Renderer extends BaseRenderer {
         }
 
         const encoder = this.device.createCommandEncoder();
-
         this.shadowPass = encoder.beginRenderPass({
             colorAttachments: [],
             depthStencilAttachment: {
@@ -313,26 +311,25 @@ export class Renderer extends BaseRenderer {
         });
         this.shadowPass.setPipeline(this.shadowPipeline);
 
-        const lightComponent = light.getComponentOfType(Light);
+        const lightComp = light.getComponentOfType(Light);
         const lightViewMatrix = getGlobalViewMatrix(light);
-        const lightProjectionMatrix = lightComponent.perspectiveMatrix;
-        const lightColor = vec3.scale(vec3.create(), lightComponent.color, 1 / 255);
+        const lightProjectionMatrix = lightComp.perspectiveMatrix;
+        const lightColor = vec3.scale(vec3.create(), lightComp.color, 1 / 255);
         const lightPosition = mat4.getTranslation(vec3.create(), getGlobalModelMatrix(light));
-        let vecDir = vec4.set(vec4.create(),0,0,-1,1)
-        let lightDirection = vec4.transformQuat(vec4.create(), vecDir, getGlobalRotation(light))
-        lightDirection = vec3.fromValues(lightDirection[0], lightDirection[1], lightDirection[2])
-        const lightAttenuation = vec3.clone(lightComponent.attenuation);
-        const { lightUniformBuffer, lightBindGroup } = this.prepareLight(lightComponent);
+        let lightDirection = vec4.transformQuat(vec4.create(), vec4.set(vec4.create(),0,0,-1,1), getGlobalRotation(light));
+        lightDirection = vec3.fromValues(lightDirection[0], lightDirection[1], lightDirection[2]);
+        const lightAttenuation = vec3.clone(lightComp.attenuation);
+        const { lightUniformBuffer, lightBindGroup } = this.prepareLight(lightComp);
         this.device.queue.writeBuffer(lightUniformBuffer, 0, lightViewMatrix);
         this.device.queue.writeBuffer(lightUniformBuffer, 64, lightProjectionMatrix);
         this.device.queue.writeBuffer(lightUniformBuffer, 128, lightColor);
         this.device.queue.writeBuffer(lightUniformBuffer, 128+16, lightPosition);
         this.device.queue.writeBuffer(lightUniformBuffer, 128+32, lightAttenuation);
         this.device.queue.writeBuffer(lightUniformBuffer, 128+48, lightDirection);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128+60, new Float32Array([lightComponent.intensity, lightComponent.ambient, lightComponent.fi]));
+        this.device.queue.writeBuffer(lightUniformBuffer, 128+60, new Float32Array([lightComp.intensity, lightComp.ambient, lightComp.fi]));
         this.shadowPass.setBindGroup(0, lightBindGroup);
 
-        this.renderNode_shadow(scene);
+        this.renderNodeShadow(scene);
         this.shadowPass.end();
 
         this.renderPass = encoder.beginRenderPass({
@@ -369,11 +366,10 @@ export class Renderer extends BaseRenderer {
         this.device.queue.writeBuffer(lightUniformBuffer, 128+16, lightPosition);
         this.device.queue.writeBuffer(lightUniformBuffer, 128+32, lightAttenuation);
         this.device.queue.writeBuffer(lightUniformBuffer, 128+48, lightDirection);
-        this.device.queue.writeBuffer(lightUniformBuffer, 128+60, new Float32Array([lightComponent.intensity, lightComponent.ambient, lightComponent.fi]));
+        this.device.queue.writeBuffer(lightUniformBuffer, 128+60, new Float32Array([lightComp.intensity, lightComp.ambient, lightComp.fi]));
         this.renderPass.setBindGroup(1, lightBindGroup);
 
         this.renderNode(scene);
-
         this.renderPass.end();
         this.device.queue.submit([encoder.finish()]);
     }
@@ -396,23 +392,22 @@ export class Renderer extends BaseRenderer {
         }
     }
 
-    renderNode_shadow(node, modelMatrix = mat4.create()) {
-        const localMatrix = getLocalModelMatrix(node);
-        modelMatrix = mat4.multiply(mat4.create(), modelMatrix, localMatrix);
-        const { modelUniformBuffer, modelBindGroup } = this.prepareNode(node);
-        const normalMatrix = this.mat3tomat4(mat3.normalFromMat4(mat3.create(), modelMatrix));
-        this.device.queue.writeBuffer(modelUniformBuffer, 0, modelMatrix);
-        this.device.queue.writeBuffer(modelUniformBuffer, 64, normalMatrix);
-        this.shadowPass.setBindGroup(1, modelBindGroup);
+  renderNodeShadow(node, modelMatrix = mat4.create()) {
+    modelMatrix = mat4.multiply(mat4.create(), modelMatrix, getLocalModelMatrix(node));
+    const { modelUniformBuffer, modelBindGroup } = this.prepareNode(node);
+    const normalMatrix = this.mat3tomat4(mat3.normalFromMat4(mat3.create(), modelMatrix));
+    this.device.queue.writeBuffer(modelUniformBuffer, 0, modelMatrix);
+    this.device.queue.writeBuffer(modelUniformBuffer, 64, normalMatrix);
+    this.shadowPass.setBindGroup(1, modelBindGroup);
 
-        for (const model of getModels(node)) {
-            this.renderModel_shadow(model);
-        }
-
-        for (const child of node.children) {
-            this.renderNode_shadow(child, modelMatrix);
-        }
+    for (const model of getModels(node)) {
+      this.renderModelShadow(model);
     }
+
+    for (const child of node.children) {
+      this.renderNodeShadow(child, modelMatrix);
+    }
+  }
 
     renderModel(model) {
         for (const primitive of model.primitives) {
@@ -420,9 +415,9 @@ export class Renderer extends BaseRenderer {
         }
     }
 
-    renderModel_shadow(model) {
+    renderModelShadow(model) {
         for (const primitive of model.primitives) {
-            this.renderPrimitive_shadow(primitive);
+            this.renderPrimitiveShadow(primitive);
         }
     }
 
@@ -431,25 +426,19 @@ export class Renderer extends BaseRenderer {
         const { materialUniformBuffer, materialBindGroup } = this.prepareMaterial(material);
         this.device.queue.writeBuffer(materialUniformBuffer, 0, new Float32Array([
             ...material.baseFactor,
-            /*material.diffuse*/ 2,
-            /*material.specular*/ 0.1,
-            /*material.shininess*/ 100,
+            2,
         ]));
         this.renderPass.setBindGroup(3, materialBindGroup);
-
         const { vertexBuffer, indexBuffer } = this.prepareMesh(primitive.mesh, vertexBufferLayout);
         this.renderPass.setVertexBuffer(0, vertexBuffer);
         this.renderPass.setIndexBuffer(indexBuffer, 'uint32');
-
         this.renderPass.drawIndexed(primitive.mesh.indices.length);
     }
 
-    renderPrimitive_shadow(primitive) {
+    renderPrimitiveShadow(primitive) {
         const { vertexBuffer, indexBuffer } = this.prepareMesh(primitive.mesh, vertexBufferLayout);
         this.shadowPass.setVertexBuffer(0, vertexBuffer);
         this.shadowPass.setIndexBuffer(indexBuffer, 'uint32');
-
         this.shadowPass.drawIndexed(primitive.mesh.indices.length);
     }
-
 }

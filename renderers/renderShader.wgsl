@@ -26,7 +26,6 @@ struct FragmentOutput {
 struct CameraUniforms {
     viewMatrix : mat4x4f,
     projectionMatrix : mat4x4f,
-    position : vec3f,
 }
 
 struct LightUniforms {
@@ -49,8 +48,6 @@ struct ModelUniforms {
 struct MaterialUniforms {
     baseFactor : vec4f,
     diffuse : f32,
-    specular : f32,
-    shininess : f32,
 }
 
 
