@@ -20,7 +20,7 @@ import {
 
 import { Light } from '../core/Light.js';
 
-const vertexBufferLayout = {
+const vertexLayout = {
     arrayStride: 32,
     attributes: [
         {
@@ -44,7 +44,7 @@ const vertexBufferLayout = {
     ],
 };
 
-const cameraBindGroupLayout = {
+const cameraLayout = {
     entries: [
         {
             binding: 0,
@@ -68,7 +68,7 @@ const cameraBindGroupLayout = {
     ],
 };
 
-const lightBindGroupLayout = {
+const lightLayout = {
     entries: [
         {
             binding: 0,
@@ -78,7 +78,7 @@ const lightBindGroupLayout = {
     ],
 };
 
-const modelBindGroupLayout = {
+const modelLayout = {
     entries: [
         {
             binding: 0,
@@ -88,7 +88,7 @@ const modelBindGroupLayout = {
     ],
 };
 
-const materialBindGroupLayout = {
+const materialLayout = {
     entries: [
         {
             binding: 0,
@@ -116,84 +116,76 @@ export class Renderer extends BaseRenderer {
 
     async initialize() {
         await super.initialize();
+        this.cameraLayout = this.device.createBindGroupLayout(cameraLayout);
+        this.lightLayout = this.device.createBindGroupLayout(lightLayout);
+        this.modelLayout = this.device.createBindGroupLayout(modelLayout);
+        this.materialLayout = this.device.createBindGroupLayout(materialLayout);
 
-        const codeShadowDepth = await fetch(new URL('shadowDepth.wgsl', import.meta.url)).then(response => response.text());
-        const moduleShadowDepth = this.device.createShaderModule({ code: codeShadowDepth });
-
-        this.lightBindGroupLayout = this.device.createBindGroupLayout(lightBindGroupLayout);
-        this.modelBindGroupLayout = this.device.createBindGroupLayout(modelBindGroupLayout);
+        const shadowShader = await fetch(new URL('shadowShader.wgsl', import.meta.url)).then(response => response.text());
 
         this.shadowPipeline = await this.device.createRenderPipelineAsync({
-            label: 'Shadow Pipeline',
             layout: this.device.createPipelineLayout({
                 bindGroupLayouts: [
-                    this.lightBindGroupLayout,
-                    this.modelBindGroupLayout,
+                    this.lightLayout,
+                    this.modelLayout,
                 ],
             }),
             vertex: {
-                module: moduleShadowDepth,
+                module: this.device.createShaderModule({ code: shadowShader }),
                 entryPoint: 'vertex',
-                buffers: [ vertexBufferLayout ],
+                buffers: [ vertexLayout ],
             },
             depthStencil : {
                 depthWriteEnabled: true,
                 depthCompare: 'less',
-                format: 'depth32float',
+                format: 'depth24plus',
             }
         });
 
-        this.shadowDepthTexture = this.device.createTexture({
-            size: [2048, 2048],
+        this.shadowTexture = this.device.createTexture({
+            size: [4096, 4096],
             usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
-            format: 'depth32float'
+            format: 'depth24plus'
         });
-        this.shadowDepthTextureView = this.shadowDepthTexture.createView()
+        this.shadowTextureView = this.shadowTexture.createView();
         this.shadowSampler = this.device.createSampler({ compare: 'less' })
 
-        const codeRender = await fetch(new URL('renderShader.wgsl', import.meta.url)).then(response => response.text());
-        const moduleRender = this.device.createShaderModule({ code: codeRender });
 
-        this.cameraBindGroupLayout = this.device.createBindGroupLayout(cameraBindGroupLayout);
-        this.lightBindGroupLayout = this.device.createBindGroupLayout(lightBindGroupLayout);
-        this.modelBindGroupLayout = this.device.createBindGroupLayout(modelBindGroupLayout);
-        this.materialBindGroupLayout = this.device.createBindGroupLayout(materialBindGroupLayout);
+        const renderShader = await fetch(new URL('renderShader.wgsl', import.meta.url)).then(response => response.text());
 
-        const layout = this.device.createPipelineLayout({
-            bindGroupLayouts: [
-                this.cameraBindGroupLayout,
-                this.lightBindGroupLayout,
-                this.modelBindGroupLayout,
-                this.materialBindGroupLayout,
-            ],
-        });
-
-        this.pipelinePerFragment = await this.device.createRenderPipelineAsync({
-            label: "Render Pipeline",
+        this.renderPipeline = await this.device.createRenderPipelineAsync({
+            layout: this.device.createPipelineLayout({
+              bindGroupLayouts: [
+                this.cameraLayout,
+                this.lightLayout,
+                this.modelLayout,
+                this.materialLayout,
+              ],
+            }),
             vertex: {
-                module: moduleRender,
+                module: this.device.createShaderModule({ code: renderShader }),
                 entryPoint: 'vertex',
-                buffers: [ vertexBufferLayout ],
+                buffers: [ vertexLayout ],
             },
             fragment: {
-                module: moduleRender,
+                module: this.device.createShaderModule({ code: renderShader }),
                 entryPoint: 'fragment',
                 targets: [{ format: this.format }],
             },
             depthStencil: {
-                format: 'depth32float',
+                format: 'depth24plus',
                 depthWriteEnabled: true,
                 depthCompare: 'less',
             },
-            layout,
         });
+
         this.recreateDepthTexture();
     }
 
     recreateDepthTexture() {
         this.depthTexture?.destroy();
         this.depthTexture = this.device.createTexture({
-            format: 'depth32float',
+            format: 'depth24plus',
             size: [this.canvas.width, this.canvas.height],
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
         });
@@ -203,14 +195,13 @@ export class Renderer extends BaseRenderer {
         if (this.gpuObjects.has(node)) {
             return this.gpuObjects.get(node);
         }
-
         const modelUniformBuffer = this.device.createBuffer({
             size: 128,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
         });
 
         const modelBindGroup = this.device.createBindGroup({
-            layout: this.modelBindGroupLayout,
+            layout: this.modelLayout,
             entries: [
                 { binding: 0, resource: { buffer: modelUniformBuffer } },
             ],
@@ -232,10 +223,10 @@ export class Renderer extends BaseRenderer {
         });
 
         const cameraBindGroup = this.device.createBindGroup({
-            layout: this.cameraBindGroupLayout,
+            layout: this.cameraLayout,
             entries: [
                 { binding: 0, resource: { buffer: cameraUniformBuffer } },
-                { binding: 1, resource: this.shadowDepthTextureView },
+                { binding: 1, resource: this.shadowTextureView },
                 { binding: 2, resource: this.shadowSampler },
             ],
         });
@@ -256,7 +247,7 @@ export class Renderer extends BaseRenderer {
         });
 
         const lightBindGroup = this.device.createBindGroup({
-            layout: this.lightBindGroupLayout,
+            layout: this.lightLayout,
             entries: [
                 { binding: 0, resource: { buffer: lightUniformBuffer } },
             ],
@@ -272,20 +263,17 @@ export class Renderer extends BaseRenderer {
             return this.gpuObjects.get(material);
         }
 
-        const baseTexture = this.prepareImage(material.baseTexture.image).gpuTexture;
-        const baseSampler = this.prepareSampler(material.baseTexture.sampler).gpuSampler;
-
         const materialUniformBuffer = this.device.createBuffer({
             size: 32,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
         });
 
         const materialBindGroup = this.device.createBindGroup({
-            layout: this.materialBindGroupLayout,
+            layout: this.materialLayout,
             entries: [
                 { binding: 0, resource: { buffer: materialUniformBuffer } },
-                { binding: 1, resource: baseTexture.createView() },
-                { binding: 2, resource: baseSampler },
+                { binding: 1, resource: this.prepareImage(material.baseTexture.image).gpuTexture.createView() },
+                { binding: 2, resource: this.prepareSampler(material.baseTexture.sampler).gpuSampler },
             ],
         });
 
@@ -303,7 +291,7 @@ export class Renderer extends BaseRenderer {
         this.shadowPass = encoder.beginRenderPass({
             colorAttachments: [],
             depthStencilAttachment: {
-                view: this.shadowDepthTextureView,
+                view: this.shadowTextureView,
                 depthClearValue: 1,
                 depthLoadOp: 'clear',
                 depthStoreOp: 'store',
@@ -329,7 +317,7 @@ export class Renderer extends BaseRenderer {
         this.device.queue.writeBuffer(lightUniformBuffer, 128+60, new Float32Array([lightComp.intensity, lightComp.ambient, lightComp.fi]));
         this.shadowPass.setBindGroup(0, lightBindGroup);
 
-        this.renderNodeShadow(scene);
+        this.renderShadows(scene);
         this.shadowPass.end();
 
         this.renderPass = encoder.beginRenderPass({
@@ -348,7 +336,7 @@ export class Renderer extends BaseRenderer {
                 depthStoreOp: 'discard',
             },
         });
-        this.renderPass.setPipeline(this.pipelinePerFragment);
+        this.renderPass.setPipeline(this.renderPipeline);
 
         const cameraComponent = camera.getComponentOfType(Camera);
         const viewMatrix = getGlobalViewMatrix(camera);
@@ -378,13 +366,21 @@ export class Renderer extends BaseRenderer {
         const localMatrix = getLocalModelMatrix(node);
         modelMatrix = mat4.multiply(mat4.create(), modelMatrix, localMatrix);
         const { modelUniformBuffer, modelBindGroup } = this.prepareNode(node);
-        const normalMatrix = this.mat3tomat4(mat3.normalFromMat4(mat3.create(), modelMatrix));
+        const normalMatrix = mat4.normalFromMat4(mat4.create(), modelMatrix);
         this.device.queue.writeBuffer(modelUniformBuffer, 0, modelMatrix);
         this.device.queue.writeBuffer(modelUniformBuffer, 64, normalMatrix);
         this.renderPass.setBindGroup(2, modelBindGroup);
 
         for (const model of getModels(node)) {
-            this.renderModel(model);
+          for (const primitive of model.primitives) {
+            const { materialUniformBuffer, materialBindGroup } = this.prepareMaterial(primitive.material);
+            this.device.queue.writeBuffer(materialUniformBuffer, 0, new Float32Array([primitive.material.baseFactor]));
+            this.renderPass.setBindGroup(3, materialBindGroup);
+            const { vertexBuffer, indexBuffer } = this.prepareMesh(primitive.mesh, vertexLayout);
+            this.renderPass.setVertexBuffer(0, vertexBuffer);
+            this.renderPass.setIndexBuffer(indexBuffer, 'uint32');
+            this.renderPass.drawIndexed(primitive.mesh.indices.length);
+          }
         }
 
         for (const child of node.children) {
@@ -392,53 +388,26 @@ export class Renderer extends BaseRenderer {
         }
     }
 
-  renderNodeShadow(node, modelMatrix = mat4.create()) {
+  renderShadows(node, modelMatrix = mat4.create()) {
     modelMatrix = mat4.multiply(mat4.create(), modelMatrix, getLocalModelMatrix(node));
     const { modelUniformBuffer, modelBindGroup } = this.prepareNode(node);
-    const normalMatrix = this.mat3tomat4(mat3.normalFromMat4(mat3.create(), modelMatrix));
+    const normalMatrix = mat4.normalFromMat4(mat3.create(), modelMatrix);
     this.device.queue.writeBuffer(modelUniformBuffer, 0, modelMatrix);
     this.device.queue.writeBuffer(modelUniformBuffer, 64, normalMatrix);
     this.shadowPass.setBindGroup(1, modelBindGroup);
 
     for (const model of getModels(node)) {
-      this.renderModelShadow(model);
-    }
-
-    for (const child of node.children) {
-      this.renderNodeShadow(child, modelMatrix);
-    }
-  }
-
-    renderModel(model) {
-        for (const primitive of model.primitives) {
-            this.renderPrimitive(primitive);
-        }
-    }
-
-    renderModelShadow(model) {
-        for (const primitive of model.primitives) {
-            this.renderPrimitiveShadow(primitive);
-        }
-    }
-
-    renderPrimitive(primitive) {
-        const material = primitive.material;
-        const { materialUniformBuffer, materialBindGroup } = this.prepareMaterial(material);
-        this.device.queue.writeBuffer(materialUniformBuffer, 0, new Float32Array([
-            ...material.baseFactor,
-            2,
-        ]));
-        this.renderPass.setBindGroup(3, materialBindGroup);
-        const { vertexBuffer, indexBuffer } = this.prepareMesh(primitive.mesh, vertexBufferLayout);
-        this.renderPass.setVertexBuffer(0, vertexBuffer);
-        this.renderPass.setIndexBuffer(indexBuffer, 'uint32');
-        this.renderPass.drawIndexed(primitive.mesh.indices.length);
-    }
-
-    renderPrimitiveShadow(primitive) {
-        const { vertexBuffer, indexBuffer } = this.prepareMesh(primitive.mesh, vertexBufferLayout);
+      for (const primitive of model.primitives) {
+        const { vertexBuffer, indexBuffer } = this.prepareMesh(primitive.mesh, vertexLayout);
         this.shadowPass.setVertexBuffer(0, vertexBuffer);
         this.shadowPass.setIndexBuffer(indexBuffer, 'uint32');
         this.shadowPass.drawIndexed(primitive.mesh.indices.length);
+      }
     }
+
+    for (const child of node.children) {
+      this.renderShadows(child, modelMatrix);
+    }
+  }
+
 }

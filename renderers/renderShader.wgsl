@@ -47,7 +47,6 @@ struct ModelUniforms {
 
 struct MaterialUniforms {
     baseFactor : vec4f,
-    diffuse : f32,
 }
 
 
@@ -83,7 +82,7 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
     let L = normalize(light.position - input.position);
     let R = normalize(reflect(-L, N));
     let D = normalize(light.direction);
-    let l = max(dot(N, L), 0) * material.diffuse;
+    let l = max(dot(N, L), 0) * 2;
 
     var c = vec3f(0.0, 0.0, 0.0);
     if(dot(-L,D) <= cos(light.fi)){
@@ -96,7 +95,7 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
     var s = vec2(input.shadowPos.x/input.shadowPos.w * 0.5 + 0.5, input.shadowPos.y/input.shadowPos.w * -0.5 + 0.5);
     for (var y = -1; y <= 1; y++) {
         for (var x = -1; x <= 1; x++) {
-            v += textureSampleCompare(shadowMap, shadowSampler, s + vec2<f32>(vec2(x, y)) * (1.0 / 2048), (input.shadowPos.z - 0.01) / input.shadowPos.w);
+            v += textureSampleCompare(shadowMap, shadowSampler, s + vec2<f32>(vec2(x, y)) * (1.0 / 4096), (input.shadowPos.z - 0.01) / input.shadowPos.w);
         }
     }
 
