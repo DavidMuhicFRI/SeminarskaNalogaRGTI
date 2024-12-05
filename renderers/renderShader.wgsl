@@ -81,40 +81,37 @@ fn fragment(input : FragmentInput) -> FragmentOutput {
     var output : FragmentOutput;
 
     let d = distance(input.position, light.position);
-    let attenuation = 1 / dot(light.attenuation, vec3(1.0, d, d * d));
+    let a = 1 / dot(light.attenuation, vec3(1.0, d, d * d));
     let N = normalize(input.normal);
     let L = normalize(light.position - input.position);
     let V = normalize(camera.position - input.position);
     let R = normalize(reflect(-L, N));
     let D = normalize(light.direction);
-    let lambert = max(dot(N, L), 0) * material.diffuse;
+    let l = max(dot(N, L), 0) * material.diffuse;
 
-    var cl = vec3f(0, 0, 0);
+    var c = vec3f(0.0, 0.0, 0.0);
     if(dot(-L,D) <= cos(light.fi)){
-        cl = vec3f(0, 0, 0);
+        c = vec3f(0.0, 0.0, 0.0);
     }else {
-        cl = light.color * exp(-pow( 1.25/light.fi * acos(dot(-L,D)), 8));
+        c = light.color * exp(-pow( 1.25/light.fi * acos(dot(-L,D)), 8));
     }
 
-    var visibility = 0.0;
-    var shadowXY = vec2(input.shadowPos.x/input.shadowPos.w * 0.5 + 0.5, input.shadowPos.y/input.shadowPos.w * -0.5 + 0.5);
+    var v = 0.0;
+    var s = vec2(input.shadowPos.x/input.shadowPos.w * 0.5 + 0.5, input.shadowPos.y/input.shadowPos.w * -0.5 + 0.5);
     for (var y = -1; y <= 1; y++) {
         for (var x = -1; x <= 1; x++) {
-            let offset = vec2<f32>(vec2(x, y)) * (1.0 / 2048);
-            visibility += textureSampleCompare(shadowMap, shadowSampler, shadowXY + offset, (input.shadowPos.z - 0.005) / input.shadowPos.w);
+            v += textureSampleCompare(shadowMap, shadowSampler, s + vec2<f32>(vec2(x, y)) * (1.0 / 2048), (input.shadowPos.z - 0.005) / input.shadowPos.w);
         }
     }
-    visibility /= 3.0;
-    visibility = min(visibility, 2.0);
 
-    let shadowPos = input.shadowPos / input.shadowPos.w;
-    if(shadowPos.x < -1.0 || shadowPos.x > 1.0 || shadowPos.y < -1.0 || shadowPos.y > 1.0 || shadowPos.z < 0.0 || shadowPos.z > 1.0){
-        visibility = 0.0;
+    let sPosition = input.shadowPos / input.shadowPos.w;
+    if(sPosition.x < -1.0 || sPosition.x > 1.0 || sPosition.y < -1.0 || sPosition.y > 1.0 || sPosition.z < 0.0 || sPosition.z > 1.0){
+        v = 0.0;
+    }else{
+        v /= 3.0;
+        v = min(v, 2.0);
     }
 
-    let diffuseLight = lambert * attenuation * cl * light.intensity;
-    let ambientLight = light.ambient * light.color / d;
-
-    output.color = vec4(textureSample(uTexture, uSampler, input.texcoords).rgb * (diffuseLight * visibility + ambientLight * 1.3), 1.0);
+    output.color = vec4(textureSample(uTexture, uSampler, input.texcoords).rgb * (l * a * c * v * light.intensity + (light.ambient * light.color / d) * 1.3), 1.0);
     return output;
 }
