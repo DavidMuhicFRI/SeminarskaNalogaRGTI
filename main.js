@@ -623,7 +623,7 @@ async function initializeTheLight(intro){
     }));
     light.addComponent(new Light({
       color: [250, 245, 220],
-      intensity: 1.4,
+      intensity: 2.4,
       attenuation: [0, 0.1, 0.03],
       ambientOff: 0.01,
       ambientOn: 0.04,
@@ -640,7 +640,7 @@ async function initializeTheLight(intro){
     lightTransform.rotation = [-0.71, 0, 0, 1];
     let lightComponent = light.getComponentOfType(Light);
     lightComponent.color = [250, 245, 220];
-    lightComponent.intensity = 2;
+    lightComponent.intensity = 4;
     lightComponent.attenuation = [0, 0.1, 0.03];
     lightComponent.ambientOff = 0.01;
     lightComponent.ambientOn = 0.04;
