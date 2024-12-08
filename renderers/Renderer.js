@@ -1,4 +1,4 @@
-import { vec3, vec4, mat3, mat4 } from '../glm.js';
+import { vec3, vec4, mat4 } from '../glm.js';
 
 import * as WebGPU from '../WebGPU.js';
 

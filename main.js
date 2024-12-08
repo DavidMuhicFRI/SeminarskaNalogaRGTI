@@ -404,12 +404,8 @@ document.addEventListener("keydown", function(event){
   if(pageStatus === "game"){
     if(event.key === " "){
       game.activateAbility();
-      console.log(game.currentPlayer.energy)
       spacePressed = true;
     }
-  }
-  if(event.key === "l"){
-    console.log(camera.getComponentOfType(Transform).translation, camera.getComponentOfType(Transform).rotation);
   }
 });
 document.addEventListener("keyup", function(event){
@@ -674,14 +670,12 @@ function update(time, dt) {
   accumulatedDt += dt;
   if(time - previousTime > 0.008) {
     dt = accumulatedDt * 2;
-    //console.log("difference", time - previousTime, "and dt is ", dt);
     previousTime = time;
     scene.traverse(node => {
       for (const component of node.components) {
         component.update?.(time, dt);
       }
     });
-    //console.log(camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).translation, camera.getComponentOfType(FirstPersonController).node.getComponentOfType(Transform).rotation);
     if(physics){
       physics.update(time, dt);
     }

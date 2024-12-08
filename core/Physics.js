@@ -125,7 +125,6 @@ export class Physics {
       let cupWidth = (cupBox.max[0] - cupBox.min[0]) / 2;
       let wallWidth = 0.03;
       if (this.isBallInCup(cupWidth - wallWidth, distance, ball.radius)) {
-        console.log("Ball in cup");
         ball.inCup = true;
         if(ballTransform[1] <= cupBox.min[1] + 2 * ball.radius){
           ball.velocity = [0, 0, 0];
@@ -138,10 +137,8 @@ export class Physics {
         }
       }else{
         if(minDirection[1] !== 0){
-          console.log("Edge bounce");
           this.edgeBounce(minDirection, ball, ballTransform, cupBox, cup, ballBox, cupWidth, distance);
         }else{
-          console.log("Normal bounce from cup");
           this.normalBounce(minDirection, ball);
         }
       }
@@ -149,7 +146,6 @@ export class Physics {
 
     //bounces the ball from the player
     playerBounce(){
-      console.log("Player hit");
       this.game.handlePlayerHit();
     }
 
@@ -159,22 +155,19 @@ export class Physics {
       ball.lastBounceNode = null;
       ball.lastBounceType = null;
       if (minDirection[0] !== 0) {
-        //console.log("from side")
         ball.velocity[0] = -ball.velocity[0] * ball.bounciness;
         if(ball.effect === "springEffect"){
           ball.velocity[0] = 4 * ball.velocity[0];
-        }// Reverse X direction if needed
+        }
       }
       if (minDirection[1] !== 0) {
         ball.velocity[1] = -ball.velocity[1] * ball.bounciness;
         if(ball.effect !== "springEffect" && ((ball.velocity[1] < 0.2 && ball.transform.translation[1] < 4.6) || (ball.velocity[1] < 8 && ball.transform.translation[1] < 0.4))){
           this.game.stopBall();
-        }// Reverse Y direction if needed
-        //console.log("from upDown")
+        }
       }
       if (minDirection[2] !== 0) {
-        ball.velocity[2] = -ball.velocity[2] * ball.bounciness; // Reverse Z direction if needed
-        //console.log("from straight")
+        ball.velocity[2] = -ball.velocity[2] * ball.bounciness;
         if(ball.effect === "springEffect"){
           ball.velocity[2] = 4 * ball.velocity[2];
         }
@@ -246,19 +239,13 @@ export class Physics {
     let edge = distance[0] < distance[2] ? 0 : 2;
     let direction;
     let inside;
-    //if the ball is going up, it should bounce up
     if(Math.abs(distance[edge]) < cupWidth - wallWidth){
-      //bouncing inside
       direction = distance[edge] < 0 ? 1 : -1;
-      //if the ball is left of the centre, it should bounce right
       inside = true;
     }else if(Math.abs(distance[edge]) > cupWidth){
-      //bouncing outside
       direction = distance[edge] > 0 ? 1 : -1;
-      //if the ball is right of the centre, it should bounce right
       inside = false;
     }else{
-      //bouncing on the edge
       this.normalBounce(minDirection, ball);
       return;
     }
@@ -275,8 +262,5 @@ export class Physics {
     let YFactor = Math.abs(ball.velocity[1]) * ball.bounciness;
     ball.velocity[edge] = Math.abs(ball.velocity[edge]) * direction + spreadFactor * YFactor;
     ball.velocity[1] = YFactor * (1 - spreadFactor * 0.5);
-    //console.log(ball.velocity[1], "velocity and ", YFactor + (1 - spreadFactor));
-    //ball.transform.translation = vec3.add(vec3.create(), ball.transform.translation, minDirection);
-    //console.log(ball.velocity, "out");
   }
 }

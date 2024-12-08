@@ -175,7 +175,6 @@ export class Game {
     }
   }
   endTurn(){
-    console.log("Turn ended");
     this.turnStarted = false;
     this.changePlayerTurn();
     this.stopCupEffects();
@@ -435,7 +434,6 @@ export class Game {
     cup.getComponentOfType(Transform).translation = [0, -10, 0];
     this.currentPlayer.score++;
     if(this.currentPlayer.score === 6){
-      console.log("Player won");
       this.gameOver();
     }else{
       this.giveAnotherTurn();
@@ -446,10 +444,9 @@ export class Game {
     if(this.ball.effect === 'atlasEffect'){
       damage *= 1.5;
       this.otherPlayer().rest = true;
-    }else if(this.ball.effect === 'springEffect'){
+    }else if(this.ball.effect === 'springEffect') {
       damage *= 1.3;
     }
-    console.log(this.otherPlayer().character.stats.name);
     this.otherPlayer().character.stats.hurtSound.play().then();
     if(this.otherPlayer().character.stats.name === 'NERO'){
       damage *= 1.5;
