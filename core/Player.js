@@ -73,13 +73,13 @@ export class Player {
   //increases current HP
   gainHP(amount){
     this.currentHP += amount
-    if(this.currentHP > this.character.stats.health) this.currentHP = this.character.stats.health;
+    this.currentHP = this.currentHP > this.character.stats.health ? this.character.stats.health : this.currentHP;
     this.setHP(1);
   }
   //decreases current HP
   loseHP(amount){
     this.currentHP -= amount
-    if(this.currentHP < 0) this.currentHP = 0;
+    this.currentHP = this.currentHP < 0 ? 0 : this.currentHP;
     this.setHP(-1);
   }
 

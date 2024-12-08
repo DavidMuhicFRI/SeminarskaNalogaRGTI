@@ -468,7 +468,6 @@ export class Game {
     if(this.currentPlayer.character.stats.name === 'SPRING' && !this.ball.inCup && this.ball.effect !== 'springEffect' && this.ball.velocity[1] > 0.8){
       this.currentPlayer.gainEnergy(0.66);
       this.currentPlayer.gainHP(0.1);
-      this.currentHP = Math.min(this.currentHP, this.currentPlayer.character.stats.health);
     }
     if(this.ball.effect === 'atlasEffect'){
       this.ball.effect = null;
