@@ -10,27 +10,32 @@ export class Game {
     this.ball = ball;
     this.camera = camera;
     this.canvas = canvas;
+
     this.gravity = 1;
     this.bounciness = 0.85;
 
     this.cameraShakeInterval = null;
+    this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
 
     this.turnTime = this.currentPlayer.turnTime;
     this.remainingTime = this.turnTime;
     this.timerInterval = null;
     this.turnStarted = false;
+
     this.gameSound = new Audio('gameBackground.mp3');
     this.gameSound.loop = true;
     this.gameSound.volume = 0.1;
+
     this.bounceSound = new Audio('ballBounceSound.mp3');
+
     this.cheerSound = new Audio('cupHitSound.mp3');
     this.cheerSound.volume = 0.5;
+
     this.buttonSound = new Audio('buttonSound.mp3');
     this.buttonSound.volume = 0.15;
+
     this.gameOverSound = new Audio('gameOverSound.mp3');
     this.cheerSound.volume = 0.5;
-
-    this.cameraRotation = { roll: -180, pitch: 0, yaw: 15.035 };
 
     this.instructionsProgress = 0;
     this.wordInterval = null;
