@@ -160,7 +160,10 @@ export class Physics {
       ball.lastBounceType = null;
       if (minDirection[0] !== 0) {
         //console.log("from side")
-        ball.velocity[0] = -ball.velocity[0] * ball.bounciness; // Reverse X direction if needed
+        ball.velocity[0] = -ball.velocity[0] * ball.bounciness;
+        if(ball.effect === "springEffect"){
+          ball.velocity[0] = 4 * ball.velocity[0];
+        }// Reverse X direction if needed
       }
       if (minDirection[1] !== 0) {
         ball.velocity[1] = -ball.velocity[1] * ball.bounciness;
@@ -172,6 +175,9 @@ export class Physics {
       if (minDirection[2] !== 0) {
         ball.velocity[2] = -ball.velocity[2] * ball.bounciness; // Reverse Z direction if needed
         //console.log("from straight")
+        if(ball.effect === "springEffect"){
+          ball.velocity[2] = 4 * ball.velocity[2];
+        }
       }
       transform.translation = vec3.add(vec3.create(), transform.translation, minDirection);
       if(ball.effect === "springEffect"){
