@@ -123,7 +123,7 @@ export class Physics {
       let cupTransform = cup.getComponentOfType(Transform).translation;
       let distance = this.calculateRealDistance(cupBox, ballTransform, cupTransform);
       let cupWidth = (cupBox.max[0] - cupBox.min[0]) / 2;
-      let wallWidth = 0.04;
+      let wallWidth = 0.03;
       if (this.isBallInCup(cupWidth - wallWidth, distance, ball.radius)) {
         console.log("Ball in cup");
         ball.inCup = true;
@@ -215,7 +215,7 @@ export class Physics {
 
     //returns the bounce constant for the edge bounce depending on the distance from the edge
     getEdgeBounceCons(distance, ball, cupWidth, inside){
-    let wallWidth = 0.04;
+    let wallWidth = 0.03;
     let edge = distance[0] < distance[2] ? 0 : 2;
     if(inside){
       return ((cupWidth - wallWidth - (Math.abs(distance[edge]))) / ball.radius) * 0.5;
@@ -236,7 +236,7 @@ export class Physics {
           ball.lastBounce = "edge";
         }
       }
-    let wallWidth = 0.04;
+    let wallWidth = 0.03;
     let edge = distance[0] < distance[2] ? 0 : 2;
     let direction;
     let inside;
