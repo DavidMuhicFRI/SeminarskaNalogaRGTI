@@ -74,7 +74,7 @@ export class Character {
           funFact: 'Fun-fact: has crippling social anxiety',
           health: 60,
           strength: 0.93,
-          energyGainTurn: 10,
+          energyGainTurn: 8,
           energyGainCup: 12,
           minCastEnergy: 1,
           scale: [1.1, 1.1, 1.1],
