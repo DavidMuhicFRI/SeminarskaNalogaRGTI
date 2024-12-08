@@ -47,7 +47,7 @@ export class Character {
           funFact: 'Fun-fact: likes to cosplay as batman',
           health: 70,
           strength: 1.05,
-          energyGainTurn: 13,
+          energyGainTurn: 10,
           energyGainCup: 10,
           minCastEnergy: 1,
           scale: [1.05, 1.05, 1.05],

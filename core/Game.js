@@ -392,10 +392,10 @@ export class Game {
     if(!event || this.currentPlayer.energy < 1){
       return;
     }
-    this.currentPlayer.loseEnergy(0.66);
+    this.currentPlayer.loseEnergy(1);
     let dx = event.movementX;
     let direction = dx > 0 ? 1 : -1;
-    let adjustment = Math.min(0.04, Math.abs(dx) * 0.01);
+    let adjustment = Math.min(0.05, Math.abs(dx) * 0.02);
     if(this.currentPlayer === this.player1){
       this.ball.velocity[0] -= adjustment * direction;
     }else{
